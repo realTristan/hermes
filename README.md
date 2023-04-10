@@ -19,7 +19,7 @@ Instead of iterating over all of the keys in the cache and checking whether they
 **Average Speed**: 856.6µs
 
 ### Rust + actix-web
-**Average Speed**: 53ms
+**Average Speed**: 1.77ms
 
 # Example
 ```py
