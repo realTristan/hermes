@@ -70,16 +70,6 @@ class Cache:
                     # // Append the index of the item for this word to the cache
                     self.cache[word].append(i)
 
-    # // Print the cache info
-    def print_cache_info(self) -> None:
-        print(f"Cache size: {len(self.ache)}")
-        print(f"Cache size in bytes: {sys.getsizeof(self.cache)}")
-
-    # // Print the data info
-    def print_data_info(self) -> None:
-        print(f"Data size: {len(self.data)}")
-        print(f"Data size in bytes: {sys.getsizeof(self.data)}")
-
     # // Search for a word in the cache
     def search(self, word: str) -> list[int]:
         res: list[int] = []
