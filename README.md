@@ -8,6 +8,9 @@ Hermes works by iterating over the items in the data.json file, and then iterate
 ## Accessing Data
 When searching for a word, Hermes will return a list of indices for all of the items that contain that word. It checks whether the key in the cache dictionary contains the provided word, instead of just accessing it so that short forms for words can be used.
 
+### How to make faster
+Instead of iterating over all of the keys in the cache and checking whether they contain the word you're looking for, just immediately access the indices by map index. ex: return cache[word] instead of for(keys in cache) if key contains word...
+
 ## Benchmarks
 ### Python + Flask
 **Average Speed**: 2.998ms
