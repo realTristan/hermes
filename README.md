@@ -51,11 +51,10 @@ async def root(request: Request):
     # // Search for a word in the cache
     start_time: float = time.time()
     indices: list[int] = cache.search(course)
-    print(f"Search time: {time.time() - start_time} seconds")
 
     # // Convert the indices to the actual items
     items: list[dict] = cache.indices_to_data(indices)
-    print(f"Conversion time: {time.time() - start_time} seconds")
+    print(f"Time: {time.time() - start_time}s")
 
     # // Return the items
     return items
