@@ -1,5 +1,5 @@
 # Hermes
-Extremely Fast Full-Text-Search Algorithm
+![banner](https://user-images.githubusercontent.com/75189508/230987049-665418b1-3576-49b7-861e-29036859ad8a.png)
 
 # About
 ## Storing Data
