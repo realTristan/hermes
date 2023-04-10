@@ -13,7 +13,7 @@ Instead of iterating over all of the keys in the cache and checking whether they
 
 ## Benchmarks
 ### Python + Flask
-**Average Speed**: 2.998ms
+**Average Speed**: 964ns
 
 ### Golang + net/http
 **Average Speed**: 856.6µs
