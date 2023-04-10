@@ -1,6 +1,7 @@
 use serde_json;
 use lazy_static;
 use std::collections::HashMap;
+use actix_web::{HttpRequest, HttpResponse, HttpServer, App, web};
 
 // Store the json data in a variable
 lazy_static::lazy_static!(
@@ -60,16 +61,45 @@ fn indices_to_data(indices: Vec<i16>) -> Vec<HashMap<String, String>> {
     return results
 }
 
-fn main() {
-    // Track the start time
-    let start = std::time::Instant::now();
-    
-    // Search the cache for the word "computer"
-    let results: Vec<i16> = search("computer");
-    indices_to_data(results);
+// The courses api endpoint
+#[actix_web::get("/courses")]
+async fn courses(req: HttpRequest) -> HttpResponse {
+    // Get the query parameters
+    let params = match web::Query::<HashMap<String, String>>::from_query(req.query_string()) {
+        Ok(params) => params,
+        Err(_) => return HttpResponse::BadRequest().json(serde_json::json!({})),
+    };
+
+    // Get the query
+    let query = match params.get("q") {
+        Some(query) => query,
+        None => return HttpResponse::BadRequest().json(serde_json::json!({})),
+    };
+
+    // Track the start time in nanoseconds
+    let start: std::time::Instant = std::time::Instant::now();
 
     // Print the elapsed time
     println!("Elapsed: {:?}", start.elapsed());
 
-    // run cargo run --release
+    // Query the cache
+    let results: Vec<HashMap<String, String>> = indices_to_data(search(query));
+
+    // Return the results as json
+    return HttpResponse::Ok().json(results);
+}
+
+// Main Actix-Web function
+#[actix_web::main]
+async fn main() -> std::io::Result<()> {
+    // Establish a connection to http://127.0.0.1:8000/
+    HttpServer::new(move || {
+        App::new()
+            .wrap(actix_cors::Cors::permissive())
+            .service(courses)
+            .wrap(actix_web::middleware::NormalizePath::trim())
+    })
+    .bind(("127.0.0.1", 8000))?
+    .run()
+    .await
 }

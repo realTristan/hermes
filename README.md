@@ -18,7 +18,7 @@ Instead of iterating over all of the keys in the cache and checking whether they
 ### Golang + net/http
 **Average Speed**: 856.6µs
 
-### Rust
+### Rust + actix-web
 **Average Speed**: 53ms
 
 # Example
