@@ -79,11 +79,11 @@ async fn courses(req: HttpRequest) -> HttpResponse {
     // Track the start time in nanoseconds
     let start: std::time::Instant = std::time::Instant::now();
 
-    // Print the elapsed time
-    println!("Elapsed: {:?}", start.elapsed());
-
     // Query the cache
     let results: Vec<HashMap<String, String>> = indices_to_data(search(query));
+
+    // Print the elapsed time
+    println!("Elapsed: {:?}", start.elapsed());
 
     // Return the results as json
     return HttpResponse::Ok().json(results);
