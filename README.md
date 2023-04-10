@@ -9,11 +9,11 @@ Hermes works by iterating over the items in the data.json file, and then iterate
 When searching for a word, Hermes will return a list of indices for all of the items that contain that word. It checks whether the key in the cache dictionary contains the provided word, instead of just accessing it so that short forms for words can be used.
 
 ## Benchmarks
-From **Example**
+#### From Example
 <br>
-Search time: 0.0009989738464355469 seconds
+**Search time**: 0.0009989738464355469 seconds
 <br>
-Conversion time: 0.001999378204345703 seconds
+**Conversion time**: 0.001999378204345703 seconds
 
 # Example
 ```py
