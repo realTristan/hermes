@@ -16,10 +16,10 @@ Instead of iterating over all of the keys in the cache and checking whether they
 **Average Speed**: 2.998ms
 
 ### Golang + net/http
-**Average Speed**: 856.6µs
+**Average Speed**: 856.6µs WOW!
 
 ### Rust + actix-web
-**Average Speed**: 53ms
+**Average Speed**: 53ms weird...
 
 # Example
 ```py
