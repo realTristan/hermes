@@ -1,4 +1,4 @@
-# Hermes ![Stars](https://img.shields.io/github/stars/Simpson-Computer-Technologies-Research/Hermes?color=brightgreen) ![Watchers](https://img.shields.io/github/watchers/Simpson-Computer-Technologies-Research/Hermes?label=Watchers)
+# Hermes ![Stars](https://img.shields.io/github/stars/realTristan/Hermes?color=brightgreen) ![Watchers](https://img.shields.io/github/watchers/realTristan/Hermes?label=Watchers)
 ![banner](https://user-images.githubusercontent.com/75189508/230987049-665418b1-3576-49b7-861e-29036859ad8a.png)
 
 # About
@@ -9,11 +9,11 @@ Hermes works by iterating over the items in the data.json file, and then iterate
 When searching for a word, Hermes will return a list of indices for all of the items that contain that word. It checks whether the key in the cache dictionary contains the provided word, instead of just accessing it so that short forms for words can be used.
 
 ## Benchmarks
-### From Example
+### Python + Flask
+**Average Speed**: 2.998ms
 
-**Search time**: 0.0009989738464355469 seconds
-
-**Conversion time**: 0.001999378204345703 seconds
+### Golang + net/http
+**Average Speed**: 856.6µs
 
 # Example
 ```py
