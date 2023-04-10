@@ -1,4 +1,4 @@
-# Hermes ![Stars](https://img.shields.io/github/stars/realTristan/Hermes?color=brightgreen) ![Watchers](https://img.shields.io/github/watchers/realTristan/Hermes?label=Watchers)
+# Hermes ![Stars](https://img.shields.io/github/stars/Simpson-Computer-Technologies-Research/Hermes?color=brightgreen) ![Watchers](https://img.shields.io/github/watchers/Simpson-Computer-Technologies-Research/Hermes?label=Watchers)
 ![banner](https://user-images.githubusercontent.com/75189508/230987049-665418b1-3576-49b7-861e-29036859ad8a.png)
 
 # About
@@ -7,6 +7,9 @@ Hermes works by iterating over the items in the data.json file, and then iterate
 
 ## Accessing Data
 When searching for a word, Hermes will return a list of indices for all of the items that contain that word. It checks whether the key in the cache dictionary contains the provided word, instead of just accessing it so that short forms for words can be used.
+
+## How to improve the speed
+Instead of iterating over all of the keys in the cache and checking whether they contain the word you're looking for, just immediately access the indices by map index. ex: return cache[word] instead of for(keys in cache) if key contains word...
 
 ## Benchmarks
 ### Python + Flask
