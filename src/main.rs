@@ -14,6 +14,15 @@ lazy_static::lazy_static!(
     };
 );
 
+// Remove double spaces from a string
+fn remove_double_spaces(value: &str) -> String {
+    let mut value = value.to_string();
+    while value.contains("  ") {
+        value = value.replace("  ", " ");
+    }
+    return value;
+}
+
 // Create a global hasjmap cache for the data using lazy_static
 // The CACHE stores a string key and a vector of i16 values
 lazy_static::lazy_static! {
@@ -23,6 +32,8 @@ lazy_static::lazy_static! {
         // Iterate over the parsed data
         for (i, item) in DATA.iter().enumerate() {
             for (_, value) in item {
+                let value: String = remove_double_spaces(value);
+
                 // Split the value by spaces
                 let words: Vec<&str> = value.as_str().split(" ").collect();
 
