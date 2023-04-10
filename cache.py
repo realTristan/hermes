@@ -16,6 +16,10 @@ class Cache:
     def load(self) -> None:
         for i, course in enumerate(self.data):
             for _, v in course.items():
+                # // Remove all double spaces from the string
+                while "  " in v:
+                    v = v.replace("  ", " ")
+
                 # // Split the string by spaces, then iterate over the words
                 words: list[str] = v.lower().strip().split()
                 for word in words:
