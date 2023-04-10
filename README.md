@@ -11,8 +11,6 @@ When searching for a word, Hermes will return a list of indices for all of the i
 ## Benchmarks
 ### From Example
 
-<br>
-
 **Search time**: 0.0009989738464355469 seconds
 
 <br>
