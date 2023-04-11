@@ -140,24 +140,21 @@ func (c *Cache) _LoadCache() {
 
 			// Loop through the array
 			for _, word := range array {
-				// Check if the word is not all alphabetic
+				// If the word is not all alphabetic
 				if !isAlphaNum(word) {
 					continue
 				}
 
-				// Check if the key exists in the cache
+				// If the key doesn't exist in the cache
 				if _, ok := c.cache[word]; !ok {
-					c.cache[word] = []int{}
-				}
-
-				// Check if the index is already in the cache
-				if ContainsInt(c.cache[word], i) {
+					c.cache[word] = []int{i}
+					c.keys = append(c.keys, word)
 					continue
 				}
 
-				// Update the cache keys
-				if !ContainsString(c.keys, word) {
-					c.keys = append(c.keys, word)
+				// If the index is already in the cache
+				if ContainsInt(c.cache[word], i) {
+					continue
 				}
 				c.cache[word] = append(c.cache[word], i)
 			}
