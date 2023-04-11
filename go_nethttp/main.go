@@ -26,7 +26,7 @@ func main() {
 	fmt.Println(" >> Listening on: http://localhost:8000/")
 
 	// Listen and serve on port 8000
-	http.HandleFunc("/", Handler)
+	http.HandleFunc("/courses", Handler)
 	http.ListenAndServe(":8000", nil)
 }
 
@@ -41,10 +41,10 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 	var start time.Time = time.Now()
 
 	// Search for a word in the cache
-	var courses []map[string]string = IndicesToCourses(Search(query))
+	var courses []map[string]string = Search(query)
 
 	// Print the duration
-	fmt.Println(time.Since(start))
+	fmt.Printf("\nFound %v results in %v", len(courses), time.Since(start).String())
 
 	// Write the courses to the json response
 	var response, _ = json.Marshal(courses)
@@ -52,24 +52,33 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 }
 
 // Search for a word in the cache
-func Search(word string) []int {
+func Search(word string) []map[string]string {
 	word = strings.ToLower(word)
-	var result []int = []int{}
+	var result []map[string]string = []map[string]string{}
+	var alreadyAdded []int = []int{}
+
+	// Loop through the cache keys
 	for i := 0; i < len(cacheKeys); i++ {
-		if strings.Contains(cacheKeys[i], word) {
-			result = append(result, cache[cacheKeys[i]]...)
+		// Check if the key contains the word
+		if !strings.Contains(cacheKeys[i], word) {
+			continue
+		}
+
+		// Loop through the indices
+		for j := 0; j < len(cache[cacheKeys[i]]); j++ {
+			var index int = cache[cacheKeys[i]][j]
+
+			// Check if the index is already in the result
+			if ContainsInt(alreadyAdded, index) {
+				continue
+			}
+
+			// Else, append the index to the result
+			result = append(result, jsonData[index])
+			alreadyAdded = append(alreadyAdded, index)
 		}
 	}
 	return result
-}
-
-// Indices to courses
-func IndicesToCourses(indices []int) []map[string]string {
-	var courses []map[string]string = make([]map[string]string, 0)
-	for i := 0; i < len(indices); i++ {
-		courses = append(courses, jsonData[indices[i]])
-	}
-	return courses
 }
 
 // Load the cache

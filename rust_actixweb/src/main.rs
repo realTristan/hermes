@@ -64,22 +64,22 @@ lazy_static::lazy_static! {
 }
 
 // Search the cache for a word
-fn search(word: &str) -> Vec<i16> {
-    let mut results: Vec<i16> = Vec::new();
+fn search(word: &str) -> Vec<HashMap<String, String>> {
+    let mut results: Vec<HashMap<String, String>> = Vec::new();
+    let mut already_added: Vec<i16> = Vec::new();
+
     // Iterate over the cache
     for (key, value) in CACHE.iter() {
-        if key.contains(word) {
-            results.append(&mut value.clone());
+        if !key.contains(word) {
+            continue;
         }
-    }
-    return results
-}
-
-// Convert the indices to the actual data
-fn indices_to_data(indices: Vec<i16>) -> Vec<HashMap<String, String>> {
-    let mut results: Vec<HashMap<String, String>> = Vec::new();
-    for index in indices {
-        results.push(DATA[index as usize].clone());
+        for index in value {
+            if already_added.contains(index) {
+                continue;
+            }
+            results.push(DATA[*index as usize].clone());
+            already_added.push(*index);
+        }
     }
     return results
 }
@@ -103,10 +103,10 @@ async fn courses(req: HttpRequest) -> HttpResponse {
     let start: std::time::Instant = std::time::Instant::now();
 
     // Query the cache
-    let results: Vec<HashMap<String, String>> = indices_to_data(search(query));
+    let results: Vec<HashMap<String, String>> = search(query);
 
     // Print the elapsed time
-    println!("Elapsed: {:?}", start.elapsed());
+    println!("Found {} results in {:?}", results.len(), start.elapsed());
 
     // Return the results as json
     return HttpResponse::Ok().json(results);

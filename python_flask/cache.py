@@ -40,15 +40,15 @@ class Cache:
 
     # // Search for a word in the cache
     def search(self, word: str) -> list[int]:
-        res: list[int] = []
+        res: list[dict] = []
+        already_added: list[int] = []
         for k, v in self.cache.items():
-            if word in k:
-                res.extend(v)
+            if word not in k:
+                continue
+            for i in v:
+                if i in already_added:
+                    continue
+                res.append(self.data[i])
+                already_added.append(i)
         return res
     
-    # // Convert the indices to the actual items
-    def indices_to_data(self, indices: list[int]) -> list[dict]:
-        items: list[dict] = []
-        for i in indices:
-            items.append(self.data[i])
-        return items
