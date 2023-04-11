@@ -14,7 +14,9 @@ Instead of iterating over all of the keys in the cache and checking whether they
 ## Benchmarks
 ### Dataset Information
 **Keys**: 4,115
+
 **Total Words** 1,762,108
+
 **Map Size**: 33,048 bytes
 
 ### Python + Flask
