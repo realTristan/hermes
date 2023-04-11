@@ -15,7 +15,9 @@ Instead of iterating over all of the keys in the cache and checking whether they
 ### Dataset
 **Keys**: 4,115
 
-**Total Words** 208,092
+
+**Total Words**: 208,092
+
 
 **Map Size**: 33,048 bytes
 
