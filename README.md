@@ -33,6 +33,13 @@ When searching for a word, Hermes will return a list of indices for all of the i
 
 # Example
 ```go
+////////////////////////////////////////////////////////////////
+//
+// Run Command: go run .
+//
+// Host URL: http://localhost:8000/courses?q=computer&limit=100
+//
+////////////////////////////////////////////////////////////////
 package main
 
 import (
