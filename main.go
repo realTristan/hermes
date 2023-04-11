@@ -39,7 +39,7 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Get the limit parameter
-	var limit int = 10
+	var limit int = 500
 	if _limit := r.URL.Query().Get("limit"); _limit != "" {
 		limit, _ = strconv.Atoi(_limit)
 	}

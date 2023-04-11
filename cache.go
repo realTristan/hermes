@@ -35,7 +35,10 @@ func InitCache(jsonFile string) *Cache {
 	return &cache
 }
 
-// Search
+// Search for multiple words
+func 
+
+// Search for a single word
 func (c *Cache) Search(word string, limit int, strict bool) []map[string]string {
 	// Lock the cache
 	c.mutex.RLock()
