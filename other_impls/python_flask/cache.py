@@ -39,8 +39,22 @@ class Cache:
                     self.cache[word].append(i)
 
     # // Search for a word in the cache
-    def search(self, word: str, limit: int) -> list[int]:
+    def search(self, word: str, limit: int, strict: bool) -> list[int]:
         res: list[dict] = []
+
+        # // If strict mode is enabled
+        if strict:
+            # // Check if the word is in the cache
+            if word not in self.cache:
+                return res
+
+            # // Iterate over the indices in the cache
+            for i in self.cache[word]:
+                res.append(self.data[i])
+            
+            # // Return the results
+            return res
+        
         already_added: list[int] = []
         for k, v in self.cache.items():
             # // Check if the limit has been reached

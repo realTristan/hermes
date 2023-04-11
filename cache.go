@@ -50,10 +50,18 @@ func (c *Cache) Search(word string, limit int, strict bool) []map[string]string 
 	// If the user wants a strict search, just return the result
 	// straight from the cache
 	if strict {
+		// Check if the word is in the cache
+		if _, ok := c.cache[word]; !ok {
+			return result
+		}
+
+		// Loop through the indices
 		var indices []int = c.cache[word]
 		for i := 0; i < len(indices); i++ {
 			result = append(result, c.json[indices[i]])
 		}
+
+		// Return the result
 		return result
 	}
 

@@ -64,8 +64,23 @@ lazy_static::lazy_static! {
 }
 
 // Search the cache for a word
-fn search(word: &str, limit: i32) -> Vec<HashMap<String, String>> {
+fn search(word: &str, limit: i32, strict: bool) -> Vec<HashMap<String, String>> {
     let mut results: Vec<HashMap<String, String>> = Vec::new();
+
+    // If strict mode is enabled, return the exact match
+    if strict {
+        match CACHE.get(word) {
+            Some(value) => {
+                for index in value {
+                    results.push(DATA[*index as usize].clone());
+                }
+                return results;
+            }
+            None => return results,
+        }
+    }
+
+    // Store the indexes that have already been added
     let mut already_added: Vec<i16> = Vec::new();
 
     // Iterate over the cache
@@ -141,11 +156,20 @@ async fn courses(req: HttpRequest) -> HttpResponse {
         None => 10,
     };
 
+    // Get the strict mode
+    let strict = match params.get("strict") {
+        Some(strict) => match strict.parse::<bool>() {
+            Ok(strict) => strict,
+            Err(_) => return HttpResponse::BadRequest().json(serde_json::json!({})),
+        },
+        None => false,
+    };
+
     // Track the start time in nanoseconds
     let start: std::time::Instant = std::time::Instant::now();
 
     // Query the cache
-    let results: Vec<HashMap<String, String>> = search(query, limit);
+    let results: Vec<HashMap<String, String>> = search(query, limit, strict);
 
     // Print the elapsed time
     println!("Found {} results in {:?}", results.len(), start.elapsed());
