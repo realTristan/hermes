@@ -8,9 +8,10 @@ data = json.load(open("data.json"))
 
 # // Iterate over the json itmes
 for item in data:
-    for k,v in item.items():
-        v.strip().split()
-        total_words += len(v)
+    for k, v in item.items():
+        for word in v.strip().split():
+            if word.isalnum():
+                total_words += 1
 
 # // Print the results
 print(f"Total words: {total_words}")
