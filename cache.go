@@ -116,6 +116,10 @@ func (c *Cache) Search(word string, limit int, strict bool) ([]map[string]string
 		case len(result) >= limit:
 			return result, indices
 
+		// Check if the word is empty
+		case len(word) == 0:
+			return result, indices
+
 		// The word doesn't start with the same letter
 		case c.keys[i][0] != word[0]:
 			continue
@@ -189,6 +193,11 @@ func (c *Cache) _LoadCache() {
 
 			// Loop through the array
 			for _, word := range array {
+				// Make sure the word is not empty
+				if len(word) == 0 {
+					continue
+				}
+
 				// If the word is not all alphabetic
 				if !_IsAlphaNum(word) {
 					continue
