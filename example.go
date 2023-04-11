@@ -12,6 +12,7 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -34,8 +35,8 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 
 	// Get the query parameter
 	var query string = "CS"
-	if _query := r.URL.Query().Get("query"); _query != "" {
-		query = _query
+	if _query := r.URL.Query().Get("q"); _query != "" {
+		query = strings.ToLower(_query)
 	}
 
 	// Get the limit parameter
@@ -54,7 +55,8 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 	var start time.Time = time.Now()
 
 	// Search for a word in the cache
-	var courses []map[string]string = cache.Search(query, limit, strict)
+	var queryWords []string = strings.Split(query, " ")
+	var courses []map[string]string = cache.SearchMultiple(queryWords, limit, strict)
 
 	// Print the duration
 	fmt.Printf("\nFound %v results in %v", len(courses), time.Since(start))

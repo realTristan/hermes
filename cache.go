@@ -36,10 +36,44 @@ func InitCache(jsonFile string) *Cache {
 }
 
 // Search for multiple words
-func 
+func (c *Cache) SearchMultiple(words []string, limit int, strict bool) []map[string]string {
+	// Get the result of the first word
+	var firstResult, allIndices = c.Search(words[0], limit, strict)
+
+	// If there's only one word, return the result
+	if len(words) == 1 {
+		return firstResult
+	}
+
+	// Create an array to store the result
+	var result []map[string]string = []map[string]string{}
+
+	// Loop through the words and get the indices that are common
+	for i := 1; i < len(words); i++ {
+		// Search for the word
+		var _, indices = c.Search(words[i], limit, strict)
+
+		// Loop through the indices and remove the ones that are not common
+		for j := 0; j < len(allIndices); j++ {
+			// Check if the index is in the indices array
+			if !_ContainsInt(indices, allIndices[j]) {
+				// Remove the index from the allIndices array
+				allIndices = append(allIndices[:j], allIndices[j+1:]...)
+			}
+		}
+	}
+
+	// Loop through the indices
+	for i := 0; i < len(allIndices); i++ {
+		result = append(result, cache.json[allIndices[i]])
+	}
+
+	// Return the result
+	return result
+}
 
 // Search for a single word
-func (c *Cache) Search(word string, limit int, strict bool) []map[string]string {
+func (c *Cache) Search(word string, limit int, strict bool) ([]map[string]string, []int) {
 	// Lock the cache
 	c.mutex.RLock()
 	defer c.mutex.RUnlock()
@@ -47,37 +81,34 @@ func (c *Cache) Search(word string, limit int, strict bool) []map[string]string 
 	// Create an array to store the result
 	var result []map[string]string = []map[string]string{}
 
-	// Convert the word to lowercase
-	word = strings.ToLower(word)
+	// Create an array to store the indices that have already
+	// been added to the result array
+	var indices []int = []int{}
 
 	// If the user wants a strict search, just return the result
 	// straight from the cache
 	if strict {
 		// Check if the word is in the cache
 		if _, ok := c.cache[word]; !ok {
-			return result
+			return result, indices
 		}
 
 		// Loop through the indices
-		var indices []int = c.cache[word]
+		indices = c.cache[word]
 		for i := 0; i < len(indices); i++ {
 			result = append(result, c.json[indices[i]])
 		}
 
 		// Return the result
-		return result
+		return result, indices
 	}
-
-	// Create an array to store the indices that have already
-	// been added to the result array
-	var indices []int = []int{}
 
 	// Loop through the cache keys
 	for i := 0; i < len(c.keys); i++ {
 		switch {
 		// Check if the limit has been reached
 		case len(result) >= limit:
-			return result
+			return result, indices
 
 		// The word doesn't start with the same letter
 		case c.keys[i][0] != word[0]:
@@ -95,10 +126,11 @@ func (c *Cache) Search(word string, limit int, strict bool) []map[string]string 
 
 				// Else, append the index to the result
 				result = append(result, c.json[index])
+				indices = append(indices, index)
 			}
 
 			// Return the result
-			return result
+			return result, indices
 
 		// Check if the key contains the word
 		case !strings.Contains(c.keys[i], word):
@@ -120,7 +152,7 @@ func (c *Cache) Search(word string, limit int, strict bool) []map[string]string 
 	}
 
 	// Return the result
-	return result
+	return result, indices
 }
 
 // Load the cache json data
