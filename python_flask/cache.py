@@ -39,16 +39,41 @@ class Cache:
                     self.cache[word].append(i)
 
     # // Search for a word in the cache
-    def search(self, word: str) -> list[int]:
+    def search(self, word: str, limit: int) -> list[int]:
         res: list[dict] = []
         already_added: list[int] = []
         for k, v in self.cache.items():
+            # // Check if the limit has been reached
+            if len(res) >= limit:
+                return res
+            
+            # // The word doesn't start with the same letter
+            if k[0] != word[0]:
+                continue
+            
+            # // The word is longer than the key string
+            if len(k) < len(word):
+                continue
+
+            # // The word is the key string
+            if word == k:
+                for i in v:
+                    if i in already_added:
+                        continue
+                    res.append(self.data[i])
+                return res
+            
+            # // The word is not in the key string
             if word not in k:
                 continue
+            
+            # // Iterate over the indices in the cache
             for i in v:
                 if i in already_added:
                     continue
                 res.append(self.data[i])
                 already_added.append(i)
+        
+        # // Return the results
         return res
     

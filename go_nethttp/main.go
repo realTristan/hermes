@@ -6,11 +6,12 @@ import (
 	"net/http"
 	"os"
 	"regexp"
+	"strconv"
 	"strings"
 	"time"
 )
 
-// Initialize the cache
+// Initialize the caches
 var cache map[string][]int = make(map[string][]int)
 var cacheKeys []string = []string{}
 
@@ -37,11 +38,17 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 	// Get the query parameter
 	var query string = r.URL.Query().Get("q")
 
+	// parse the limit
+	var limit int = 10
+	if _limit := r.URL.Query().Get("limit"); _limit != "" {
+		limit, _ = strconv.Atoi(_limit)
+	}
+
 	// Track the start time
 	var start time.Time = time.Now()
 
 	// Search for a word in the cache
-	var courses []map[string]string = Search(query)
+	var courses []map[string]string = Search(query, limit)
 
 	// Print the duration
 	fmt.Printf("\nFound %v results in %v", len(courses), time.Since(start).String())
@@ -52,15 +59,51 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 }
 
 // Search for a word in the cache
-func Search(word string) []map[string]string {
-	word = strings.ToLower(word)
+func Search(word string, limit int) []map[string]string {
+	// Create an array to store the result
 	var result []map[string]string = []map[string]string{}
+
+	// Convert the word to lowercase
+	word = strings.ToLower(word)
+
+	// Create an array to store the indices that have already
+	// been added to the result array
 	var alreadyAdded []int = []int{}
 
 	// Loop through the cache keys
 	for i := 0; i < len(cacheKeys); i++ {
+		switch {
+		// Check if the limit has been reached
+		case len(result) >= limit:
+			return result
+
+		// The word doesn't start with the same letter
+		case cacheKeys[i][0] != word[0]:
+			continue
+
+		// Check if the key is shorter than the word
+		case len(cacheKeys[i]) < len(word):
+			continue
+
+		// Check if the key is equal to the word
+		case cacheKeys[i] == word:
+			// Loop through the indices
+			for j := 0; j < len(cache[cacheKeys[i]]); j++ {
+				var index int = cache[cacheKeys[i]][j]
+
+				// Else, append the index to the result
+				result = append(result, jsonData[index])
+			}
+
+			// Return the result
+			return result
+
 		// Check if the key contains the word
-		if !strings.Contains(cacheKeys[i], word) {
+		case !strings.Contains(cacheKeys[i], word):
+			continue
+
+		// Check if the index is already in the result
+		case ContainsInt(alreadyAdded, i):
 			continue
 		}
 
@@ -68,16 +111,13 @@ func Search(word string) []map[string]string {
 		for j := 0; j < len(cache[cacheKeys[i]]); j++ {
 			var index int = cache[cacheKeys[i]][j]
 
-			// Check if the index is already in the result
-			if ContainsInt(alreadyAdded, index) {
-				continue
-			}
-
 			// Else, append the index to the result
 			result = append(result, jsonData[index])
-			alreadyAdded = append(alreadyAdded, index)
+			alreadyAdded = append(alreadyAdded, i)
 		}
 	}
+
+	// Return the result
 	return result
 }
 
@@ -107,7 +147,7 @@ func LoadCache() {
 			// Loop through the array
 			for _, word := range array {
 				// Check if the word is not all alphabetic
-				if !isAlpha(word) {
+				if !isAlphaNum(word) {
 					continue
 				}
 
@@ -132,14 +172,14 @@ func LoadCache() {
 }
 
 // Check if a string is all alphabetic
-func isAlpha(s string) bool {
+func isAlphaNum(s string) bool {
 	return regexp.MustCompile(`^[a-zA-Z0-9]*$`).MatchString(s)
 }
 
 // Check if an int is in an array
 func ContainsInt(array []int, value int) bool {
-	for _, item := range array {
-		if item == value {
+	for i := 0; i < len(array); i++ {
+		if array[i] == value {
 			return true
 		}
 	}
@@ -148,10 +188,21 @@ func ContainsInt(array []int, value int) bool {
 
 // Check if a string is in an array
 func ContainsString(array []string, value string) bool {
-	for _, item := range array {
-		if item == value {
+	for i := 0; i < len(array); i++ {
+		if array[i] == value {
 			return true
 		}
 	}
 	return false
+}
+
+// Sort an array of strings
+func SortString(array []string) {
+	for i := 0; i < len(array); i++ {
+		for j := i + 1; j < len(array); j++ {
+			if array[i] > array[j] {
+				array[i], array[j] = array[j], array[i]
+			}
+		}
+	}
 }

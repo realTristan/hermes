@@ -21,13 +21,15 @@ cache.load()
 @app.get("/courses")
 async def root(request: Request):
     # // Get the course to search for from the query params
-    course: str = request.query_params.get("q", "CS")
+    query: str = request.query_params.get("q", "CS")
+    limit: int = int(request.query_params.get("limit", 10))
+
 
     # // Search for a word in the cache
     start_time: float = time.time()
 
     # // Search for the course
-    courses: list[dict] = cache.search(course)
+    courses: list[dict] = cache.search(query, limit)
 
     # // Print the result
     print(f"Found {len(courses)} results in {time.time() - start_time} seconds")
