@@ -20,6 +20,8 @@ When searching for a word, Hermes will return a list of indices for all of the i
 
 **Golang strict=false:** About 41.054µs
 
+**Golang strict=false:** About 9.102µs
+
 
 # Example
 ```go
