@@ -121,6 +121,7 @@ func (c *Cache) Search(word string, limit int, strict bool) ([]map[string]string
 
 	// Loop through the cache keys
 	for i := 0; i < len(c.keys); i++ {
+	Switch:
 		switch {
 		// Check if the limit has been reached
 		case len(result) >= limit:
@@ -136,17 +137,7 @@ func (c *Cache) Search(word string, limit int, strict bool) ([]map[string]string
 
 		// Check if the key is equal to the word
 		case c.keys[i] == word:
-			// Loop through the indices
-			for j := 0; j < len(c.cache[c.keys[i]]); j++ {
-				var index int = c.cache[c.keys[i]][j]
-
-				// Else, append the index to the result
-				result = append(result, c.json[index])
-				indices = append(indices, index)
-			}
-
-			// Return the result
-			return result, indices
+			break Switch
 
 		// Check if the key contains the word
 		case !strings.Contains(c.keys[i], word):
@@ -195,12 +186,12 @@ func (c *Cache) _LoadCache() {
 			value = strings.ToLower(value)
 
 			// Split the string into an array
-			var array []string = strings.Split(value, " ")
+			var words []string = strings.Split(value, " ")
 
-			// Loop through the array
-			for _, word := range array {
+			// Loop through the words
+			for _, word := range words {
 				// Make sure the word is not empty
-				if len(word) == 0 {
+				if len(word) <= 1 {
 					continue
 				}
 
