@@ -14,10 +14,12 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	Hermes "github.com/realTristan/Hermes"
 )
 
 // Initialize the cache from the hermes.go file
-var cache *Cache = InitCache("data.json")
+var cache *Hermes.Cache = Hermes.InitCache("data.json")
 
 // Main function
 func main() {
