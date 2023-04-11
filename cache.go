@@ -102,7 +102,7 @@ func (c *Cache) Search(word string, limit int, strict bool) []map[string]string 
 			continue
 
 		// Check if the index is already in the result
-		case ContainsInt(indices, i):
+		case _ContainsInt(indices, i):
 			continue
 		}
 
@@ -138,7 +138,7 @@ func (c *Cache) _LoadCache() {
 			value = strings.TrimSpace(value)
 
 			// Remove double spaces
-			value = RemoveDoubleSpaces(value)
+			value = _RemoveDoubleSpaces(value)
 
 			// Convert to lowercase
 			value = strings.ToLower(value)
@@ -149,7 +149,7 @@ func (c *Cache) _LoadCache() {
 			// Loop through the array
 			for _, word := range array {
 				// If the word is not all alphabetic
-				if !isAlphaNum(word) {
+				if !_IsAlphaNum(word) {
 					continue
 				}
 
@@ -161,7 +161,7 @@ func (c *Cache) _LoadCache() {
 				}
 
 				// If the index is already in the cache
-				if ContainsInt(c.cache[word], i) {
+				if _ContainsInt(c.cache[word], i) {
 					continue
 				}
 				c.cache[word] = append(c.cache[word], i)
@@ -171,12 +171,12 @@ func (c *Cache) _LoadCache() {
 }
 
 // Check if a string is all alphabetic
-func isAlphaNum(s string) bool {
+func _IsAlphaNum(s string) bool {
 	return regexp.MustCompile(`^[a-zA-Z0-9]*$`).MatchString(s)
 }
 
 // Remove double spaces from a string
-func RemoveDoubleSpaces(s string) string {
+func _RemoveDoubleSpaces(s string) string {
 	for strings.Contains(s, "  ") {
 		s = strings.Replace(s, "  ", " ", -1)
 	}
@@ -184,17 +184,7 @@ func RemoveDoubleSpaces(s string) string {
 }
 
 // Check if an int is in an array
-func ContainsInt(array []int, value int) bool {
-	for i := 0; i < len(array); i++ {
-		if array[i] == value {
-			return true
-		}
-	}
-	return false
-}
-
-// Check if a string is in an array
-func ContainsString(array []string, value string) bool {
+func _ContainsInt(array []int, value int) bool {
 	for i := 0; i < len(array); i++ {
 		if array[i] == value {
 			return true
