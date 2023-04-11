@@ -7,7 +7,7 @@ use actix_web::{HttpRequest, HttpResponse, HttpServer, App, web};
 lazy_static::lazy_static!(
     static ref DATA: Vec<HashMap<String, String>> = {
         // Read the data.json file
-        let data: String = std::fs::read_to_string("data.json").expect("Failed to read data.json");
+        let data: String = std::fs::read_to_string("../data.json").expect("Failed to read data.json");
 
         // Parse the data.json file
         return serde_json::from_str(&data).expect("Failed to parse data.json");
@@ -39,10 +39,22 @@ lazy_static::lazy_static! {
 
                 // Iterate over the words
                 for word in words {
+                    // Check if the word is alphanumeric
+                    if !word.chars().all(char::is_alphanumeric) {
+                        continue;
+                    }
+
                     // Check if the word is already in the cache
                     if !cache.contains_key(word) {
                         cache.insert(word.to_string(), Vec::new());
                     }
+
+                    // If the index already exists in the vector, skip it
+                    if cache.get(word).unwrap().contains(&(i as i16)) {
+                        continue;
+                    }
+
+                    // Push the index to the vector
                     cache.get_mut(word).unwrap().push(i as i16);
                 }
             }

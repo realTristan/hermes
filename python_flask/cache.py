@@ -23,9 +23,17 @@ class Cache:
                 # // Split the string by spaces, then iterate over the words
                 words: list[str] = v.lower().strip().split()
                 for word in words:
+                    # // If the word is not all alpha, skip it
+                    if not word.isalnum() or len(word) <= 1:
+                        continue
+
                     # // If the word is not in the cache, add it
                     if word not in self.cache:
                         self.cache[word] = []
+
+                    # // If the index is already in the cache, skip it
+                    if i in self.cache[word]:
+                        continue
                     
                     # // Append the index of the item for this word to the cache
                     self.cache[word].append(i)

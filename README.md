@@ -13,13 +13,13 @@ Instead of iterating over all of the keys in the cache and checking whether they
 
 ## Benchmarks
 ### Python + Flask
-**Average Speed**: 1.03ms
+**Average Speed**: 626.4µs -> 1.03ms
 
 ### Golang + net/http
-**Average Speed**: 856.6µs
+**Average Speed**: 310.8µs -> 856.6µs
 
 ### Rust + actix-web
-**Average Speed**: 1.77ms
+**Average Speed**: 833.3µs
 
 # Example
 ```py
