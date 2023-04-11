@@ -64,15 +64,48 @@ lazy_static::lazy_static! {
 }
 
 // Search the cache for a word
-fn search(word: &str) -> Vec<HashMap<String, String>> {
+fn search(word: &str, limit: i32) -> Vec<HashMap<String, String>> {
     let mut results: Vec<HashMap<String, String>> = Vec::new();
     let mut already_added: Vec<i16> = Vec::new();
 
     // Iterate over the cache
     for (key, value) in CACHE.iter() {
+        if results.len() as i32 >= limit {
+            return results;
+        }
+
+        // If the word doesn't start with the same letter as the key
+        match key.chars().nth(0) {
+            Some(key_first_char) => match word.chars().nth(0) {
+                Some(word_first_char) => {
+                    if key_first_char != word_first_char {
+                        continue;
+                    }
+                }
+                None => continue,
+            },
+            None => continue,
+        }
+
+        // If the key is shorter than the word
+        if key.len() < word.len() {
+            continue;
+        }
+
+        // If the key equals the word
+        if key == word {
+            for index in value {
+                results.push(DATA[*index as usize].clone());
+            }
+            return results;
+        }
+
+        // If the key doesn't contain the word
         if !key.contains(word) {
             continue;
         }
+
+        // Iterate over the indexes
         for index in value {
             if already_added.contains(index) {
                 continue;
@@ -99,11 +132,20 @@ async fn courses(req: HttpRequest) -> HttpResponse {
         None => return HttpResponse::BadRequest().json(serde_json::json!({})),
     };
 
+    // Get the limit
+    let limit = match params.get("limit") {
+        Some(limit) => match limit.parse::<i32>() {
+            Ok(limit) => limit,
+            Err(_) => return HttpResponse::BadRequest().json(serde_json::json!({})),
+        },
+        None => 10,
+    };
+
     // Track the start time in nanoseconds
     let start: std::time::Instant = std::time::Instant::now();
 
     // Query the cache
-    let results: Vec<HashMap<String, String>> = search(query);
+    let results: Vec<HashMap<String, String>> = search(query, limit);
 
     // Print the elapsed time
     println!("Found {} results in {:?}", results.len(), start.elapsed());
