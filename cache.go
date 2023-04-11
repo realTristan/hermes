@@ -37,6 +37,11 @@ func InitCache(jsonFile string) *Cache {
 
 // Search for multiple words
 func (c *Cache) SearchMultiple(words []string, limit int, strict bool) []map[string]string {
+	// If the words array is empty
+	if len(words) == 0 {
+		return []map[string]string{}
+	}
+
 	// Get the result of the first word
 	var firstResult, allIndices = c.Search(words[0], limit, strict)
 
