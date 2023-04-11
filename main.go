@@ -26,19 +26,28 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 
 	// Get the query parameter
-	var query string = r.URL.Query().Get("q")
+	var query string = "CS"
+	if _query := r.URL.Query().Get("query"); _query != "" {
+		query = _query
+	}
 
-	// parse the limit
+	// Get the limit parameter
 	var limit int = 10
 	if _limit := r.URL.Query().Get("limit"); _limit != "" {
 		limit, _ = strconv.Atoi(_limit)
+	}
+
+	// Get the strict parameter
+	var strict bool = false
+	if _strict := r.URL.Query().Get("strict"); _strict != "" {
+		strict, _ = strconv.ParseBool(_strict)
 	}
 
 	// Track the start time
 	var start time.Time = time.Now()
 
 	// Search for a word in the cache
-	var courses []map[string]string = cache.Search(query, limit)
+	var courses []map[string]string = cache.Search(query, limit, strict)
 
 	// Print the duration
 	fmt.Printf("\nFound %v results in %v", len(courses), time.Since(start))

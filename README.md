@@ -9,9 +9,7 @@ Hermes works by iterating over the items in the data.json file, and then iterate
 When searching for a word, Hermes will return a list of indices for all of the items that contain that word. It checks whether the key in the cache dictionary contains the provided word, instead of just accessing it so that short forms for words can be used.
 
 ## How to improve the speed
-1. Instead of iterating over all of the keys in the cache and checking whether they contain the word you're looking for, just immediately access the indices by map index. ex: return cache[word] instead of for(keys in cache) if key contains word...
-
-2. Create a history cache
+1. Create a history cache
 
 ## Benchmarks
 ### Dataset
@@ -23,23 +21,23 @@ When searching for a word, Hermes will return a list of indices for all of the i
 
 <br>
 
-### Speeds
-**Python + Flask**: 436.27µs
-
+### Speeds (strict=false)
 **Golang + net/http**: 41.054µs
+
+**Python + Flask**: 436.27µs
 
 **Rust + actixweb**: 590.456µs
 
 
 # Example
 ```go
-////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////
 //
 // Run Command: go run .
 //
-// Host URL: http://localhost:8000/courses?q=computer&limit=100
+// Host URL: http://localhost:8000/courses?q=computer&limit=100&strict=false
 //
-////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////
 package main
 
 import (

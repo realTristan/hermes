@@ -36,7 +36,7 @@ func InitCache(jsonFile string) *Cache {
 }
 
 // Search
-func (c *Cache) Search(word string, limit int) []map[string]string {
+func (c *Cache) Search(word string, limit int, strict bool) []map[string]string {
 	// Lock the cache
 	c.mutex.RLock()
 	defer c.mutex.RUnlock()
@@ -46,6 +46,16 @@ func (c *Cache) Search(word string, limit int) []map[string]string {
 
 	// Convert the word to lowercase
 	word = strings.ToLower(word)
+
+	// If the user wants a strict search, just return the result
+	// straight from the cache
+	if strict {
+		var indices []int = c.cache[word]
+		for i := 0; i < len(indices); i++ {
+			result = append(result, c.json[indices[i]])
+		}
+		return result
+	}
 
 	// Create an array to store the indices that have already
 	// been added to the result array
