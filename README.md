@@ -15,22 +15,26 @@ Instead of iterating over all of the keys in the cache and checking whether they
 ### Dataset Info
 **Keys**: 4,115
 
-**Total Words** 1,762,108
+**Total Words**: 1,762,108
 
 **Map Size**: 33,048 bytes
 
+<br>
 
 ### Python + Flask
 **Average Speed**: 626.4µs -> 1.03ms
 
+<br>
 
 ### Golang + net/http
 **Average Speed**: 310.8µs -> 856.6µs
 
+<br>
 
 ### Rust + actix-web
 **Average Speed**: 833.3µs
 
+<br>
 
 # Example
 ```py
