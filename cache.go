@@ -53,6 +53,12 @@ func (c *Cache) SearchMultiple(words []string, limit int, strict bool) []map[str
 		// Search for the word
 		var _, indices = c.Search(words[i], limit, strict)
 
+		// If the allIndices array is empty, set it to the indices
+		if len(allIndices) == 0 {
+			allIndices = indices
+			continue
+		}
+
 		// Loop through the indices and remove the ones that are not common
 		for j := 0; j < len(allIndices); j++ {
 			// Check if the index is in the indices array
