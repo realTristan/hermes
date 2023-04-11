@@ -12,7 +12,7 @@ When searching for a word, Hermes will return a list of indices for all of the i
 Instead of iterating over all of the keys in the cache and checking whether they contain the word you're looking for, just immediately access the indices by map index. ex: return cache[word] instead of for(keys in cache) if key contains word...
 
 ## Benchmarks
-### Dataset Info
+### Dataset
 **Keys**: 4,115
 
 **Total Words**: 1,762,108
