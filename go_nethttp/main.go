@@ -195,14 +195,3 @@ func ContainsString(array []string, value string) bool {
 	}
 	return false
 }
-
-// Sort an array of strings
-func SortString(array []string) {
-	for i := 0; i < len(array); i++ {
-		for j := i + 1; j < len(array); j++ {
-			if array[i] > array[j] {
-				array[i], array[j] = array[j], array[i]
-			}
-		}
-	}
-}
