@@ -12,17 +12,13 @@ When searching for a word, Hermes will return a list of indices for all of the i
 1. Create a history cache
 
 ## Benchmarks
-### Dataset
-**Keys**: 4,115
+**Dataset Keys:** 4,115
 
-**Total Words**: 208,092
+**Dataset Total Words:** 208,092
 
-**Map Size**: 33,048 bytes
+**Dataset Map Size:** 33,048 bytes
 
-<br>
-
-### Golang + net/http Speed Test [strict = false]
-**Result**: About 41.054µs
+**Golang strict=false:** About 41.054µs
 
 
 # Example
