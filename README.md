@@ -21,12 +21,8 @@ When searching for a word, Hermes will return a list of indices for all of the i
 
 <br>
 
-### Speeds (strict=false)
-**Golang + net/http**: 41.054µs
-
-**Python + Flask**: 436.27µs
-
-**Rust + actixweb**: 590.456µs
+### Golang + net/http Speed Test [strict = false]
+**Result**: About 41.054µs
 
 
 # Example
