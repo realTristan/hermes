@@ -80,6 +80,11 @@ func (c *Cache) SearchMultiple(words []string, limit int, strict bool) []map[str
 
 // Search for a single word
 func (c *Cache) Search(word string, limit int, strict bool) ([]map[string]string, []int) {
+	// If the word is empty
+	if len(word) == 0 {
+		return []map[string]string{}, []int{}
+	}
+
 	// Lock the cache
 	c.mutex.RLock()
 	defer c.mutex.RUnlock()
@@ -114,10 +119,6 @@ func (c *Cache) Search(word string, limit int, strict bool) ([]map[string]string
 		switch {
 		// Check if the limit has been reached
 		case len(result) >= limit:
-			return result, indices
-
-		// Check if the word is empty
-		case len(word) == 0:
 			return result, indices
 
 		// The word doesn't start with the same letter
