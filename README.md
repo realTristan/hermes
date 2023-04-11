@@ -23,14 +23,14 @@ Instead of iterating over all of the keys in the cache and checking whether they
 
 <br>
 
-### Python + Flask
-**Average Speed**: 626.4µs -> 1.03ms
+### Speeds
+**Python + Flask**: 626.4µs -> 1.03ms
 
-### Golang + net/http
-**Average Speed**: 310.8µs -> 856.6µs
 
-### Rust + actix-web
-**Average Speed**: 833.3µs
+**Golang + net/http**: 310.8µs -> 856.6µs
+
+
+**Rust + actixweb**: 833.3µs
 
 # Example
 ```py
