@@ -26,54 +26,62 @@ When searching for a word, Hermes will return a list of indices for all of the i
 ### Speeds
 **Python + Flask**: 436.27µs
 
-**Golang + net/http**: 51.054µs
+**Golang + net/http**: 41.054µs
 
 **Rust + actixweb**: 590.456µs
 
 
 # Example
-```py
-from fastapi.middleware.cors import CORSMiddleware
-from fastapi import FastAPI, Request
-from cache import Cache
-import time
+```go
+package main
 
-# // The FastAPI app
-app = FastAPI()
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["GET"],
-    allow_headers=["*"],
+import (
+	"encoding/json"
+	"fmt"
+	"net/http"
+	"strconv"
+	"time"
 )
 
-# // The cache
-cache: Cache = Cache()
-cache.load()
+// Initialize the cache from the hermes.go file
+var cache *Cache = InitCache("data.json")
 
-# // Courses endpoint
-@app.get("/courses")
-async def root(request: Request):
-    # // Get the course to search for from the query params
-    course: str = request.query_params.get("q", "CS")
+// Main function
+func main() {
+	// Print host
+	fmt.Println(" >> Listening on: http://localhost:8000/")
 
-    # // Search for a word in the cache
-    start_time: float = time.time()
+	// Listen and serve on port 8000
+	http.HandleFunc("/courses", Handler)
+	http.ListenAndServe(":8000", nil)
+}
 
-    # // Search for the course
-    courses: list[dict] = cache.search(course)
+// Handle the incoming http request
+func Handler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Origin", "*")
 
-    # // Print the result
-    print(f"Found {len(courses)} results in {time.time() - start_time} seconds")
+	// Get the query parameter
+	var query string = r.URL.Query().Get("q")
 
-    # // Return the items
-    return courses
+	// parse the limit
+	var limit int = 10
+	if _limit := r.URL.Query().Get("limit"); _limit != "" {
+		limit, _ = strconv.Atoi(_limit)
+	}
 
-# // Run the app
-if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run(app, host="localhost", port=8000)
+	// Track the start time
+	var start time.Time = time.Now()
+
+	// Search for a word in the cache
+	var courses []map[string]string = cache.Search(query, limit)
+
+	// Print the duration
+	fmt.Printf("\nFound %v results in %v", len(courses), time.Since(start))
+
+	// Write the courses to the json response
+	var response, _ = json.Marshal(courses)
+	w.Write(response)
+}
 ```
 
 # License
