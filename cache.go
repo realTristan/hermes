@@ -1,4 +1,4 @@
-package main
+package Hermes
 
 import (
 	"encoding/json"
@@ -65,7 +65,7 @@ func (c *Cache) SearchMultiple(words []string, limit int, strict bool) []map[str
 
 	// Loop through the indices
 	for i := 0; i < len(allIndices); i++ {
-		result = append(result, cache.json[allIndices[i]])
+		result = append(result, c.json[allIndices[i]])
 	}
 
 	// Return the result
