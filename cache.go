@@ -36,57 +36,61 @@ func InitCache(jsonFile string) *Cache {
 }
 
 // Search for multiple words
-func (c *Cache) SearchMultiple(words []string, limit int, strict bool) []map[string]string {
+func (c *Cache) SearchMultiple(query string, limit int, strict bool) []map[string]string {
+	// If the query is empty
+	if len(query) == 0 {
+		return []map[string]string{}
+	}
+
+	// Split the query into an array
+	var words []string = strings.Split(strings.TrimSpace(query), " ")
+
 	// If the words array is empty
 	if len(words) == 0 {
 		return []map[string]string{}
 	}
 
-	// Get the result of the first word
-	var firstResult, allIndices = c.Search(words[0], limit, strict)
-
 	// If there's only one word, return the result
 	if len(words) == 1 {
-		return firstResult
+		var initialResult, _ = c.Search(query, limit, strict)
+		return initialResult
 	}
 
 	// Create an array to store the result
 	var result []map[string]string = []map[string]string{}
+	var alreadyAdded []int = []int{}
 
 	// Loop through the words and get the indices that are common
-	for i := 1; i < len(words); i++ {
-		// Search for the word
-		var _, indices = c.Search(words[i], limit, strict)
+	for i := 0; i < len(words); i++ {
+		// Search for the query inside the cache
+		var queryResult, indices = c.Search(words[i], limit, strict)
 
-		// If the allIndices array is empty, set it to the indices
-		if len(allIndices) == 0 {
-			allIndices = indices
-			continue
-		}
+		// Iterate over the result
+		for j := 0; j < len(queryResult); j++ {
+			// If the data's already been added
+			if _ContainsInt(alreadyAdded, j) {
+				continue
+			}
 
-		// Loop through the indices and remove the ones that are not common
-		for j := 0; j < len(allIndices); j++ {
-			// Check if the index is in the indices array
-			if !_ContainsInt(indices, allIndices[j]) {
-				// Remove the index from the allIndices array
-				allIndices = append(allIndices[:j], allIndices[j+1:]...)
+			// Iterate over the keys and values for the json data for that index
+			for _, v := range queryResult[j] {
+				// If the data contains the query
+				if strings.Contains(v, query) {
+					result = append(result, queryResult[j])
+					alreadyAdded = append(alreadyAdded, indices[j])
+				}
 			}
 		}
-	}
-
-	// Loop through the indices
-	for i := 0; i < len(allIndices); i++ {
-		result = append(result, c.json[allIndices[i]])
 	}
 
 	// Return the result
 	return result
 }
 
-// Search for a single word
-func (c *Cache) Search(word string, limit int, strict bool) ([]map[string]string, []int) {
-	// If the word is empty
-	if len(word) == 0 {
+// Search for a single query
+func (c *Cache) Search(query string, limit int, strict bool) ([]map[string]string, []int) {
+	// If the query is empty
+	if len(query) == 0 {
 		return []map[string]string{}, []int{}
 	}
 
@@ -104,13 +108,13 @@ func (c *Cache) Search(word string, limit int, strict bool) ([]map[string]string
 	// If the user wants a strict search, just return the result
 	// straight from the cache
 	if strict {
-		// Check if the word is in the cache
-		if _, ok := c.cache[word]; !ok {
+		// Check if the query is in the cache
+		if _, ok := c.cache[query]; !ok {
 			return result, indices
 		}
 
 		// Loop through the indices
-		indices = c.cache[word]
+		indices = c.cache[query]
 		for i := 0; i < len(indices); i++ {
 			result = append(result, c.json[indices[i]])
 		}
@@ -127,20 +131,20 @@ func (c *Cache) Search(word string, limit int, strict bool) ([]map[string]string
 		case len(result) >= limit:
 			return result, indices
 
-		// The word doesn't start with the same letter
-		case c.keys[i][0] != word[0]:
+		// If the key doesn't start with the word
+		case !strings.HasPrefix(c.keys[i], query):
 			continue
 
-		// Check if the key is shorter than the word
-		case len(c.keys[i]) < len(word):
+		// Check if the key is shorter than the query
+		case len(c.keys[i]) < len(query):
 			continue
 
-		// Check if the key is equal to the word
-		case c.keys[i] == word:
+		// Check if the key is equal to the query
+		case c.keys[i] == query:
 			break Switch
 
-		// Check if the key contains the word
-		case !strings.Contains(c.keys[i], word):
+		// Check if the key contains the query
+		case !strings.Contains(c.keys[i], query):
 			continue
 
 		// Check if the index is already in the result

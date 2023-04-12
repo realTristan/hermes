@@ -57,8 +57,7 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 	var start time.Time = time.Now()
 
 	// Search for a word in the cache
-	var queryWords []string = strings.Split(query, " ")
-	var courses []map[string]string = cache.SearchMultiple(queryWords, limit, strict)
+	var courses []map[string]string = cache.SearchMultiple(query, limit, strict)
 
 	// Print the duration
 	fmt.Printf("\nFound %v results in %v", len(courses), time.Since(start))
