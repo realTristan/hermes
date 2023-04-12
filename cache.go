@@ -35,14 +35,46 @@ func InitCache(jsonFile string) *Cache {
 	return &cache
 }
 
-// Search for multiple words
-func (c *Cache) SearchMultiple(query string, limit int, strict bool) []map[string]string {
-	// If the query is empty
-	if len(query) == 0 {
-		return []map[string]string{}
-	}
+// Clean the cache
+func (c *Cache) Clean() {
+	c.mutex.Lock()
+	defer c.mutex.Unlock()
+	c._Clean()
+}
 
-	// Split the query into an array
+// Clean the cache
+func (c *Cache) _Clean() {
+	c.cache = map[string][]int{}
+	c.keys = []string{}
+	c.json = []map[string]string{}
+}
+
+// Reset the cache
+func (c *Cache) Reset(fileName string) {
+	c.mutex.Lock()
+	defer c.mutex.Unlock()
+	c._Reset(fileName)
+}
+
+// Reset the cache
+func (c *Cache) _Reset(fileName string) {
+	c.cache = map[string][]int{}
+	c.keys = []string{}
+	c.json = []map[string]string{}
+	c._LoadJson(fileName)
+	c._LoadCache()
+}
+
+// SearchMultiple function with lock
+func (c *Cache) SearchMultiple(query string, limit int, strict bool) []map[string]string {
+	c.mutex.RLock()
+	defer c.mutex.RUnlock()
+	return c._SearchMultiple(query, limit, strict)
+}
+
+// Search for multiple words
+func (c *Cache) _SearchMultiple(query string, limit int, strict bool) []map[string]string {
+	// Split the query into words
 	var words []string = strings.Split(strings.TrimSpace(query), " ")
 
 	// If the words array is empty
@@ -52,8 +84,8 @@ func (c *Cache) SearchMultiple(query string, limit int, strict bool) []map[strin
 
 	// If there's only one word, return the result
 	if len(words) == 1 {
-		var initialResult, _ = c.Search(query, limit, strict)
-		return initialResult
+		var r, _ = c.Search(query, limit, strict)
+		return r
 	}
 
 	// Create an array to store the result
@@ -61,12 +93,12 @@ func (c *Cache) SearchMultiple(query string, limit int, strict bool) []map[strin
 	var alreadyAdded []int = []int{}
 
 	// Loop through the words and get the indices that are common
-	for i := 0; i < len(words); i++ {
+	for i := range words {
 		// Search for the query inside the cache
 		var queryResult, indices = c.Search(words[i], limit, strict)
 
 		// Iterate over the result
-		for j := 0; j < len(queryResult); j++ {
+		for j := range queryResult {
 			// If the data's already been added
 			if _ContainsInt(alreadyAdded, j) {
 				continue
@@ -87,16 +119,19 @@ func (c *Cache) SearchMultiple(query string, limit int, strict bool) []map[strin
 	return result
 }
 
-// Search for a single query
+// Search function with lock
 func (c *Cache) Search(query string, limit int, strict bool) ([]map[string]string, []int) {
+	c.mutex.RLock()
+	defer c.mutex.RUnlock()
+	return c._Search(query, limit, strict)
+}
+
+// Search for a single query
+func (c *Cache) _Search(query string, limit int, strict bool) ([]map[string]string, []int) {
 	// If the query is empty
 	if len(query) == 0 {
 		return []map[string]string{}, []int{}
 	}
-
-	// Lock the cache
-	c.mutex.RLock()
-	defer c.mutex.RUnlock()
 
 	// Create an array to store the result
 	var result []map[string]string = []map[string]string{}
@@ -115,7 +150,7 @@ func (c *Cache) Search(query string, limit int, strict bool) ([]map[string]strin
 
 		// Loop through the indices
 		indices = c.cache[query]
-		for i := 0; i < len(indices); i++ {
+		for i := range indices {
 			result = append(result, c.json[indices[i]])
 		}
 
@@ -124,7 +159,7 @@ func (c *Cache) Search(query string, limit int, strict bool) ([]map[string]strin
 	}
 
 	// Loop through the cache keys
-	for i := 0; i < len(c.keys); i++ {
+	for i := range c.keys {
 	Switch:
 		switch {
 		// Check if the limit has been reached
@@ -153,7 +188,7 @@ func (c *Cache) Search(query string, limit int, strict bool) ([]map[string]strin
 		}
 
 		// Loop through the indices
-		for j := 0; j < len(c.cache[c.keys[i]]); j++ {
+		for j := range c.cache[c.keys[i]] {
 			var index int = c.cache[c.keys[i]][j]
 
 			// Else, append the index to the result
@@ -176,10 +211,7 @@ func (c *Cache) _LoadJson(fileName string) {
 func (c *Cache) _LoadCache() {
 	// Loop through the json data
 	for i, item := range c.json {
-		for _, runeValue := range item {
-			// Convert the rune to a string
-			var value string = string(runeValue)
-
+		for _, value := range item {
 			// Remove spaces from front and back
 			value = strings.TrimSpace(value)
 
@@ -189,11 +221,8 @@ func (c *Cache) _LoadCache() {
 			// Convert to lowercase
 			value = strings.ToLower(value)
 
-			// Split the string into an array
-			var words []string = strings.Split(value, " ")
-
 			// Loop through the words
-			for _, word := range words {
+			for _, word := range strings.Split(value, " ") {
 				// Make sure the word is not empty
 				if len(word) <= 1 {
 					continue
@@ -215,6 +244,8 @@ func (c *Cache) _LoadCache() {
 				if _ContainsInt(c.cache[word], i) {
 					continue
 				}
+
+				// Append the index to the cache
 				c.cache[word] = append(c.cache[word], i)
 			}
 		}
@@ -236,7 +267,7 @@ func _RemoveDoubleSpaces(s string) string {
 
 // Check if an int is in an array
 func _ContainsInt(array []int, value int) bool {
-	for i := 0; i < len(array); i++ {
+	for i := range array {
 		if array[i] == value {
 			return true
 		}

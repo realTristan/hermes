@@ -18,20 +18,20 @@ When searching for a word, Hermes will return a list of indices for all of the i
 
 **Dataset Map Size:** 33,048 bytes
 
-**Golang strict=false:** About 41.054µs
+**Search for "computer" + !strict:** About 41.054µs
 
-**Golang strict=true:** About 9.102µs
+**Search for "computer" + strict** About 9.102µs
 
 
 # Example
 ```go
-//////////////////////////////////////////////////////////////////////////////
+// ////////////////////////////////////////////////////////////////////////////
 //
 // Run Command: go run .
 //
 // Host URL: http://localhost:8000/courses?q=computer&limit=100&strict=false
 //
-//////////////////////////////////////////////////////////////////////////////
+// ////////////////////////////////////////////////////////////////////////////
 package main
 
 import (
@@ -39,11 +39,14 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
+	"strings"
 	"time"
+
+	Hermes "github.com/realTristan/Hermes"
 )
 
 // Initialize the cache from the hermes.go file
-var cache *Cache = InitCache("data.json")
+var cache *Hermes.Cache = Hermes.InitCache("data.json")
 
 // Main function
 func main() {
@@ -61,12 +64,12 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 
 	// Get the query parameter
 	var query string = "CS"
-	if _query := r.URL.Query().Get("query"); _query != "" {
-		query = _query
+	if _query := r.URL.Query().Get("q"); _query != "" {
+		query = strings.ToLower(_query)
 	}
 
 	// Get the limit parameter
-	var limit int = 10
+	var limit int = 500
 	if _limit := r.URL.Query().Get("limit"); _limit != "" {
 		limit, _ = strconv.Atoi(_limit)
 	}
@@ -81,7 +84,8 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 	var start time.Time = time.Now()
 
 	// Search for a word in the cache
-	var courses []map[string]string = cache.Search(query, limit, strict)
+	var queryWords []string = strings.Split(query, " ")
+	var courses []map[string]string = cache.SearchMultiple(queryWords, limit, strict)
 
 	// Print the duration
 	fmt.Printf("\nFound %v results in %v", len(courses), time.Since(start))
