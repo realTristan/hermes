@@ -35,6 +35,36 @@ func InitCache(jsonFile string) *Cache {
 	return &cache
 }
 
+// Clean the cache
+func (c *Cache) Clean() {
+	c.mutex.Lock()
+	defer c.mutex.Unlock()
+	c._Clean()
+}
+
+// Clean the cache
+func (c *Cache) _Clean() {
+	c.cache = map[string][]int{}
+	c.keys = []string{}
+	c.json = []map[string]string{}
+}
+
+// Reset the cache
+func (c *Cache) Reset(fileName string) {
+	c.mutex.Lock()
+	defer c.mutex.Unlock()
+	c._Reset(fileName)
+}
+
+// Reset the cache
+func (c *Cache) _Reset(fileName string) {
+	c.cache = map[string][]int{}
+	c.keys = []string{}
+	c.json = []map[string]string{}
+	c._LoadJson(fileName)
+	c._LoadCache()
+}
+
 // SearchMultiple function with lock
 func (c *Cache) SearchMultiple(words []string, limit int, strict bool) []map[string]string {
 	c.mutex.RLock()
