@@ -12,7 +12,7 @@ func _IsAlphaNum(s string) bool {
 
 // Remove double spaces from a string
 func _RemoveDoubleSpaces(s string) string {
-	for strings.ContainsAny(s, "  ") {
+	for strings.Contains(s, "  ") {
 		s = strings.Replace(s, "  ", " ", -1)
 	}
 	return s

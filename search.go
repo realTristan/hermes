@@ -53,7 +53,7 @@ func (c *Cache) _SearchWithSpaces(query string, limit int, strict bool, keyExcep
 				}
 
 				// If the data contains the query
-				if strings.ContainsAny(value, query) {
+				if strings.Contains(value, query) {
 					result = append(result, queryResult[j])
 					indices = append(indices, queryIndices[j])
 				}
@@ -87,7 +87,7 @@ func (c *Cache) _SearchInJsonWithKey(query string, key string, limit int, strict
 		}
 
 		// If the data contains the query
-		if strings.ContainsAny(c.json[i][key], query) {
+		if strings.Contains(c.json[i][key], query) {
 			result = append(result, queryResult[i])
 			indices = append(indices, i)
 		}
@@ -131,7 +131,7 @@ func (c *Cache) _SearchInJson(query string, limit int, strict bool, keyException
 			}
 
 			// If the data contains the query
-			if strings.ContainsAny(value, query) {
+			if strings.Contains(value, query) {
 				result = append(result, queryResult[i])
 				indices = append(indices, i)
 			}
