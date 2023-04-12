@@ -3,14 +3,14 @@ package hermes
 import "strings"
 
 // SearchWithSpaces function with lock
-func (c *Cache) SearchWithSpaces(query string, limit int, strict bool) ([]map[string]string, []int) {
+func (c *Cache) SearchWithSpaces(query string, limit int, strict bool, keyExceptions []string) ([]map[string]string, []int) {
 	c.mutex.RLock()
 	defer c.mutex.RUnlock()
-	return c._SearchWithSpaces(query, limit, strict)
+	return c._SearchWithSpaces(query, limit, strict, keyExceptions)
 }
 
 // Search for multiple words
-func (c *Cache) _SearchWithSpaces(query string, limit int, strict bool) ([]map[string]string, []int) {
+func (c *Cache) _SearchWithSpaces(query string, limit int, strict bool, keyExceptions []string) ([]map[string]string, []int) {
 	// Split the query into words
 	var words []string = strings.Split(strings.TrimSpace(query), " ")
 
@@ -41,9 +41,19 @@ func (c *Cache) _SearchWithSpaces(query string, limit int, strict bool) ([]map[s
 			}
 
 			// Iterate over the keys and values for the json data for that index
-			for _, value := range queryResult[j] {
+			for key, value := range queryResult[j] {
+				switch {
+				// If the key is in the keyExceptions array
+				case _ContainsString(keyExceptions, key):
+					continue
+
+				// If the value length is less than the query length
+				case len(value) < len(query):
+					continue
+				}
+
 				// If the data contains the query
-				if strings.Contains(value, query) {
+				if strings.ContainsAny(value, query) {
 					result = append(result, queryResult[j])
 					indices = append(indices, queryIndices[j])
 				}
@@ -56,15 +66,15 @@ func (c *Cache) _SearchWithSpaces(query string, limit int, strict bool) ([]map[s
 }
 
 // SearchInJsonWithKey function with lock
-func (c *Cache) SearchInJsonWithKey(query string, key string, limit int, strict bool) ([]map[string]string, []int) {
+func (c *Cache) SearchInJsonWithKey(query string, key string, limit int, strict bool, keyExceptions []string) ([]map[string]string, []int) {
 	c.mutex.RLock()
 	defer c.mutex.RUnlock()
-	return c._SearchInJsonWithKey(query, key, limit, strict)
+	return c._SearchInJsonWithKey(query, key, limit, strict, keyExceptions)
 }
 
 // SearchInJsonWithKey function
-func (c *Cache) _SearchInJsonWithKey(query string, key string, limit int, strict bool) ([]map[string]string, []int) {
-	var queryResult, _ = c._SearchWithSpaces(query, limit, strict)
+func (c *Cache) _SearchInJsonWithKey(query string, key string, limit int, strict bool, keyExceptions []string) ([]map[string]string, []int) {
+	var queryResult, _ = c._SearchWithSpaces(query, limit, strict, keyExceptions)
 
 	// Define variables
 	var result []map[string]string = []map[string]string{}
@@ -77,7 +87,7 @@ func (c *Cache) _SearchInJsonWithKey(query string, key string, limit int, strict
 		}
 
 		// If the data contains the query
-		if strings.Contains(c.json[i][key], query) {
+		if strings.ContainsAny(c.json[i][key], query) {
 			result = append(result, queryResult[i])
 			indices = append(indices, i)
 		}
@@ -88,15 +98,15 @@ func (c *Cache) _SearchInJsonWithKey(query string, key string, limit int, strict
 }
 
 // SearchInJson function with lock
-func (c *Cache) SearchInJson(query string, limit int, strict bool) ([]map[string]string, []int) {
+func (c *Cache) SearchInJson(query string, limit int, strict bool, keyExceptions []string) ([]map[string]string, []int) {
 	c.mutex.RLock()
 	defer c.mutex.RUnlock()
-	return c._SearchInJson(query, limit, strict)
+	return c._SearchInJson(query, limit, strict, keyExceptions)
 }
 
 // _SearchInJson function
-func (c *Cache) _SearchInJson(query string, limit int, strict bool) ([]map[string]string, []int) {
-	var queryResult, _ = c._SearchWithSpaces(query, limit, strict)
+func (c *Cache) _SearchInJson(query string, limit int, strict bool, keyExceptions []string) ([]map[string]string, []int) {
+	var queryResult, _ = c._SearchWithSpaces(query, limit, strict, keyExceptions)
 
 	// Define variables
 	var result []map[string]string = []map[string]string{}
@@ -109,9 +119,19 @@ func (c *Cache) _SearchInJson(query string, limit int, strict bool) ([]map[strin
 		}
 
 		// Iterate over the keys and values for the json data for that index
-		for key := range queryResult[i] {
+		for key, value := range queryResult[i] {
+			switch {
+			// If the key is in the keyExceptions array
+			case _ContainsString(keyExceptions, key):
+				continue
+
+			// If the value length is less than the query length
+			case len(value) < len(query):
+				continue
+			}
+
 			// If the data contains the query
-			if strings.Contains(c.json[i][key], query) {
+			if strings.ContainsAny(value, query) {
 				result = append(result, queryResult[i])
 				indices = append(indices, i)
 			}

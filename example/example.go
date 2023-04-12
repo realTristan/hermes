@@ -57,7 +57,11 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 	var start time.Time = time.Now()
 
 	// Search for a word in the cache
-	var res, _ = cache.SearchWithSpaces(query, limit, strict)
+	var res, _ = cache.SearchWithSpaces(query, limit, strict, []string{
+		"components",
+		"unit",
+		"id",
+	})
 
 	// Print the duration
 	fmt.Printf("\nFound %v results in %v", len(res), time.Since(start))
