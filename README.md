@@ -12,15 +12,15 @@ When searching for a word, Hermes will return a list of indices for all of the i
 1. Create a history cache
 
 ## Benchmarks
-**Dataset Keys:** 4,115
+`Dataset Keys: 4,115`
 
-**Dataset Total Words:** 208,092
+`Dataset Total Words: 208,092`
 
-**Dataset Map Size:** 33,048 bytes
+`Dataset Map Size: 33,048 bytes`
 
-**Search for "computer" + !strict:** About 41.054µs
+`?q=computer&limit=100&strict=false: 41.054µs`
 
-**Search for "computer" + strict** About 9.102µs
+`?q=computer&limit=100&strict=true: 9.102µs`
 
 
 # Example
