@@ -18,9 +18,9 @@ When searching for a word, Hermes will return a list of indices for all of the i
 
 **Dataset Map Size:** 33,048 bytes
 
-**Golang strict=false:** About 41.054µs
+**Search for "computer" + !strict:** About 41.054µs
 
-**Golang strict=true:** About 9.102µs
+**Search for "computer" + strict** About 9.102µs
 
 
 # Example
