@@ -80,7 +80,7 @@ func (c *Cache) _SearchMultiple(words []string, limit int, strict bool) []map[st
 	}
 
 	// Get the result of the first word
-	var firstResult, allIndices = c._Search(words[0], limit, strict)
+	var firstResult, firstIndices = c._Search(words[0], limit, strict)
 
 	// If there's only one word, return the result
 	if len(words) == 1 {
@@ -88,7 +88,7 @@ func (c *Cache) _SearchMultiple(words []string, limit int, strict bool) []map[st
 	}
 
 	// Create an array to store the result
-	var result []map[string]string = []map[string]string{}
+	var finalResult []map[string]string = []map[string]string{}
 
 	// Loop through the words and get the indices that are common
 	for i := 1; i < len(words); i++ {
@@ -96,28 +96,28 @@ func (c *Cache) _SearchMultiple(words []string, limit int, strict bool) []map[st
 		var _, indices = c._Search(words[i], limit, strict)
 
 		// If the allIndices array is empty, set it to the indices
-		if len(allIndices) == 0 {
-			allIndices = indices
+		if len(firstIndices) == 0 {
+			firstIndices = indices
 			continue
 		}
 
 		// Loop through the indices and remove the ones that are not common
-		for j := range allIndices {
+		for j := 0; j < len(firstIndices); j++ {
 			// Check if the index is in the indices array
-			if !_ContainsInt(indices, allIndices[j]) {
-				// Remove the index from the allIndices array
-				allIndices = append(allIndices[:j], allIndices[j+1:]...)
+			if !_ContainsInt(indices, firstIndices[j]) {
+				// Remove the index from the firstIndices array
+				firstIndices = append(firstIndices[:j], firstIndices[j+1:]...)
 			}
 		}
 	}
 
 	// Loop through the indices
-	for i := range allIndices {
-		result = append(result, c.json[allIndices[i]])
+	for i := range firstIndices {
+		finalResult = append(finalResult, c.json[firstIndices[i]])
 	}
 
 	// Return the result
-	return result
+	return finalResult
 }
 
 // Search function with lock
