@@ -37,3 +37,8 @@ func _ContainsString(array []string, value string) bool {
 	}
 	return false
 }
+
+// Check if a string contains another string (case insensitive)
+func ContainsIgnoreCase(s1 string, s2 string) bool {
+	return strings.Contains(strings.ToLower(s1), strings.ToLower(s2))
+}

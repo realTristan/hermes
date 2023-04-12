@@ -12,7 +12,6 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
-	"strings"
 	"time"
 
 	Hermes "github.com/realTristan/Hermes"
@@ -38,7 +37,7 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 	// Get the query parameter
 	var query string = "CS"
 	if _query := r.URL.Query().Get("q"); _query != "" {
-		query = strings.ToLower(_query)
+		query = _query
 	}
 
 	// Get the limit parameter
@@ -58,9 +57,9 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 
 	// Search for a word in the cache
 	var res, _ = cache.SearchWithSpaces(query, limit, strict, []string{
-		"components",
-		"unit",
 		"id",
+		"components",
+		"units",
 	})
 
 	// Print the duration

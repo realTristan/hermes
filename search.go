@@ -1,6 +1,8 @@
 package hermes
 
-import "strings"
+import (
+	"strings"
+)
 
 // SearchWithSpaces function with lock
 func (c *Cache) SearchWithSpaces(query string, limit int, strict bool, keyExceptions []string) ([]map[string]string, []int) {
@@ -66,29 +68,29 @@ func (c *Cache) _SearchWithSpaces(query string, limit int, strict bool, keyExcep
 }
 
 // SearchInJsonWithKey function with lock
-func (c *Cache) SearchInJsonWithKey(query string, key string, limit int, strict bool, keyExceptions []string) ([]map[string]string, []int) {
+func (c *Cache) SearchInJsonWithKey(query string, key string, limit int, strict bool) ([]map[string]string, []int) {
 	c.mutex.RLock()
 	defer c.mutex.RUnlock()
-	return c._SearchInJsonWithKey(query, key, limit, strict, keyExceptions)
+	return c._SearchInJsonWithKey(query, key, limit, strict)
 }
 
 // SearchInJsonWithKey function
-func (c *Cache) _SearchInJsonWithKey(query string, key string, limit int, strict bool, keyExceptions []string) ([]map[string]string, []int) {
-	var queryResult, _ = c._SearchWithSpaces(query, limit, strict, keyExceptions)
-
+func (c *Cache) _SearchInJsonWithKey(query string, key string, limit int, strict bool) ([]map[string]string, []int) {
 	// Define variables
 	var result []map[string]string = []map[string]string{}
 	var indices []int = []int{}
 
 	// Iterate over the query result
-	for i := range queryResult {
-		if _ContainsInt(indices, i) {
+	for i := range c.json {
+		switch {
+		// If the json value length is less than the query length
+		case len(c.json[i][key]) < len(query):
 			continue
 		}
 
 		// If the data contains the query
-		if strings.Contains(c.json[i][key], query) {
-			result = append(result, queryResult[i])
+		if ContainsIgnoreCase(c.json[i][key], query) {
+			result = append(result, c.json[i])
 			indices = append(indices, i)
 		}
 	}
@@ -106,20 +108,14 @@ func (c *Cache) SearchInJson(query string, limit int, strict bool, keyExceptions
 
 // _SearchInJson function
 func (c *Cache) _SearchInJson(query string, limit int, strict bool, keyExceptions []string) ([]map[string]string, []int) {
-	var queryResult, _ = c._SearchWithSpaces(query, limit, strict, keyExceptions)
-
 	// Define variables
 	var result []map[string]string = []map[string]string{}
 	var indices []int = []int{}
 
 	// Iterate over the query result
-	for i := range queryResult {
-		if _ContainsInt(indices, i) {
-			continue
-		}
-
+	for i := range c.json {
 		// Iterate over the keys and values for the json data for that index
-		for key, value := range queryResult[i] {
+		for key, value := range c.json[i] {
 			switch {
 			// If the key is in the keyExceptions array
 			case _ContainsString(keyExceptions, key):
@@ -131,8 +127,8 @@ func (c *Cache) _SearchInJson(query string, limit int, strict bool, keyException
 			}
 
 			// If the data contains the query
-			if strings.Contains(value, query) {
-				result = append(result, queryResult[i])
+			if ContainsIgnoreCase(value, query) {
+				result = append(result, c.json[i])
 				indices = append(indices, i)
 			}
 		}
