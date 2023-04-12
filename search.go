@@ -2,42 +2,41 @@ package hermes
 
 import "strings"
 
-// SearchMultiple function with lock
-func (c *Cache) SearchMultiple(query string, limit int, strict bool) []map[string]string {
+// SearchWithSpaces function with lock
+func (c *Cache) SearchWithSpaces(query string, limit int, strict bool) ([]map[string]string, []int) {
 	c.mutex.RLock()
 	defer c.mutex.RUnlock()
-	return c._SearchMultiple(query, limit, strict)
+	return c._SearchWithSpaces(query, limit, strict)
 }
 
 // Search for multiple words
-func (c *Cache) _SearchMultiple(query string, limit int, strict bool) []map[string]string {
+func (c *Cache) _SearchWithSpaces(query string, limit int, strict bool) ([]map[string]string, []int) {
 	// Split the query into words
 	var words []string = strings.Split(strings.TrimSpace(query), " ")
 
 	// If the words array is empty
 	if len(words) == 0 {
-		return []map[string]string{}
+		return []map[string]string{}, []int{}
 	}
 
 	// If there's only one word, return the result
 	if len(words) == 1 {
-		var r, _ = c.Search(query, limit, strict)
-		return r
+		return c.Search(query, limit, strict)
 	}
 
 	// Create an array to store the result
 	var result []map[string]string = []map[string]string{}
-	var alreadyAdded []int = []int{}
+	var indices []int = []int{}
 
 	// Loop through the words and get the indices that are common
 	for i := range words {
 		// Search for the query inside the cache
-		var queryResult, indices = c.Search(words[i], limit, strict)
+		var queryResult, queryIndices = c.Search(words[i], limit, strict)
 
 		// Iterate over the result
 		for j := range queryResult {
 			// If the data's already been added
-			if _ContainsInt(alreadyAdded, j) {
+			if _ContainsInt(indices, j) {
 				continue
 			}
 
@@ -46,14 +45,14 @@ func (c *Cache) _SearchMultiple(query string, limit int, strict bool) []map[stri
 				// If the data contains the query
 				if strings.Contains(value, query) {
 					result = append(result, queryResult[j])
-					alreadyAdded = append(alreadyAdded, indices[j])
+					indices = append(indices, queryIndices[j])
 				}
 			}
 		}
 	}
 
 	// Return the result
-	return result
+	return result, indices
 }
 
 // SearchInJsonWithKey function with lock
@@ -65,7 +64,7 @@ func (c *Cache) SearchInJsonWithKey(query string, key string, limit int, strict 
 
 // SearchInJsonWithKey function
 func (c *Cache) _SearchInJsonWithKey(query string, key string, limit int, strict bool) []map[string]string {
-	var queryResult, _ = c._Search(query, limit, strict)
+	var queryResult, _ = c._SearchWithSpaces(query, limit, strict)
 
 	// Create a variable to store results
 	var result []map[string]string = []map[string]string{}
@@ -91,7 +90,7 @@ func (c *Cache) SearchInJson(query string, limit int, strict bool) []map[string]
 
 // _SearchInJson function
 func (c *Cache) _SearchInJson(query string, limit int, strict bool) []map[string]string {
-	var queryResult, _ = c._Search(query, limit, strict)
+	var queryResult, _ = c._SearchWithSpaces(query, limit, strict)
 
 	// Create a variable to store results
 	var result []map[string]string = []map[string]string{}
@@ -109,6 +108,59 @@ func (c *Cache) _SearchInJson(query string, limit int, strict bool) []map[string
 
 	// Return the result
 	return result
+}
+
+// Search common queries with lock
+func (c *Cache) SearchCommon(queries []string, limit int, strict bool) ([]map[string]string, []int) {
+	c.mutex.RLock()
+	defer c.mutex.RUnlock()
+	return c._SearchCommon(queries, limit, strict)
+}
+
+// Search common queries
+func (c *Cache) _SearchCommon(queries []string, limit int, strict bool) ([]map[string]string, []int) {
+	// If the queries array is empty
+	if len(queries) == 0 {
+		return []map[string]string{}, []int{}
+	}
+
+	// If there's only one word, return the result
+	if len(queries) == 1 {
+		return c._Search(queries[0], limit, strict)
+	}
+
+	// Store results
+	var result []map[string]string = []map[string]string{}
+	var indices []int = []int{}
+
+	// Loop through the queries and get the indices that are common
+	for i := 1; i < len(queries); i++ {
+		// Search for the word
+		var _, queryIndices = c._Search(queries[i], limit, strict)
+
+		// If the allIndices array is empty, set it to the indices
+		if len(indices) == 0 {
+			indices = queryIndices
+			continue
+		}
+
+		// Loop through the indices and remove the ones that are not common
+		for j := 0; j < len(indices); j++ {
+			// Check if the index is in the indices array
+			if !_ContainsInt(queryIndices, indices[j]) {
+				// Remove the index from the firstIndices array
+				indices = append(indices[:j], indices[j+1:]...)
+			}
+		}
+	}
+
+	// Loop through the indices
+	for i := range indices {
+		result = append(result, c.json[indices[i]])
+	}
+
+	// Return the result
+	return result, indices
 }
 
 // Search function with lock

@@ -57,12 +57,12 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 	var start time.Time = time.Now()
 
 	// Search for a word in the cache
-	var courses []map[string]string = cache.SearchMultiple(query, limit, strict)
+	var res, _ = cache.SearchWithSpaces(query, limit, strict)
 
 	// Print the duration
-	fmt.Printf("\nFound %v results in %v", len(courses), time.Since(start))
+	fmt.Printf("\nFound %v results in %v", len(res), time.Since(start))
 
 	// Write the courses to the json response
-	var response, _ = json.Marshal(courses)
+	var response, _ = json.Marshal(res)
 	w.Write(response)
 }
