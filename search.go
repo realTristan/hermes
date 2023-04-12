@@ -56,58 +56,70 @@ func (c *Cache) _SearchWithSpaces(query string, limit int, strict bool) ([]map[s
 }
 
 // SearchInJsonWithKey function with lock
-func (c *Cache) SearchInJsonWithKey(query string, key string, limit int, strict bool) []map[string]string {
+func (c *Cache) SearchInJsonWithKey(query string, key string, limit int, strict bool) ([]map[string]string, []int) {
 	c.mutex.RLock()
 	defer c.mutex.RUnlock()
 	return c._SearchInJsonWithKey(query, key, limit, strict)
 }
 
 // SearchInJsonWithKey function
-func (c *Cache) _SearchInJsonWithKey(query string, key string, limit int, strict bool) []map[string]string {
+func (c *Cache) _SearchInJsonWithKey(query string, key string, limit int, strict bool) ([]map[string]string, []int) {
 	var queryResult, _ = c._SearchWithSpaces(query, limit, strict)
 
-	// Create a variable to store results
+	// Define variables
 	var result []map[string]string = []map[string]string{}
+	var indices []int = []int{}
 
 	// Iterate over the query result
 	for i := range queryResult {
+		if _ContainsInt(indices, i) {
+			continue
+		}
+
 		// If the data contains the query
 		if strings.Contains(c.json[i][key], query) {
 			result = append(result, queryResult[i])
+			indices = append(indices, i)
 		}
 	}
 
 	// Return the result
-	return result
+	return result, indices
 }
 
 // SearchInJson function with lock
-func (c *Cache) SearchInJson(query string, limit int, strict bool) []map[string]string {
+func (c *Cache) SearchInJson(query string, limit int, strict bool) ([]map[string]string, []int) {
 	c.mutex.RLock()
 	defer c.mutex.RUnlock()
 	return c._SearchInJson(query, limit, strict)
 }
 
 // _SearchInJson function
-func (c *Cache) _SearchInJson(query string, limit int, strict bool) []map[string]string {
+func (c *Cache) _SearchInJson(query string, limit int, strict bool) ([]map[string]string, []int) {
 	var queryResult, _ = c._SearchWithSpaces(query, limit, strict)
 
-	// Create a variable to store results
+	// Define variables
 	var result []map[string]string = []map[string]string{}
+	var indices []int = []int{}
 
 	// Iterate over the query result
 	for i := range queryResult {
+		if _ContainsInt(indices, i) {
+			continue
+		}
+
 		// Iterate over the keys and values for the json data for that index
 		for key := range queryResult[i] {
 			// If the data contains the query
 			if strings.Contains(c.json[i][key], query) {
 				result = append(result, queryResult[i])
+				indices = append(indices, i)
 			}
 		}
 	}
 
 	// Return the result
-	return result
+	return result, indices
 }
 
 // Search common queries with lock
