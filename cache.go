@@ -166,6 +166,10 @@ func (c *Cache) _Search(query string, limit int, strict bool) ([]map[string]stri
 		case len(result) >= limit:
 			return result, indices
 
+		// Check if the key is equal to the query
+		case c.keys[i] == query:
+			break Switch
+
 		// If the key doesn't start with the word
 		case !strings.HasPrefix(c.keys[i], query):
 			continue
@@ -173,10 +177,6 @@ func (c *Cache) _Search(query string, limit int, strict bool) ([]map[string]stri
 		// Check if the key is shorter than the query
 		case len(c.keys[i]) < len(query):
 			continue
-
-		// Check if the key is equal to the query
-		case c.keys[i] == query:
-			break Switch
 
 		// Check if the key contains the query
 		case !strings.Contains(c.keys[i], query):
