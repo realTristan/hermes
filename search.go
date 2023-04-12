@@ -5,14 +5,14 @@ import (
 )
 
 // SearchWithSpaces function with lock
-func (c *Cache) SearchWithSpaces(query string, limit int, strict bool, keyExceptions []string) ([]map[string]string, []int) {
+func (c *Cache) SearchWithSpaces(query string, limit int, strict bool, excludeKeys []string) ([]map[string]string, []int) {
 	c.mutex.RLock()
 	defer c.mutex.RUnlock()
-	return c._SearchWithSpaces(query, limit, strict, keyExceptions)
+	return c._SearchWithSpaces(query, limit, strict, excludeKeys)
 }
 
 // Search for multiple words
-func (c *Cache) _SearchWithSpaces(query string, limit int, strict bool, keyExceptions []string) ([]map[string]string, []int) {
+func (c *Cache) _SearchWithSpaces(query string, limit int, strict bool, excludeKeys []string) ([]map[string]string, []int) {
 	// Split the query into words
 	var words []string = strings.Split(strings.TrimSpace(query), " ")
 
@@ -45,8 +45,8 @@ func (c *Cache) _SearchWithSpaces(query string, limit int, strict bool, keyExcep
 			// Iterate over the keys and values for the json data for that index
 			for key, value := range queryResult[j] {
 				switch {
-				// If the key is in the keyExceptions array
-				case _ContainsString(keyExceptions, key):
+				// If the key is in the excludeKeys array
+				case _ContainsString(excludeKeys, key):
 					continue
 
 				// If the value length is less than the query length
@@ -100,14 +100,14 @@ func (c *Cache) _SearchInJsonWithKey(query string, key string, limit int, strict
 }
 
 // SearchInJson function with lock
-func (c *Cache) SearchInJson(query string, limit int, strict bool, keyExceptions []string) ([]map[string]string, []int) {
+func (c *Cache) SearchInJson(query string, limit int, strict bool, excludeKeys []string) ([]map[string]string, []int) {
 	c.mutex.RLock()
 	defer c.mutex.RUnlock()
-	return c._SearchInJson(query, limit, strict, keyExceptions)
+	return c._SearchInJson(query, limit, strict, excludeKeys)
 }
 
 // _SearchInJson function
-func (c *Cache) _SearchInJson(query string, limit int, strict bool, keyExceptions []string) ([]map[string]string, []int) {
+func (c *Cache) _SearchInJson(query string, limit int, strict bool, excludeKeys []string) ([]map[string]string, []int) {
 	// Define variables
 	var result []map[string]string = []map[string]string{}
 	var indices []int = []int{}
@@ -117,8 +117,8 @@ func (c *Cache) _SearchInJson(query string, limit int, strict bool, keyException
 		// Iterate over the keys and values for the json data for that index
 		for key, value := range c.json[i] {
 			switch {
-			// If the key is in the keyExceptions array
-			case _ContainsString(keyExceptions, key):
+			// If the key is in the excludeKeys array
+			case _ContainsString(excludeKeys, key):
 				continue
 
 			// If the value length is less than the query length
