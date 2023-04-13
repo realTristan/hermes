@@ -27,8 +27,10 @@ func (c *Cache) _SearchWithSpaces(query string, limit int, strict bool, excludeK
 	}
 
 	// Create an array to store the result
-	var result []map[string]string = []map[string]string{}
-	var indices []int = []int{}
+	var (
+		result  []map[string]string = []map[string]string{}
+		indices []int               = []int{}
+	)
 
 	// Loop through the words and get the indices that are common
 	for i := range words {
@@ -77,8 +79,10 @@ func (c *Cache) SearchInJsonWithKey(query string, key string, limit int, strict 
 // SearchInJsonWithKey function
 func (c *Cache) _SearchInJsonWithKey(query string, key string, limit int, strict bool) ([]map[string]string, []int) {
 	// Define variables
-	var result []map[string]string = []map[string]string{}
-	var indices []int = []int{}
+	var (
+		result  []map[string]string = []map[string]string{}
+		indices []int               = []int{}
+	)
 
 	// Iterate over the query result
 	for i := range c.json {
@@ -109,8 +113,10 @@ func (c *Cache) SearchInJson(query string, limit int, strict bool, excludeKeys [
 // _SearchInJson function
 func (c *Cache) _SearchInJson(query string, limit int, strict bool, excludeKeys []string) ([]map[string]string, []int) {
 	// Define variables
-	var result []map[string]string = []map[string]string{}
-	var indices []int = []int{}
+	var (
+		result  []map[string]string = []map[string]string{}
+		indices []int               = []int{}
+	)
 
 	// Iterate over the query result
 	for i := range c.json {
@@ -158,8 +164,10 @@ func (c *Cache) _SearchCommon(queries []string, limit int, strict bool) ([]map[s
 	}
 
 	// Store results
-	var result []map[string]string = []map[string]string{}
-	var indices []int = []int{}
+	var (
+		result  []map[string]string = []map[string]string{}
+		indices []int               = []int{}
+	)
 
 	// Loop through the queries and get the indices that are common
 	for i := 1; i < len(queries); i++ {
@@ -205,12 +213,11 @@ func (c *Cache) _Search(query string, limit int, strict bool) ([]map[string]stri
 		return []map[string]string{}, []int{}
 	}
 
-	// Create an array to store the result
-	var result []map[string]string = []map[string]string{}
-
-	// Create an array to store the indices that have already
-	// been added to the result array
-	var indices []int = []int{}
+	// Define variables
+	var (
+		result  []map[string]string = []map[string]string{}
+		indices []int               = []int{}
+	)
 
 	// If the user wants a strict search, just return the result
 	// straight from the cache
