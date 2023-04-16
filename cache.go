@@ -25,10 +25,10 @@ func InitCache(jsonFile string) *Cache {
 	}
 
 	// Load the json data
-	cache._LoadJson(jsonFile)
+	cache.loadJson(jsonFile)
 
 	// Load the cache
-	cache._LoadCache()
+	cache.loadCache()
 
 	// Return the cache
 	return &cache
@@ -38,11 +38,11 @@ func InitCache(jsonFile string) *Cache {
 func (c *Cache) Clean() {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
-	c._Clean()
+	c.clean()
 }
 
 // Clean the cache
-func (c *Cache) _Clean() {
+func (c *Cache) clean() {
 	c.cache = map[string][]int{}
 	c.keys = []string{}
 	c.json = []map[string]string{}
@@ -52,26 +52,26 @@ func (c *Cache) _Clean() {
 func (c *Cache) Reset(fileName string) {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
-	c._Reset(fileName)
+	c.reset(fileName)
 }
 
 // Reset the cache
-func (c *Cache) _Reset(fileName string) {
+func (c *Cache) reset(fileName string) {
 	c.cache = map[string][]int{}
 	c.keys = []string{}
 	c.json = []map[string]string{}
-	c._LoadJson(fileName)
-	c._LoadCache()
+	c.loadJson(fileName)
+	c.loadCache()
 }
 
 // Load the cache json data
-func (c *Cache) _LoadJson(fileName string) {
+func (c *Cache) loadJson(fileName string) {
 	var data, _ = os.ReadFile(fileName)
 	json.Unmarshal(data, &c.json)
 }
 
 // Load the cache
-func (c *Cache) _LoadCache() {
+func (c *Cache) loadCache() {
 	// Loop through the json data
 	for i, item := range c.json {
 		for _, value := range item {
@@ -79,7 +79,7 @@ func (c *Cache) _LoadCache() {
 			value = strings.TrimSpace(value)
 
 			// Remove double spaces
-			value = _RemoveDoubleSpaces(value)
+			value = removeDoubleSpaces(value)
 
 			// Convert to lowercase
 			value = strings.ToLower(value)
@@ -92,7 +92,7 @@ func (c *Cache) _LoadCache() {
 				}
 
 				// If the word is not all alphabetic
-				if !_IsAlphaNum(word) {
+				if !isAlphaNum(word) {
 					continue
 				}
 
@@ -104,7 +104,7 @@ func (c *Cache) _LoadCache() {
 				}
 
 				// If the index is already in the cache
-				if _ContainsInt(c.cache[word], i) {
+				if containsInt(c.cache[word], i) {
 					continue
 				}
 

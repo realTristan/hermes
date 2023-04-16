@@ -6,11 +6,11 @@ import "strings"
 func (c *Cache) SearchWithSpaces(query string, limit int, strict bool, keys map[string]bool) ([]map[string]string, []int) {
 	c.mutex.RLock()
 	defer c.mutex.RUnlock()
-	return c._SearchWithSpaces(query, limit, strict, keys)
+	return c.searchWithSpaces(query, limit, strict, keys)
 }
 
 // Search for multiple words
-func (c *Cache) _SearchWithSpaces(query string, limit int, strict bool, keys map[string]bool) ([]map[string]string, []int) {
+func (c *Cache) searchWithSpaces(query string, limit int, strict bool, keys map[string]bool) ([]map[string]string, []int) {
 	// Split the query into words
 	var words []string = strings.Split(strings.TrimSpace(query), " ")
 
@@ -46,7 +46,7 @@ func (c *Cache) _SearchWithSpaces(query string, limit int, strict bool, keys map
 					continue
 
 				// If the value contains the query
-				case _Contains(value, query, len(query)):
+				case contains(value, query, len(query)):
 					result = append(result, queryResult[j])
 				}
 			}
@@ -61,11 +61,11 @@ func (c *Cache) _SearchWithSpaces(query string, limit int, strict bool, keys map
 func (c *Cache) SearchInJsonWithKey(query string, key string, limit int, strict bool) ([]map[string]string, []int) {
 	c.mutex.RLock()
 	defer c.mutex.RUnlock()
-	return c._SearchInJsonWithKey(query, key, limit, strict)
+	return c.searchInJsonWithKey(query, key, limit, strict)
 }
 
 // SearchInJsonWithKey function
-func (c *Cache) _SearchInJsonWithKey(query string, key string, limit int, strict bool) ([]map[string]string, []int) {
+func (c *Cache) searchInJsonWithKey(query string, key string, limit int, strict bool) ([]map[string]string, []int) {
 	// Define variables
 	var (
 		result  []map[string]string = []map[string]string{}
@@ -81,7 +81,7 @@ func (c *Cache) _SearchInJsonWithKey(query string, key string, limit int, strict
 		}
 
 		// If the data contains the query
-		if _ContainsIgnoreCase(c.json[i][key], query) {
+		if containsIgnoreCase(c.json[i][key], query) {
 			result = append(result, c.json[i])
 			indices = append(indices, i)
 		}
@@ -95,11 +95,11 @@ func (c *Cache) _SearchInJsonWithKey(query string, key string, limit int, strict
 func (c *Cache) SearchInJson(query string, limit int, strict bool, keys map[string]bool) ([]map[string]string, []int) {
 	c.mutex.RLock()
 	defer c.mutex.RUnlock()
-	return c._SearchInJson(query, limit, strict, keys)
+	return c.searchInJson(query, limit, strict, keys)
 }
 
 // _SearchInJson function
-func (c *Cache) _SearchInJson(query string, limit int, strict bool, keys map[string]bool) ([]map[string]string, []int) {
+func (c *Cache) searchInJson(query string, limit int, strict bool, keys map[string]bool) ([]map[string]string, []int) {
 	// Define variables
 	var (
 		result  []map[string]string = []map[string]string{}
@@ -121,7 +121,7 @@ func (c *Cache) _SearchInJson(query string, limit int, strict bool, keys map[str
 			}
 
 			// If the data contains the query
-			if _ContainsIgnoreCase(value, query) {
+			if containsIgnoreCase(value, query) {
 				result = append(result, c.json[i])
 				indices = append(indices, i)
 			}
@@ -136,11 +136,11 @@ func (c *Cache) _SearchInJson(query string, limit int, strict bool, keys map[str
 func (c *Cache) Search(query string, limit int, strict bool) ([]map[string]string, []int) {
 	c.mutex.RLock()
 	defer c.mutex.RUnlock()
-	return c._Search(query, limit, strict)
+	return c.search(query, limit, strict)
 }
 
 // Search for a single query
-func (c *Cache) _Search(query string, limit int, strict bool) ([]map[string]string, []int) {
+func (c *Cache) search(query string, limit int, strict bool) ([]map[string]string, []int) {
 	// If the query is empty
 	if len(query) == 0 {
 		return []map[string]string{}, []int{}
@@ -188,7 +188,7 @@ func (c *Cache) _Search(query string, limit int, strict bool) ([]map[string]stri
 			continue
 
 		// If the key doesn't start with the word
-		case !_Contains(c.keys[i], query, queryLength):
+		case !contains(c.keys[i], query, queryLength):
 			continue
 		}
 
