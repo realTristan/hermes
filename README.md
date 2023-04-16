@@ -23,7 +23,7 @@ When searching for a word, Hermes will return a list of indices for all of the i
 
 `Dataset Map Size: 33,048 bytes`
 
-`?q=computer&limit=100&strict=false: 51.054µs`
+`?q=computer&limit=100&strict=false: 32.5µs`
 
 `?q=computer&limit=100&strict=true: 9.102µs`
 
