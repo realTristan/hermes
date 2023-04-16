@@ -2,10 +2,7 @@ package hermes
 
 import (
 	"encoding/json"
-	"errors"
-	"fmt"
 	"os"
-	"reflect"
 	"strings"
 	"sync"
 )
@@ -19,7 +16,7 @@ type FTS struct {
 }
 
 // InitCache function
-func InitJson(file string) *FTS {
+func InitJson(file string, keySettings map[string]bool) *FTS {
 	var fts *FTS = &FTS{
 		mutex: &sync.RWMutex{},
 		cache: map[string][]int{},
@@ -27,11 +24,9 @@ func InitJson(file string) *FTS {
 		json:  []map[string]string{},
 	}
 
-	// Load the json data
-	fts.readJson(file)
-
-	// Load the cache
-	fts.loadCacheJson(fts.json)
+	// Load the json cache
+	fts.loadJson(file)
+	fts.loadCacheJson(fts.json, keySettings)
 
 	// Return the cache
 	return fts
@@ -55,8 +50,7 @@ func (fts *FTS) set(key string, value map[string]string) {
 			case len(word) <= 1:
 				continue
 			case !isAlphaNum(word):
-				fmt.Println("skipping word:", word, "from:", value, "reason: not alphanumeric")
-				continue
+				word = removeNonAlphaNum(word)
 			}
 			if _, ok := fts.cache[word]; !ok {
 				fts.cache[word] = []int{len(fts.json) - 1}
@@ -83,38 +77,35 @@ func (fts *FTS) clean() {
 }
 
 // Reset the FTS cache
-func (fts *FTS) Reset(fileName string) {
+func (fts *FTS) Reset(file string, keySettings map[string]bool) {
 	fts.mutex.Lock()
 	defer fts.mutex.Unlock()
-	fts.reset(fileName)
+	fts.reset(file, keySettings)
 }
 
 // Reset the FTS cache
-func (fts *FTS) reset(fileName string) {
+func (fts *FTS) reset(file string, keySettings map[string]bool) {
 	fts.cache = map[string][]int{}
 	fts.keys = []string{}
 	fts.json = []map[string]string{}
-	fts.readJson(fileName)
-	fts.loadCacheJson(fts.json)
+	fts.loadJson(file)
+	fts.loadCacheJson(fts.json, keySettings)
 }
 
 // Read the json data
-func (fts *FTS) readJson(fileName string) {
-	var data, _ = os.ReadFile(fileName)
+func (fts *FTS) loadJson(file string) {
+	var data, _ = os.ReadFile(file)
 	json.Unmarshal(data, &fts.json)
 }
 
 // Load the FTS cache
-func (fts *FTS) loadCacheJson(json []map[string]string) error {
+func (fts *FTS) loadCacheJson(json []map[string]string, keySettings map[string]bool) error {
 	// Loop through the json data
 	for i, item := range json {
-		if reflect.TypeOf(item).Kind() != reflect.Map {
-			return errors.New("invalid data type. values inside json array must be: map[string]string")
-		}
-
-		for _, value := range item {
-			if reflect.TypeOf(value).Kind() != reflect.String {
-				return errors.New("invalid data type. values inside json map must be: string")
+		// Loop through the map
+		for key, value := range item {
+			if !keySettings[key] {
+				continue
 			}
 
 			// Clean the value
@@ -128,15 +119,14 @@ func (fts *FTS) loadCacheJson(json []map[string]string) error {
 				case len(word) <= 1:
 					continue
 				case !isAlphaNum(word):
-					fmt.Println("skipping word:", word, "from:", value, "reason: not alphanumeric")
-					continue
+					word = removeNonAlphaNum(word)
 				}
 				if _, ok := fts.cache[word]; !ok {
 					fts.cache[word] = []int{i}
 					fts.keys = append(fts.keys, word)
 					continue
 				}
-				if !containsInt(fts.cache[word], i) {
+				if containsInt(fts.cache[word], i) {
 					continue
 				}
 				fts.cache[word] = append(fts.cache[word], i)

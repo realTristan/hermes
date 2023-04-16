@@ -5,14 +5,14 @@ import (
 )
 
 // SearchWithSpaces function with lock
-func (fts *FTS) SearchWithSpaces(query string, limit int, strict bool, keys map[string]bool) ([]map[string]string, []int) {
+func (fts *FTS) SearchWithSpaces(query string, limit int, strict bool, keySettings map[string]bool) ([]map[string]string, []int) {
 	fts.mutex.RLock()
 	defer fts.mutex.RUnlock()
-	return fts.searchWithSpaces(query, limit, strict, keys)
+	return fts.searchWithSpaces(query, limit, strict, keySettings)
 }
 
 // Search for multiple words
-func (fts *FTS) searchWithSpaces(query string, limit int, strict bool, keys map[string]bool) ([]map[string]string, []int) {
+func (fts *FTS) searchWithSpaces(query string, limit int, strict bool, keySettings map[string]bool) ([]map[string]string, []int) {
 	// Split the query into words
 	var words []string = strings.Split(strings.TrimSpace(query), " ")
 
@@ -37,9 +37,9 @@ func (fts *FTS) searchWithSpaces(query string, limit int, strict bool, keys map[
 			// Iterate over the keys and values for the json data for that index
 			for key, value := range queryResult[j] {
 				switch {
-				case !keys[key]:
+				case !keySettings[key]:
 					continue
-				case contains(value, query):
+				case strings.Contains(value, query):
 					result = append(result, queryResult[j])
 				}
 			}
@@ -64,8 +64,7 @@ func (fts *FTS) searchInJsonWithKey(query string, key string, limit int) []map[s
 
 	// Iterate over the query result
 	for i := 0; i < len(fts.json); i++ {
-		switch {
-		case containsIgnoreCase(fts.json[i][key], query):
+		if containsIgnoreCase(fts.json[i][key], query) {
 			result = append(result, fts.json[i])
 		}
 	}
@@ -75,14 +74,14 @@ func (fts *FTS) searchInJsonWithKey(query string, key string, limit int) []map[s
 }
 
 // SearchInJson function with lock
-func (fts *FTS) SearchInJson(query string, limit int, keys map[string]bool) []map[string]string {
+func (fts *FTS) SearchInJson(query string, limit int, keySettings map[string]bool) []map[string]string {
 	fts.mutex.RLock()
 	defer fts.mutex.RUnlock()
-	return fts.searchInJson(query, limit, keys)
+	return fts.searchInJson(query, limit, keySettings)
 }
 
 // searchInJson function
-func (fts *FTS) searchInJson(query string, limit int, keys map[string]bool) []map[string]string {
+func (fts *FTS) searchInJson(query string, limit int, keySettings map[string]bool) []map[string]string {
 	// Define variables
 	var result []map[string]string = []map[string]string{}
 
@@ -91,7 +90,7 @@ func (fts *FTS) searchInJson(query string, limit int, keys map[string]bool) []ma
 		// Iterate over the keys and values for the json data for that index
 		for key, value := range fts.json[i] {
 			switch {
-			case !keys[key]:
+			case !keySettings[key]:
 				continue
 			case containsIgnoreCase(value, query):
 				result = append(result, fts.json[i])

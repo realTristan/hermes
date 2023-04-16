@@ -24,12 +24,12 @@ func InitCache() *Cache {
 }
 
 // Initialize the FTS cache
-func (c *Cache) InitFTS() {
+func (c *Cache) InitFTS(keySettings map[string]bool) {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
-	c.initFTS()
+	c.initFTS(keySettings)
 }
-func (c *Cache) initFTS() {
+func (c *Cache) initFTS(keySettings map[string]bool) {
 	// Convert the cache data into an array of maps
 	var jsonArray []map[string]string = []map[string]string{}
 	for _, key := range c.keys() {
@@ -41,7 +41,7 @@ func (c *Cache) initFTS() {
 		keys:  []string{},
 		json:  jsonArray,
 	}
-	c.fts.loadCacheJson(jsonArray)
+	c.fts.loadCacheJson(jsonArray, keySettings)
 }
 
 // Clean the cache
@@ -146,8 +146,8 @@ func (c *Cache) Search(query string, limit int, strict bool) ([]map[string]strin
 }
 
 // Search the cache with spaces
-func (c *Cache) SearchWithSpaces(query string, limit int, strict bool, keys map[string]bool) ([]map[string]string, []int) {
+func (c *Cache) SearchWithSpaces(query string, limit int, strict bool, keySettings map[string]bool) ([]map[string]string, []int) {
 	c.mutex.RLock()
 	defer c.mutex.RUnlock()
-	return c.fts.SearchWithSpaces(query, limit, strict, keys)
+	return c.fts.SearchWithSpaces(query, limit, strict, keySettings)
 }

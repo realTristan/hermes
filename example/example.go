@@ -18,7 +18,15 @@ import (
 )
 
 // Initialize the cache from the hermes.go file
-var fts *Hermes.FTS = Hermes.InitJson("data.json")
+var fts *Hermes.FTS = Hermes.InitJson("data.json", map[string]bool{
+	"id":             false,
+	"components":     false,
+	"units":          false,
+	"description":    true,
+	"name":           true,
+	"pre_requisites": true,
+	"title":          true,
+})
 
 // Main function
 func main() {
