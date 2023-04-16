@@ -44,7 +44,6 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
-	"strings"
 	"time"
 
 	Hermes "github.com/realTristan/Hermes"
@@ -70,7 +69,7 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 	// Get the query parameter
 	var query string = "CS"
 	if _query := r.URL.Query().Get("q"); _query != "" {
-		query = strings.ToLower(_query)
+		query = _query
 	}
 
 	// Get the limit parameter
@@ -89,7 +88,17 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 	var start time.Time = time.Now()
 
 	// Search for a word in the cache
-	var res, _ = cache.SearchWithSpaces(query, limit, strict)
+	// Make sure the show which keys you do want to search through,
+	// and which ones you don't
+	var res, _ = cache.SearchWithSpaces(query, limit, strict, map[string]bool{
+		"id":             false,
+		"components":     false,
+		"units":          false,
+		"description":    true,
+		"name":           true,
+		"pre_requisites": true,
+		"title":          true,
+	})
 
 	// Print the duration
 	fmt.Printf("\nFound %v results in %v", len(res), time.Since(start))
