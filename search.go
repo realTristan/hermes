@@ -1,8 +1,6 @@
 package hermes
 
-import (
-	"strings"
-)
+import "strings"
 
 // SearchWithSpaces function with lock
 func (c *Cache) SearchWithSpaces(query string, limit int, strict bool, keys map[string]bool) ([]map[string]string, []int) {
@@ -131,64 +129,6 @@ func (c *Cache) _SearchInJson(query string, limit int, strict bool, keys map[str
 				indices = append(indices, i)
 			}
 		}
-	}
-
-	// Return the result
-	return result, indices
-}
-
-// Search common queries with lock
-func (c *Cache) SearchCommon(queries []string, limit int, strict bool) ([]map[string]string, []int) {
-	c.mutex.RLock()
-	defer c.mutex.RUnlock()
-	return c._SearchCommon(queries, limit, strict)
-}
-
-// Search common queries
-func (c *Cache) _SearchCommon(queries []string, limit int, strict bool) ([]map[string]string, []int) {
-	// If the queries array is empty
-	if len(queries) == 0 {
-		return []map[string]string{}, []int{}
-	}
-
-	// If there's only one word, return the result
-	if len(queries) == 1 {
-		return c._Search(queries[0], limit, strict)
-	}
-
-	// Store results
-	var (
-		result  []map[string]string = []map[string]string{}
-		indices []int               = make([]int, len(c.json))
-	)
-
-	// Loop through the queries and get the indices that are common
-	for i := 1; i < len(queries); i++ {
-		// Search for the word
-		var _, queryIndices = c._Search(queries[i], limit, strict)
-
-		// If the allIndices array is empty, set it to the indices
-		if len(indices) == 0 {
-			indices = queryIndices
-			continue
-		}
-
-		// Loop through the indices and remove the ones that are not common
-		for j := 0; j < len(indices); j++ {
-			if queryIndices[j] == -1 && indices[j] == 0 {
-				indices[j] = 0
-			} else if queryIndices[j] == 0 && indices[j] == -1 {
-				indices[j] = 0
-			}
-		}
-	}
-
-	// Loop through the indices
-	for i := 0; i < len(indices); i++ {
-		if indices[i] != -1 {
-			continue
-		}
-		result = append(result, c.json[i])
 	}
 
 	// Return the result
