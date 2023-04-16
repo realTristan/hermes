@@ -28,16 +28,6 @@ func _ContainsInt(array []int, value int) bool {
 	return false
 }
 
-// Check if a string is in an array
-func _ContainsString(array []string, value string) bool {
-	for i := 0; i < len(array); i++ {
-		if array[i] == value {
-			return true
-		}
-	}
-	return false
-}
-
 // Check if a string contains a substring
 func _Contains(s string, toFind string, toFindLength int) bool {
 	for i := 0; i < len(s)-toFindLength-1; i++ {

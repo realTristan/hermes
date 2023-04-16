@@ -56,10 +56,16 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 	var start time.Time = time.Now()
 
 	// Search for a word in the cache
-	var res, _ = cache.SearchWithSpaces(query, limit, strict, []string{
-		"id",
-		"components",
-		"units",
+	// Make sure the show which keys you do want to search through,
+	// and which ones you don't
+	var res, _ = cache.SearchWithSpaces(query, limit, strict, map[string]bool{
+		"id":             false,
+		"components":     false,
+		"units":          false,
+		"description":    true,
+		"name":           true,
+		"pre_requisites": true,
+		"title":          true,
 	})
 
 	// Print the duration
