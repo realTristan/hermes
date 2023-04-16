@@ -40,11 +40,8 @@ func _ContainsString(array []string, value string) bool {
 
 // Check if a string contains a substring
 func _Contains(s string, toFind string, toFindLength int) bool {
-	for i := 0; i < len(s); i++ {
+	for i := 0; i < len(s)-toFindLength-1; i++ {
 		if s[i] == toFind[0] {
-			if i+toFindLength > len(s) {
-				return false
-			}
 			if s[i:i+toFindLength] == toFind {
 				return true
 			}
