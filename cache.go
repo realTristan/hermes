@@ -1,37 +1,47 @@
 package hermes
 
-import (
-	"encoding/json"
-	"os"
-	"strings"
-	"sync"
-)
+import "sync"
 
 // Cache struct
 type Cache struct {
+	data  map[string]map[string]string
 	mutex *sync.RWMutex
-	cache map[string][]int
-	keys  []string
-	json  []map[string]string
+	fts   *FTS
 }
 
-// InitCache function
-func InitCache(jsonFile string) *Cache {
-	var cache Cache = Cache{
+// Initialize the cache
+func InitCache() *Cache {
+	return &Cache{
+		data:  map[string]map[string]string{},
+		mutex: &sync.RWMutex{},
+		fts: &FTS{
+			mutex: &sync.RWMutex{},
+			cache: map[string][]int{},
+			keys:  []string{},
+			json:  []map[string]string{},
+		},
+	}
+}
+
+// Initialize the FTS cache
+func (c *Cache) InitFTS() {
+	c.mutex.Lock()
+	defer c.mutex.Unlock()
+	c.initFTS()
+}
+func (c *Cache) initFTS() {
+	// Convert the cache data into an array of maps
+	var jsonArray []map[string]string = []map[string]string{}
+	for _, key := range c.keys() {
+		jsonArray = append(jsonArray, c.get(key))
+	}
+	c.fts = &FTS{
 		mutex: &sync.RWMutex{},
 		cache: map[string][]int{},
 		keys:  []string{},
-		json:  []map[string]string{},
+		json:  jsonArray,
 	}
-
-	// Load the json data
-	cache.loadJson(jsonFile)
-
-	// Load the cache
-	cache.loadCache()
-
-	// Return the cache
-	return &cache
+	c.fts.loadCacheJson(jsonArray)
 }
 
 // Clean the cache
@@ -40,77 +50,104 @@ func (c *Cache) Clean() {
 	defer c.mutex.Unlock()
 	c.clean()
 }
-
-// Clean the cache
 func (c *Cache) clean() {
-	c.cache = map[string][]int{}
-	c.keys = []string{}
-	c.json = []map[string]string{}
+	c.data = map[string]map[string]string{}
 }
 
-// Reset the cache
-func (c *Cache) Reset(fileName string) {
+// Set a value in the cache
+func (c *Cache) Set(key string, value map[string]string) {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
-	c.reset(fileName)
+	c.set(key, value)
 }
+func (c *Cache) set(key string, value map[string]string) {
+	c.data[key] = value
 
-// Reset the cache
-func (c *Cache) reset(fileName string) {
-	c.cache = map[string][]int{}
-	c.keys = []string{}
-	c.json = []map[string]string{}
-	c.loadJson(fileName)
-	c.loadCache()
-}
-
-// Load the cache json data
-func (c *Cache) loadJson(fileName string) {
-	var data, _ = os.ReadFile(fileName)
-	json.Unmarshal(data, &c.json)
-}
-
-// Load the cache
-func (c *Cache) loadCache() {
-	// Loop through the json data
-	for i, item := range c.json {
-		for _, value := range item {
-			// Remove spaces from front and back
-			value = strings.TrimSpace(value)
-
-			// Remove double spaces
-			value = removeDoubleSpaces(value)
-
-			// Convert to lowercase
-			value = strings.ToLower(value)
-
-			// Loop through the words
-			for _, word := range strings.Split(value, " ") {
-				// Make sure the word is not empty
-				if len(word) <= 1 {
-					continue
-				}
-
-				// If the word is not all alphabetic
-				if !isAlphaNum(word) {
-					continue
-				}
-
-				// If the key doesn't exist in the cache
-				if _, ok := c.cache[word]; !ok {
-					c.cache[word] = []int{i}
-					c.keys = append(c.keys, word)
-					continue
-				}
-
-				// If the index is already in the cache
-				if containsInt(c.cache[word], i) {
-					continue
-				}
-
-				// Append the index to the cache
-				c.cache[word] = append(c.cache[word], i)
-			}
-		}
+	// update the value in the FTS cache
+	if c.fts != nil {
+		c.fts.set(key, value)
 	}
+}
+
+// Get a value from the cache
+func (c *Cache) Get(key string) map[string]string {
+	c.mutex.RLock()
+	defer c.mutex.RUnlock()
+	return c.get(key)
+}
+func (c *Cache) get(key string) map[string]string {
+	return c.data[key]
+}
+
+// Delete a key from the cache
+func (c *Cache) Delete(key string) {
+	c.mutex.Lock()
+	defer c.mutex.Unlock()
+	c.delete(key)
+}
+func (c *Cache) delete(key string) {
+	delete(c.data, key)
+}
+
+// Check if a key exists in the cache
+func (c *Cache) Exists(key string) bool {
+	c.mutex.RLock()
+	defer c.mutex.RUnlock()
+	return c.exists(key)
+}
+func (c *Cache) exists(key string) bool {
+	_, ok := c.data[key]
+	return ok
+}
+
+// Get all the keys in the cache
+func (c *Cache) Keys() []string {
+	c.mutex.RLock()
+	defer c.mutex.RUnlock()
+	return c.keys()
+}
+func (c *Cache) keys() []string {
+	keys := []string{}
+	for key := range c.data {
+		keys = append(keys, key)
+	}
+	return keys
+}
+
+// Get all the values in the cache
+func (c *Cache) Values() []map[string]string {
+	c.mutex.RLock()
+	defer c.mutex.RUnlock()
+	return c.values()
+}
+func (c *Cache) values() []map[string]string {
+	var values []map[string]string = []map[string]string{}
+	for _, value := range c.data {
+		values = append(values, value)
+	}
+	return values
+}
+
+// Get the length of the cache
+func (c *Cache) Length() int {
+	c.mutex.RLock()
+	defer c.mutex.RUnlock()
+	return c.length()
+}
+func (c *Cache) length() int {
+	return len(c.data)
+}
+
+// Search the cache
+func (c *Cache) Search(query string, limit int, strict bool) ([]map[string]string, []int) {
+	c.mutex.RLock()
+	defer c.mutex.RUnlock()
+	return c.fts.Search(query, limit, strict)
+}
+
+// Search the cache with spaces
+func (c *Cache) SearchWithSpaces(query string, limit int, strict bool, keys map[string]bool) ([]map[string]string, []int) {
+	c.mutex.RLock()
+	defer c.mutex.RUnlock()
+	return c.fts.SearchWithSpaces(query, limit, strict, keys)
 }

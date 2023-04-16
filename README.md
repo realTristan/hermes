@@ -6,16 +6,6 @@
 go get github.com/realTristan/Hermes
 ```
 
-# About
-## Storing Data
-Hermes works by iterating over the items in the data.json file, and then iterates over the keys and values of the items and splits the value into different words. It then stores the indices for all of the items that contain those words in a dictionary.
-
-## Accessing Data
-When searching for a word, Hermes will return a list of indices for all of the items that contain that word. It checks whether the key in the cache dictionary contains the provided word, instead of just accessing it so that short forms for words can be used.
-
-## How to improve the speed
-1. Create a history cache
-
 ## Benchmarks
 `Dataset Keys: 4,115`
 
@@ -23,80 +13,46 @@ When searching for a word, Hermes will return a list of indices for all of the i
 
 `Dataset Map Size: 33,048 bytes`
 
-`?q=computer&limit=100&strict=false: 51.054µs`
+`?q=computer&limit=100&strict=false: 32.5µs`
 
 `?q=computer&limit=100&strict=true: 9.102µs`
 
 
 # Example
 ```go
-// ////////////////////////////////////////////////////////////////////////////
-//
-// Run Command: go run .
-//
-// Host URL: http://localhost:8000/courses?q=computer&limit=100&strict=false
-//
-// ////////////////////////////////////////////////////////////////////////////
 package main
 
 import (
-	"encoding/json"
 	"fmt"
-	"net/http"
-	"strconv"
-	"strings"
 	"time"
 
 	Hermes "github.com/realTristan/Hermes"
 )
 
-// Initialize the cache from the hermes.go file
-var cache *Hermes.Cache = Hermes.InitCache("data.json")
-
-// Main function
 func main() {
-	// Print host
-	fmt.Println(" >> Listening on: http://localhost:8000/")
+	// Initialize the cache
+	var cache *Hermes.Cache = Hermes.InitCache()
+	cache.InitFTS()
 
-	// Listen and serve on port 8000
-	http.HandleFunc("/courses", Handler)
-	http.ListenAndServe(":8000", nil)
-}
+	// Track start time
+	var startTime time.Time = time.Now()
 
-// Handle the incoming http request
-func Handler(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Access-Control-Allow-Origin", "*")
+	// Set a value in the cache
+	cache.Set("user_id_1", map[string]string{"name": "tristan"})
+	cache.Set("user_id_2", map[string]string{"name": "michael"})
 
-	// Get the query parameter
-	var query string = "CS"
-	if _query := r.URL.Query().Get("q"); _query != "" {
-		query = strings.ToLower(_query)
-	}
+	// Print result
+	fmt.Printf("Set 2 values in %s\n", time.Since(startTime))
 
-	// Get the limit parameter
-	var limit int = 100
-	if _limit := r.URL.Query().Get("limit"); _limit != "" {
-		limit, _ = strconv.Atoi(_limit)
-	}
-
-	// Get the strict parameter
-	var strict bool = false
-	if _strict := r.URL.Query().Get("strict"); _strict != "" {
-		strict, _ = strconv.ParseBool(_strict)
-	}
-
-	// Track the start time
-	var start time.Time = time.Now()
+	// Track start time
+	startTime = time.Now()
 
 	// Search for a word in the cache
-	var res, _ = cache.SearchWithSpaces(query, limit, strict)
+	var result, _ = cache.Search("tristan", 100, false)
 
-	// Print the duration
-	fmt.Printf("\nFound %v results in %v", len(res), time.Since(start))
-
-	// Write the courses to the json response
-	var response, _ = json.Marshal(res)
-	w.Write(response)
+	// Print result
+	fmt.Printf("Found %d results in %s\n", len(result), time.Since(startTime))
+	fmt.Println(result)
 }
 ```
 
