@@ -3,6 +3,7 @@ package hermes
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"os"
 	"reflect"
 	"strings"
@@ -54,6 +55,7 @@ func (fts *FTS) _Set(key string, value map[string]string) {
 			case len(word) <= 1:
 				continue
 			case !_IsAlphaNum(word):
+				fmt.Println("skipping word:", word, "from:", value, "reason: not alphanumeric")
 				continue
 			}
 			if _, ok := fts.cache[word]; !ok {
@@ -126,6 +128,7 @@ func (fts *FTS) _LoadCacheJson(json []map[string]string) error {
 				case len(word) <= 1:
 					continue
 				case !_IsAlphaNum(word):
+					fmt.Println("skipping word:", word, "from:", value, "reason: not alphanumeric")
 					continue
 				}
 				if _, ok := fts.cache[word]; !ok {
