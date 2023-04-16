@@ -21,14 +21,11 @@ func (c *Cache) _SearchWithSpaces(query string, limit int, strict bool, keys map
 
 	// If there's only one word, return the result
 	if len(words) == 1 {
-		return c.Search(query, limit, strict)
+		return c.Search(words[0], limit, strict)
 	}
 
 	// Create an array to store the result
-	var (
-		result      []map[string]string = []map[string]string{}
-		queryLength int                 = len(query)
-	)
+	var result []map[string]string = []map[string]string{}
 
 	// Loop through the words and get the indices that are common
 	for i := 0; i < len(words); i++ {
@@ -49,7 +46,7 @@ func (c *Cache) _SearchWithSpaces(query string, limit int, strict bool, keys map
 					continue
 
 				// If the value contains the query
-				case _Contains(value, query, queryLength):
+				case _Contains(value, query, len(query)):
 					result = append(result, queryResult[j])
 				}
 			}
