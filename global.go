@@ -51,6 +51,6 @@ func _Contains(s string, toFind string, toFindLength int) bool {
 }
 
 // Check if a string contains another string (case insensitive)
-func ContainsIgnoreCase(s1 string, s2 string) bool {
+func _ContainsIgnoreCase(s1 string, s2 string) bool {
 	return _Contains(strings.ToLower(s1), strings.ToLower(s2), len(s2))
 }

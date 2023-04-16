@@ -94,7 +94,7 @@ func (c *Cache) _SearchInJsonWithKey(query string, key string, limit int, strict
 		}
 
 		// If the data contains the query
-		if ContainsIgnoreCase(c.json[i][key], query) {
+		if _ContainsIgnoreCase(c.json[i][key], query) {
 			result = append(result, c.json[i])
 			indices = append(indices, i)
 		}
@@ -134,7 +134,7 @@ func (c *Cache) _SearchInJson(query string, limit int, strict bool, excludeKeys 
 			}
 
 			// If the data contains the query
-			if ContainsIgnoreCase(value, query) {
+			if _ContainsIgnoreCase(value, query) {
 				result = append(result, c.json[i])
 				indices = append(indices, i)
 			}
