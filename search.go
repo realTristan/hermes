@@ -254,7 +254,7 @@ func (c *Cache) _Search(query string, limit int, strict bool) ([]map[string]stri
 			continue
 
 		// If the key doesn't start with the word
-		case !strings.HasPrefix(c.keys[i], query):
+		case !strings.Contains(c.keys[i], query):
 			continue
 
 		// Check if the index is already in the result
