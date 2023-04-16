@@ -1,6 +1,8 @@
 package hermes
 
-import "strings"
+import (
+	"strings"
+)
 
 // SearchWithSpaces function with lock
 func (c *Cache) SearchWithSpaces(query string, limit int, strict bool, keys map[string]bool) ([]map[string]string, []int) {
@@ -15,12 +17,10 @@ func (c *Cache) _SearchWithSpaces(query string, limit int, strict bool, keys map
 	var words []string = strings.Split(strings.TrimSpace(query), " ")
 
 	// If the words array is empty
-	if len(words) == 0 {
+	switch {
+	case len(words) == 0:
 		return []map[string]string{}, []int{}
-	}
-
-	// If there's only one word, return the result
-	if len(words) == 1 {
+	case len(words) == 1:
 		return c.Search(words[0], limit, strict)
 	}
 
@@ -37,15 +37,8 @@ func (c *Cache) _SearchWithSpaces(query string, limit int, strict bool, keys map
 			// Iterate over the keys and values for the json data for that index
 			for key, value := range queryResult[j] {
 				switch {
-				// If the value length is less than the query length
-				case len(value) < len(query):
-					continue
-
-				// If the key is excluded
 				case !keys[key]:
 					continue
-
-				// If the value contains the query
 				case _Contains(value, query, len(query)):
 					result = append(result, queryResult[j])
 				}
@@ -58,78 +51,56 @@ func (c *Cache) _SearchWithSpaces(query string, limit int, strict bool, keys map
 }
 
 // SearchInJsonWithKey function with lock
-func (c *Cache) SearchInJsonWithKey(query string, key string, limit int, strict bool) ([]map[string]string, []int) {
+func (c *Cache) SearchInJsonWithKey(query string, key string, limit int) []map[string]string {
 	c.mutex.RLock()
 	defer c.mutex.RUnlock()
-	return c._SearchInJsonWithKey(query, key, limit, strict)
+	return c._SearchInJsonWithKey(query, key, limit)
 }
 
 // SearchInJsonWithKey function
-func (c *Cache) _SearchInJsonWithKey(query string, key string, limit int, strict bool) ([]map[string]string, []int) {
+func (c *Cache) _SearchInJsonWithKey(query string, key string, limit int) []map[string]string {
 	// Define variables
-	var (
-		result  []map[string]string = []map[string]string{}
-		indices []int               = make([]int, len(c.json))
-	)
+	var result []map[string]string = []map[string]string{}
 
 	// Iterate over the query result
 	for i := 0; i < len(c.json); i++ {
 		switch {
-		// If the json value length is less than the query length
-		case len(c.json[i][key]) < len(query):
-			continue
-		}
-
-		// If the data contains the query
-		if _ContainsIgnoreCase(c.json[i][key], query) {
+		case _ContainsIgnoreCase(c.json[i][key], query):
 			result = append(result, c.json[i])
-			indices = append(indices, i)
 		}
 	}
 
 	// Return the result
-	return result, indices
+	return result
 }
 
 // SearchInJson function with lock
-func (c *Cache) SearchInJson(query string, limit int, strict bool, keys map[string]bool) ([]map[string]string, []int) {
+func (c *Cache) SearchInJson(query string, limit int, keys map[string]bool) []map[string]string {
 	c.mutex.RLock()
 	defer c.mutex.RUnlock()
-	return c._SearchInJson(query, limit, strict, keys)
+	return c._SearchInJson(query, limit, keys)
 }
 
 // _SearchInJson function
-func (c *Cache) _SearchInJson(query string, limit int, strict bool, keys map[string]bool) ([]map[string]string, []int) {
+func (c *Cache) _SearchInJson(query string, limit int, keys map[string]bool) []map[string]string {
 	// Define variables
-	var (
-		result  []map[string]string = []map[string]string{}
-		indices []int               = make([]int, len(c.json))
-	)
+	var result []map[string]string = []map[string]string{}
 
 	// Iterate over the query result
 	for i := 0; i < len(c.json); i++ {
 		// Iterate over the keys and values for the json data for that index
 		for key, value := range c.json[i] {
 			switch {
-			// If the key is excluded
 			case !keys[key]:
 				continue
-
-			// If the value length is less than the query length
-			case len(value) < len(query):
-				continue
-			}
-
-			// If the data contains the query
-			if _ContainsIgnoreCase(value, query) {
+			case _ContainsIgnoreCase(value, query):
 				result = append(result, c.json[i])
-				indices = append(indices, i)
 			}
 		}
 	}
 
 	// Return the result
-	return result, indices
+	return result
 }
 
 // Search function with lock
@@ -173,26 +144,14 @@ func (c *Cache) _Search(query string, limit int, strict bool) ([]map[string]stri
 	// Loop through the cache keys
 	var queryLength int = len(query)
 	for i := 0; i < len(c.keys); i++ {
-	Switch:
 		switch {
-		// Check if the limit has been reached
 		case len(result) >= limit:
 			return result, indices
-
-		// Check if the key is equal to the query
-		case c.keys[i] == query:
-			break Switch
-
-		// Check if the key is shorter than the query
-		case len(c.keys[i]) < queryLength:
-			continue
-
-		// If the key doesn't start with the word
 		case !_Contains(c.keys[i], query, queryLength):
 			continue
 		}
 
-		// Loop through the indices
+		// Loop through the cache indices
 		for j := 0; j < len(c.cache[c.keys[i]]); j++ {
 			var index int = c.cache[c.keys[i]][j]
 			if indices[index] == -1 {

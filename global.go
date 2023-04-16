@@ -30,6 +30,12 @@ func _ContainsInt(array []int, value int) bool {
 
 // Check if a string contains a substring
 func _Contains(s string, toFind string, toFindLength int) bool {
+	switch {
+	case len(s) < toFindLength:
+		return false
+	case s == toFind:
+		return true
+	}
 	for i := 0; i < len(s)-toFindLength-1; i++ {
 		if s[i] == toFind[0] {
 			if s[i:i+toFindLength] == toFind {
