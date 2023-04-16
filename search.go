@@ -28,17 +28,18 @@ func (c *Cache) _SearchWithSpaces(query string, limit int, strict bool, excludeK
 
 	// Create an array to store the result
 	var (
-		result  []map[string]string = []map[string]string{}
-		indices []int               = []int{}
+		result      []map[string]string = []map[string]string{}
+		indices     []int               = []int{}
+		queryLength int                 = len(query)
 	)
 
 	// Loop through the words and get the indices that are common
-	for i := range words {
+	for i := 0; i < len(words); i++ {
 		// Search for the query inside the cache
 		var queryResult, queryIndices = c.Search(words[i], limit, strict)
 
 		// Iterate over the result
-		for j := range queryResult {
+		for j := 0; j < len(queryResult); j++ {
 			// If the data's already been added
 			if _ContainsInt(indices, j) {
 				continue
@@ -57,7 +58,7 @@ func (c *Cache) _SearchWithSpaces(query string, limit int, strict bool, excludeK
 				}
 
 				// If the data contains the query
-				if strings.Contains(value, query) {
+				if _Contains(value, query, queryLength) {
 					result = append(result, queryResult[j])
 					indices = append(indices, queryIndices[j])
 				}
@@ -85,7 +86,7 @@ func (c *Cache) _SearchInJsonWithKey(query string, key string, limit int, strict
 	)
 
 	// Iterate over the query result
-	for i := range c.json {
+	for i := 0; i < len(c.json); i++ {
 		switch {
 		// If the json value length is less than the query length
 		case len(c.json[i][key]) < len(query):
@@ -119,7 +120,7 @@ func (c *Cache) _SearchInJson(query string, limit int, strict bool, excludeKeys 
 	)
 
 	// Iterate over the query result
-	for i := range c.json {
+	for i := 0; i < len(c.json); i++ {
 		// Iterate over the keys and values for the json data for that index
 		for key, value := range c.json[i] {
 			switch {
@@ -191,7 +192,7 @@ func (c *Cache) _SearchCommon(queries []string, limit int, strict bool) ([]map[s
 	}
 
 	// Loop through the indices
-	for i := range indices {
+	for i := 0; i < len(indices); i++ {
 		result = append(result, c.json[indices[i]])
 	}
 
@@ -229,7 +230,7 @@ func (c *Cache) _Search(query string, limit int, strict bool) ([]map[string]stri
 
 		// Loop through the indices
 		indices = c.cache[query]
-		for i := range indices {
+		for i := 0; i < len(indices); i++ {
 			result = append(result, c.json[indices[i]])
 		}
 
@@ -238,7 +239,8 @@ func (c *Cache) _Search(query string, limit int, strict bool) ([]map[string]stri
 	}
 
 	// Loop through the cache keys
-	for i := range c.keys {
+	var queryLength int = len(query)
+	for i := 0; i < len(c.keys); i++ {
 	Switch:
 		switch {
 		// Check if the limit has been reached
@@ -250,11 +252,11 @@ func (c *Cache) _Search(query string, limit int, strict bool) ([]map[string]stri
 			break Switch
 
 		// Check if the key is shorter than the query
-		case len(c.keys[i]) < len(query):
+		case len(c.keys[i]) < queryLength:
 			continue
 
 		// If the key doesn't start with the word
-		case !strings.Contains(c.keys[i], query):
+		case !_Contains(c.keys[i], query, queryLength):
 			continue
 
 		// Check if the index is already in the result
@@ -263,7 +265,7 @@ func (c *Cache) _Search(query string, limit int, strict bool) ([]map[string]stri
 		}
 
 		// Loop through the indices
-		for j := range c.cache[c.keys[i]] {
+		for j := 0; j < len(c.cache[c.keys[i]]); j++ {
 			var index int = c.cache[c.keys[i]][j]
 
 			// Else, append the index to the result
