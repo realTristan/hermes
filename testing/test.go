@@ -3,35 +3,32 @@ package main
 import (
 	"fmt"
 	"time"
+
+	Hermes "github.com/realTristan/Hermes"
 )
 
 func main() {
-	// allocate a slice the size of 4000
-	startTime := time.Now()
-	var _ []int = make([]int, 400000)
-	fmt.Println("Time to allocate a slice of 4000: ", time.Since(startTime))
+	// Initialize the cache
+	var cache *Hermes.Cache = Hermes.InitCache()
+	cache.InitFTS()
 
-	// create a new slice with no allocation of memory and fill it with random numbers
-	startTime = time.Now()
-	var slice2 []int = []int{}
-	for i := 0; i < 10000; i++ {
-		slice2 = append(slice2, i)
-	}
-	fmt.Println("Time to create a new slice with random numbers: ", time.Since(startTime))
+	// Track start time
+	var startTime time.Time = time.Now()
 
-	// Check if the number 27 is in the slice
-	startTime = time.Now()
-	for i := 0; i < len(slice2); i++ {
-		if slice2[i] == 8977 {
-			break
-		}
-	}
-	fmt.Println("Time to check if 27 is in the slice: ", time.Since(startTime))
+	// Set a value in the cache
+	cache.Set("user_id_1", map[string]string{"name": "tristan"})
+	cache.Set("user_id_2", map[string]string{"name": "michael"})
 
-	// Create a new variable called number
-	// and assign it the value of 27
+	// Print result
+	fmt.Printf("Set 2 values in %s\n", time.Since(startTime))
+
+	// Track start time
 	startTime = time.Now()
-	var number int = 8977
-	fmt.Println("Time to create a new variable and assign it the value of 8977: ", time.Since(startTime))
-	fmt.Println(number)
+
+	// Search for a word in the cache
+	var result, _ = cache.Search("tristan", 100, false)
+
+	// Print result
+	fmt.Printf("Found %d results in %s\n", len(result), time.Since(startTime))
+	fmt.Println(result)
 }

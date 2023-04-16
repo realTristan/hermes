@@ -12,7 +12,7 @@ func _IsAlphaNum(s string) bool {
 
 // Remove double spaces from a string
 func _RemoveDoubleSpaces(s string) string {
-	for _Contains(s, "  ", 2) {
+	for _Contains(s, "  ") {
 		s = strings.Replace(s, "  ", " ", -1)
 	}
 	return s
@@ -29,16 +29,16 @@ func _ContainsInt(array []int, value int) bool {
 }
 
 // Check if a string contains a substring
-func _Contains(s string, toFind string, toFindLength int) bool {
+func _Contains(s1 string, s2 string) bool {
 	switch {
-	case len(s) < toFindLength:
-		return false
-	case s == toFind:
+	case s1 == s2:
 		return true
+	case len(s1) < len(s2):
+		return false
 	}
-	for i := 0; i < len(s)-toFindLength-1; i++ {
-		if s[i] == toFind[0] {
-			if s[i:i+toFindLength] == toFind {
+	for i := 0; i < len(s1)-len(s2); i++ {
+		if s1[i] == s2[0] {
+			if s1[i:i+len(s2)] == s2 {
 				return true
 			}
 		}
@@ -48,5 +48,5 @@ func _Contains(s string, toFind string, toFindLength int) bool {
 
 // Check if a string contains another string (case insensitive)
 func _ContainsIgnoreCase(s1 string, s2 string) bool {
-	return _Contains(strings.ToLower(s1), strings.ToLower(s2), len(s2))
+	return _Contains(strings.ToLower(s1), strings.ToLower(s2))
 }

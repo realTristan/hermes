@@ -5,14 +5,14 @@ import (
 )
 
 // SearchWithSpaces function with lock
-func (c *Cache) SearchWithSpaces(query string, limit int, strict bool, keys map[string]bool) ([]map[string]string, []int) {
-	c.mutex.RLock()
-	defer c.mutex.RUnlock()
-	return c._SearchWithSpaces(query, limit, strict, keys)
+func (fts *FTS) SearchWithSpaces(query string, limit int, strict bool, keys map[string]bool) ([]map[string]string, []int) {
+	fts.mutex.RLock()
+	defer fts.mutex.RUnlock()
+	return fts._SearchWithSpaces(query, limit, strict, keys)
 }
 
 // Search for multiple words
-func (c *Cache) _SearchWithSpaces(query string, limit int, strict bool, keys map[string]bool) ([]map[string]string, []int) {
+func (fts *FTS) _SearchWithSpaces(query string, limit int, strict bool, keys map[string]bool) ([]map[string]string, []int) {
 	// Split the query into words
 	var words []string = strings.Split(strings.TrimSpace(query), " ")
 
@@ -21,7 +21,7 @@ func (c *Cache) _SearchWithSpaces(query string, limit int, strict bool, keys map
 	case len(words) == 0:
 		return []map[string]string{}, []int{}
 	case len(words) == 1:
-		return c.Search(words[0], limit, strict)
+		return fts.Search(words[0], limit, strict)
 	}
 
 	// Create an array to store the result
@@ -30,7 +30,7 @@ func (c *Cache) _SearchWithSpaces(query string, limit int, strict bool, keys map
 	// Loop through the words and get the indices that are common
 	for i := 0; i < len(words); i++ {
 		// Search for the query inside the cache
-		var queryResult, _ = c.Search(words[i], limit, strict)
+		var queryResult, _ = fts.Search(words[i], limit, strict)
 
 		// Iterate over the result
 		for j := 0; j < len(queryResult); j++ {
@@ -39,7 +39,7 @@ func (c *Cache) _SearchWithSpaces(query string, limit int, strict bool, keys map
 				switch {
 				case !keys[key]:
 					continue
-				case _Contains(value, query, len(query)):
+				case _Contains(value, query):
 					result = append(result, queryResult[j])
 				}
 			}
@@ -51,22 +51,22 @@ func (c *Cache) _SearchWithSpaces(query string, limit int, strict bool, keys map
 }
 
 // SearchInJsonWithKey function with lock
-func (c *Cache) SearchInJsonWithKey(query string, key string, limit int) []map[string]string {
-	c.mutex.RLock()
-	defer c.mutex.RUnlock()
-	return c._SearchInJsonWithKey(query, key, limit)
+func (fts *FTS) SearchInJsonWithKey(query string, key string, limit int) []map[string]string {
+	fts.mutex.RLock()
+	defer fts.mutex.RUnlock()
+	return fts._SearchInJsonWithKey(query, key, limit)
 }
 
 // SearchInJsonWithKey function
-func (c *Cache) _SearchInJsonWithKey(query string, key string, limit int) []map[string]string {
+func (fts *FTS) _SearchInJsonWithKey(query string, key string, limit int) []map[string]string {
 	// Define variables
 	var result []map[string]string = []map[string]string{}
 
 	// Iterate over the query result
-	for i := 0; i < len(c.json); i++ {
+	for i := 0; i < len(fts.json); i++ {
 		switch {
-		case _ContainsIgnoreCase(c.json[i][key], query):
-			result = append(result, c.json[i])
+		case _ContainsIgnoreCase(fts.json[i][key], query):
+			result = append(result, fts.json[i])
 		}
 	}
 
@@ -75,26 +75,26 @@ func (c *Cache) _SearchInJsonWithKey(query string, key string, limit int) []map[
 }
 
 // SearchInJson function with lock
-func (c *Cache) SearchInJson(query string, limit int, keys map[string]bool) []map[string]string {
-	c.mutex.RLock()
-	defer c.mutex.RUnlock()
-	return c._SearchInJson(query, limit, keys)
+func (fts *FTS) SearchInJson(query string, limit int, keys map[string]bool) []map[string]string {
+	fts.mutex.RLock()
+	defer fts.mutex.RUnlock()
+	return fts._SearchInJson(query, limit, keys)
 }
 
 // _SearchInJson function
-func (c *Cache) _SearchInJson(query string, limit int, keys map[string]bool) []map[string]string {
+func (fts *FTS) _SearchInJson(query string, limit int, keys map[string]bool) []map[string]string {
 	// Define variables
 	var result []map[string]string = []map[string]string{}
 
 	// Iterate over the query result
-	for i := 0; i < len(c.json); i++ {
+	for i := 0; i < len(fts.json); i++ {
 		// Iterate over the keys and values for the json data for that index
-		for key, value := range c.json[i] {
+		for key, value := range fts.json[i] {
 			switch {
 			case !keys[key]:
 				continue
 			case _ContainsIgnoreCase(value, query):
-				result = append(result, c.json[i])
+				result = append(result, fts.json[i])
 			}
 		}
 	}
@@ -104,14 +104,14 @@ func (c *Cache) _SearchInJson(query string, limit int, keys map[string]bool) []m
 }
 
 // Search function with lock
-func (c *Cache) Search(query string, limit int, strict bool) ([]map[string]string, []int) {
-	c.mutex.RLock()
-	defer c.mutex.RUnlock()
-	return c._Search(query, limit, strict)
+func (fts *FTS) Search(query string, limit int, strict bool) ([]map[string]string, []int) {
+	fts.mutex.RLock()
+	defer fts.mutex.RUnlock()
+	return fts._Search(query, limit, strict)
 }
 
 // Search for a single query
-func (c *Cache) _Search(query string, limit int, strict bool) ([]map[string]string, []int) {
+func (fts *FTS) _Search(query string, limit int, strict bool) ([]map[string]string, []int) {
 	// If the query is empty
 	if len(query) == 0 {
 		return []map[string]string{}, []int{}
@@ -120,21 +120,21 @@ func (c *Cache) _Search(query string, limit int, strict bool) ([]map[string]stri
 	// Define variables
 	var (
 		result  []map[string]string = []map[string]string{}
-		indices []int               = make([]int, len(c.json))
+		indices []int               = make([]int, len(fts.json))
 	)
 
 	// If the user wants a strict search, just return the result
 	// straight from the cache
 	if strict {
 		// Check if the query is in the cache
-		if _, ok := c.cache[query]; !ok {
+		if _, ok := fts.cache[query]; !ok {
 			return result, indices
 		}
 
 		// Loop through the indices
-		indices = c.cache[query]
+		indices = fts.cache[query]
 		for i := 0; i < len(indices); i++ {
-			result = append(result, c.json[indices[i]])
+			result = append(result, fts.json[indices[i]])
 		}
 
 		// Return the result
@@ -142,24 +142,23 @@ func (c *Cache) _Search(query string, limit int, strict bool) ([]map[string]stri
 	}
 
 	// Loop through the cache keys
-	var queryLength int = len(query)
-	for i := 0; i < len(c.keys); i++ {
+	for i := 0; i < len(fts.keys); i++ {
 		switch {
 		case len(result) >= limit:
 			return result, indices
-		case !_Contains(c.keys[i], query, queryLength):
+		case !_Contains(fts.keys[i], query):
 			continue
 		}
 
 		// Loop through the cache indices
-		for j := 0; j < len(c.cache[c.keys[i]]); j++ {
-			var index int = c.cache[c.keys[i]][j]
+		for j := 0; j < len(fts.cache[fts.keys[i]]); j++ {
+			var index int = fts.cache[fts.keys[i]][j]
 			if indices[index] == -1 {
 				continue
 			}
 
 			// Else, append the index to the result
-			result = append(result, c.json[index])
+			result = append(result, fts.json[index])
 			indices[index] = -1
 		}
 	}

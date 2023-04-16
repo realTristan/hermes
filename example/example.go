@@ -18,7 +18,7 @@ import (
 )
 
 // Initialize the cache from the hermes.go file
-var cache *Hermes.Cache = Hermes.InitCache("data.json")
+var fts *Hermes.FTS = Hermes.InitJson("data.json")
 
 // Main function
 func main() {
@@ -58,7 +58,7 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 	// Search for a word in the cache
 	// Make sure the show which keys you do want to search through,
 	// and which ones you don't
-	var res, _ = cache.SearchWithSpaces(query, limit, strict, map[string]bool{
+	var res, _ = fts.SearchWithSpaces(query, limit, strict, map[string]bool{
 		"id":             false,
 		"components":     false,
 		"units":          false,
