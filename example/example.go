@@ -18,7 +18,7 @@ import (
 )
 
 // Initialize the cache from the hermes.go file
-var fts *Hermes.FTS = Hermes.InitJson("data.json", map[string]bool{
+var fts, _ = Hermes.InitJson("data.json", -1, -1, map[string]bool{
 	"id":             false,
 	"components":     false,
 	"units":          false,
