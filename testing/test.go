@@ -8,9 +8,18 @@ import (
 )
 
 func main() {
-	// Initialize the cache
-	var cache *Hermes.Cache = Hermes.InitCache()
-	cache.InitFTS(map[string]bool{})
+	// Important Variables
+	var (
+		cache        *Hermes.Cache   = Hermes.InitCache()
+		maxKeys      int             = 10 // -1 for no limit
+		maxSizeBytes int             = -1 // -1 for no limit
+		keySettings  map[string]bool = map[string]bool{
+			"name": true,
+		}
+	)
+
+	// Initialize the FTS cache
+	cache.InitFTS(maxKeys, maxSizeBytes, keySettings)
 
 	// Track start time
 	var startTime time.Time = time.Now()

@@ -30,24 +30,32 @@ import (
 )
 
 func main() {
-	// Initialize the cache
-	var cache *Hermes.Cache = Hermes.InitCache()
-	cache.InitFTS(map[string]bool{})
+	// Important Variables
+	var (
+		cache        *Hermes.Cache   = Hermes.InitCache()
+		maxKeys      int             = 10 // -1 for no limit
+		maxSizeBytes int             = -1 // -1 for no limit
+		keySettings  map[string]bool = map[string]bool{
+			"name": true,
+		}
+	)
 
-	// Track start time
-	var startTime time.Time = time.Now()
+	// Initialize the FTS cache
+	cache.InitFTS(maxKeys, maxSizeBytes, keySettings)
 
-	// Set a value in the cache
-	cache.Set("user_id_1", map[string]string{"name": "tristan"})
-	cache.Set("user_id_2", map[string]string{"name": "michael"})
+	// Set values in the cache
+	var data = map[string]string{"name": "tristan"}
+	if err := cache.Set("user_id", data); err != nil {
+		fmt.Println(err)
+	}
 
-	// Print result
-	fmt.Printf("Set 2 values in %s\n", time.Since(startTime))
+	// Get "user_id" from the cache
+	var user = cache.Get("user_id")
 
-	// Track start time
-	startTime = time.Now()
-
-	// Search for a word in the cache
+	// Search for the name "tristan" in the cache
+	// @param query: "tristan
+	// @param limit: 100
+	// @param strict: false
 	var result, _ = cache.Search("tristan", 100, false)
 
 	// Print result
