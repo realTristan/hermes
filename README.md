@@ -17,6 +17,8 @@ go get github.com/realTristan/Hermes
 
 `?q=computer&limit=100&strict=true: 9.102µs`
 
+# Remarks
+For small to medium-sized datasets (like the one I used in /examples/data.json), Hermes works great. Although, as the words in the dataset increases, the full-text-search cache will take up significantly more memory. I recommended setting a cache limit and/or a cache keys limit. If you prefer not having to worry about memory, and would prefer slower full-text-searches, I recommend BetterCache. ```https://github.com/realTristan/bettercache```
 
 # Example
 ```go
