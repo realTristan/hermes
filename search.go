@@ -4,7 +4,7 @@ import (
 	"strings"
 )
 
-// SearchWithSpaces function with lock
+// SearchWithSpaces function with Mutex Locking
 func (fts *FTS) SearchWithSpaces(query string, limit int, strict bool, keySettings map[string]bool) ([]map[string]string, []int) {
 	fts.mutex.RLock()
 	defer fts.mutex.RUnlock()
@@ -50,7 +50,7 @@ func (fts *FTS) searchWithSpaces(query string, limit int, strict bool, keySettin
 	return result, []int{}
 }
 
-// SearchInJsonWithKey function with lock
+// SearchInJsonWithKey function with Mutex Locking
 func (fts *FTS) SearchInJsonWithKey(query string, key string, limit int) []map[string]string {
 	fts.mutex.RLock()
 	defer fts.mutex.RUnlock()
@@ -73,7 +73,7 @@ func (fts *FTS) searchInJsonWithKey(query string, key string, limit int) []map[s
 	return result
 }
 
-// SearchInJson function with lock
+// SearchInJson function with Mutex Locking
 func (fts *FTS) SearchInJson(query string, limit int, keySettings map[string]bool) []map[string]string {
 	fts.mutex.RLock()
 	defer fts.mutex.RUnlock()
@@ -102,7 +102,7 @@ func (fts *FTS) searchInJson(query string, limit int, keySettings map[string]boo
 	return result
 }
 
-// Search function with lock
+// Search function with Mutex Locking
 func (fts *FTS) Search(query string, limit int, strict bool) ([]map[string]string, []int) {
 	fts.mutex.RLock()
 	defer fts.mutex.RUnlock()

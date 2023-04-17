@@ -8,27 +8,38 @@ import (
 )
 
 func main() {
-	// Initialize the cache
-	var cache *Hermes.Cache = Hermes.InitCache()
-	cache.InitFTS(map[string]bool{
-		"id":             false,
-		"components":     false,
-		"units":          false,
-		"description":    true,
-		"name":           true,
-		"pre_requisites": true,
-		"title":          true,
-	})
+	// Important Variables
+	var (
+		cache        *Hermes.Cache   = Hermes.InitCache()
+		maxKeys      int             = 10 // -1 for no limit
+		maxSizeBytes int             = -1 // -1 for no limit
+		keySettings  map[string]bool = map[string]bool{
+			"name": true,
+		}
+	)
+
+	// Initialize the FTS cache
+	cache.InitFTS(maxKeys, maxSizeBytes, keySettings)
 
 	// Track start time
 	var startTime time.Time = time.Now()
 
-	// Set a value in the cache
-	cache.Set("user_id_1", map[string]string{"name": "tristan"})
-	cache.Set("user_id_2", map[string]string{"name": "michael"})
+	// Set values in the cache
+	if err := cache.Set("user_id", map[string]string{"name": "tristan"}); err != nil {
+		fmt.Println(err)
+	}
 
-	// Print result
-	fmt.Printf("Set 2 values in %s\n", time.Since(startTime))
+	// Print duration
+	fmt.Printf("Set user_id in %s\n", time.Since(startTime))
+
+	// Track start time
+	startTime = time.Now()
+
+	// Get the user_id value
+	var user = cache.Get("user_id")
+
+	// Print duration
+	fmt.Printf("Found %v in %s\n", user, time.Since(startTime))
 
 	// Track start time
 	startTime = time.Now()

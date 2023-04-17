@@ -18,89 +18,106 @@ func InitCache() *Cache {
 	}
 }
 
-// Initialize the FTS cache
-func (c *Cache) InitFTS(keySettings map[string]bool) {
+// Initialize the FTS cache with Mutex Locking
+func (c *Cache) InitFTS(maxKeys int, maxSizeBytes int, keySettings map[string]bool) error {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
-	c.initFTS(keySettings)
+	return c.initFTS(maxKeys, maxSizeBytes, keySettings)
 }
-func (c *Cache) initFTS(keySettings map[string]bool) {
+
+// Initialize the FTS cache
+func (c *Cache) initFTS(maxKeys int, maxSizeBytes int, keySettings map[string]bool) error {
 	// Convert the cache data into an array of maps
 	var data []map[string]string = []map[string]string{}
 	for _, key := range c.keys() {
 		data = append(data, c.get(key))
 	}
 	c.fts = &FTS{
-		mutex: &sync.RWMutex{},
-		cache: map[string][]int{},
-		keys:  []string{},
-		json:  data,
+		mutex:        &sync.RWMutex{},
+		cache:        map[string][]int{},
+		keys:         []string{},
+		json:         data,
+		maxKeys:      maxKeys,
+		maxSizeBytes: maxSizeBytes,
 	}
-	c.fts.loadCacheJson(data, keySettings)
+	return c.fts.loadCacheJson(data, keySettings)
 }
 
-// Clean the cache
+// Clean the cache with Mutex Locking
 func (c *Cache) Clean() {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
 	c.clean()
 }
+
+// Clean the cache
 func (c *Cache) clean() {
 	c.data = map[string]map[string]string{}
 }
 
-// Set a value in the cache
-func (c *Cache) Set(key string, value map[string]string) {
+// Set a value in the cache with Mutex Locking
+func (c *Cache) Set(key string, value map[string]string) error {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
-	c.set(key, value)
+	return c.set(key, value)
 }
-func (c *Cache) set(key string, value map[string]string) {
+
+// Set a value in the cache
+func (c *Cache) set(key string, value map[string]string) error {
 	c.data[key] = value
 
 	// update the value in the FTS cache
 	if c.fts != nil {
-		c.fts.set(key, value)
+		return c.fts.set(key, value)
 	}
+	return nil
 }
 
-// Get a value from the cache
+// Get a value from the cache with Mutex Locking
 func (c *Cache) Get(key string) map[string]string {
 	c.mutex.RLock()
 	defer c.mutex.RUnlock()
 	return c.get(key)
 }
+
+// Get a value from the cache
 func (c *Cache) get(key string) map[string]string {
 	return c.data[key]
 }
 
-// Delete a key from the cache
+// Delete a key from the cache with Mutex Locking
 func (c *Cache) Delete(key string) {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
 	c.delete(key)
 }
+
+// Delete a key from the cache
 func (c *Cache) delete(key string) {
 	delete(c.data, key)
 }
 
-// Check if a key exists in the cache
+// Check if a key exists in the cache with Mutex Locking
 func (c *Cache) Exists(key string) bool {
 	c.mutex.RLock()
 	defer c.mutex.RUnlock()
 	return c.exists(key)
 }
+
+// Check if a key exists in the cache
 func (c *Cache) exists(key string) bool {
 	_, ok := c.data[key]
 	return ok
 }
 
-// Get all the keys in the cache
+// Get all the keys in the cache with Mutex Locking
 func (c *Cache) Keys() []string {
 	c.mutex.RLock()
 	defer c.mutex.RUnlock()
 	return c.keys()
 }
+
+// Get all the keys in the cache
 func (c *Cache) keys() []string {
 	keys := []string{}
 	for key := range c.data {
@@ -109,12 +126,14 @@ func (c *Cache) keys() []string {
 	return keys
 }
 
-// Get all the values in the cache
+// Get all the values in the cache with Mutex Locking
 func (c *Cache) Values() []map[string]string {
 	c.mutex.RLock()
 	defer c.mutex.RUnlock()
 	return c.values()
 }
+
+// Get all the values in the cache
 func (c *Cache) values() []map[string]string {
 	var values []map[string]string = []map[string]string{}
 	for _, value := range c.data {
@@ -123,24 +142,26 @@ func (c *Cache) values() []map[string]string {
 	return values
 }
 
-// Get the length of the cache
+// Get the length of the cache with Mutex Locking
 func (c *Cache) Length() int {
 	c.mutex.RLock()
 	defer c.mutex.RUnlock()
 	return c.length()
 }
+
+// Get the length of the cache
 func (c *Cache) length() int {
 	return len(c.data)
 }
 
-// Search the cache
+// Search the cache with Mutex Locking
 func (c *Cache) Search(query string, limit int, strict bool) ([]map[string]string, []int) {
 	c.mutex.RLock()
 	defer c.mutex.RUnlock()
 	return c.fts.Search(query, limit, strict)
 }
 
-// Search the cache with spaces
+// Search the cache with spaces with Mutex Locking
 func (c *Cache) SearchWithSpaces(query string, limit int, strict bool, keySettings map[string]bool) ([]map[string]string, []int) {
 	c.mutex.RLock()
 	defer c.mutex.RUnlock()
