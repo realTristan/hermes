@@ -32,7 +32,7 @@ import (
 func main() {
 	// Initialize the cache
 	var cache *Hermes.Cache = Hermes.InitCache()
-	cache.InitFTS()
+	cache.InitFTS(map[string]bool{})
 
 	// Track start time
 	var startTime time.Time = time.Now()
