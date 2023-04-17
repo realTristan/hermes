@@ -10,15 +10,7 @@ import (
 func main() {
 	// Initialize the cache
 	var cache *Hermes.Cache = Hermes.InitCache()
-	cache.InitFTS(map[string]bool{
-		"id":             false,
-		"components":     false,
-		"units":          false,
-		"description":    true,
-		"name":           true,
-		"pre_requisites": true,
-		"title":          true,
-	})
+	cache.InitFTS(map[string]bool{})
 
 	// Track start time
 	var startTime time.Time = time.Now()
