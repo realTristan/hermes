@@ -14,12 +14,7 @@ func InitCache() *Cache {
 	return &Cache{
 		data:  map[string]map[string]string{},
 		mutex: &sync.RWMutex{},
-		fts: &FTS{
-			mutex: &sync.RWMutex{},
-			cache: map[string][]int{},
-			keys:  []string{},
-			json:  []map[string]string{},
-		},
+		fts:   nil,
 	}
 }
 
@@ -31,17 +26,17 @@ func (c *Cache) InitFTS(keySettings map[string]bool) {
 }
 func (c *Cache) initFTS(keySettings map[string]bool) {
 	// Convert the cache data into an array of maps
-	var jsonArray []map[string]string = []map[string]string{}
+	var data []map[string]string = []map[string]string{}
 	for _, key := range c.keys() {
-		jsonArray = append(jsonArray, c.get(key))
+		data = append(data, c.get(key))
 	}
 	c.fts = &FTS{
 		mutex: &sync.RWMutex{},
 		cache: map[string][]int{},
 		keys:  []string{},
-		json:  jsonArray,
+		json:  data,
 	}
-	c.fts.loadCacheJson(jsonArray, keySettings)
+	c.fts.loadCacheJson(data, keySettings)
 }
 
 // Clean the cache
