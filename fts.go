@@ -126,13 +126,11 @@ func (fts *FTS) Reset(file string, keySettings map[string]bool) error {
 
 // Reset the FTS cache
 func (fts *FTS) reset(file string, keySettings map[string]bool) error {
-	fts.cache = map[string][]int{}
-	fts.keys = []string{}
-	fts.json = []map[string]string{}
-	fts.loadJson(file)
-	if err := fts.loadCacheJson(fts.json, keySettings); err != nil {
+	var newFts, err = InitJson(file, fts.maxKeys, fts.maxSizeBytes, keySettings)
+	if err != nil {
 		return err
 	}
+	*fts = *newFts
 	return nil
 }
 
