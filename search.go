@@ -1,8 +1,6 @@
 package hermes
 
-import (
-	"strings"
-)
+import "strings"
 
 // SearchWithSpaces function with Mutex Locking
 func (ft *FullText) SearchWithSpaces(query string, limit int, strict bool, schema map[string]bool) []map[string]interface{} {
@@ -24,60 +22,23 @@ func (ft *FullText) searchWithSpaces(query string, limit int, strict bool, schem
 	}
 
 	// Define variables
-	var (
-		result  []map[string]interface{} = []map[string]interface{}{}
-		indices []int                    = make([]int, len(ft.data))
-	)
+	var result []map[string]interface{} = []map[string]interface{}{}
 
-	// If the user wants a strict search, just return the result
-	// straight from the cache
-	if strict {
-		// Check if the query is in the cache
-		if _, ok := ft.cache[words[0]]; !ok {
-			return []map[string]interface{}{}
-		}
-
-		// Loop through the indices
-		indices = ft.cache[words[0]]
-		for i := 0; i < len(indices); i++ {
-			for key, value := range ft.data[indices[i]] {
-				if !schema[key] {
-					continue
-				}
-				if containsIgnoreCase(value.(string), query) {
-					result = append(result, ft.data[indices[i]])
-				}
-			}
-		}
-
-		// Return the result
-		return result
+	// Check if the query is in the cache
+	if _, ok := ft.cache[words[0]]; !ok {
+		return []map[string]interface{}{}
 	}
 
-	// Loop through the cache keys
-	for i := 0; i < len(ft.words); i++ {
-		switch {
-		case len(result) >= limit:
-			return result
-		case !contains(ft.words[i], words[0]):
-			continue
-		}
-
-		// Loop through the cache indices
-		for j := 0; j < len(ft.cache[ft.words[i]]); j++ {
-			var index int = ft.cache[ft.words[i]][j]
-			if indices[index] == -1 {
-				continue
-			}
-
-			// Iterate over the keys for that index
-			for key, value := range ft.data[index] {
+	// Loop through the indices
+	var indices []int = ft.cache[words[0]]
+	for i := 0; i < len(indices); i++ {
+		for key, value := range ft.data[indices[i]] {
+			if v, ok := value.(string); ok {
 				if !schema[key] {
 					continue
 				}
-				if containsIgnoreCase(value.(string), query) {
-					result = append(result, ft.data[index])
-					indices[index] = -1
+				if containsIgnoreCase(v, query) {
+					result = append(result, ft.data[indices[i]])
 				}
 			}
 		}
