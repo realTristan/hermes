@@ -34,10 +34,12 @@ func (ft *FullText) searchWithSpaces(query string, limit int, strict bool, schem
 	for i := 0; i < len(indices); i++ {
 		for key, value := range ft.data[indices[i]] {
 			if v, ok := value.(string); ok {
-				if !schema[key] {
+				switch {
+				// Check if the key is in the schema
+				case !schema[key]:
 					continue
-				}
-				if containsIgnoreCase(v, query) {
+				// Check if the value contains the query
+				case containsIgnoreCase(v, query):
 					result = append(result, ft.data[indices[i]])
 				}
 			}
@@ -48,15 +50,15 @@ func (ft *FullText) searchWithSpaces(query string, limit int, strict bool, schem
 	return result
 }
 
-// SearchInJsonWithKey function with Mutex Locking
-func (ft *FullText) SearchInJsonWithKey(query string, key string, limit int) []map[string]interface{} {
+// SearchInDataWithKey function with Mutex Locking
+func (ft *FullText) SearchInDataWithKey(query string, key string, limit int) []map[string]interface{} {
 	ft.mutex.RLock()
 	defer ft.mutex.RUnlock()
-	return ft.searchInJsonWithKey(query, key, limit)
+	return ft.searchInDataWithKey(query, key, limit)
 }
 
-// SearchInJsonWithKey function
-func (ft *FullText) searchInJsonWithKey(query string, key string, limit int) []map[string]interface{} {
+// SearchInDataWithKey function
+func (ft *FullText) searchInDataWithKey(query string, key string, limit int) []map[string]interface{} {
 	// Define variables
 	var result []map[string]interface{} = []map[string]interface{}{}
 
@@ -74,21 +76,21 @@ func (ft *FullText) searchInJsonWithKey(query string, key string, limit int) []m
 	return result
 }
 
-// SearchInJson function with Mutex Locking
-func (ft *FullText) SearchInJson(query string, limit int, schema map[string]bool) []map[string]interface{} {
+// SearchInData function with Mutex Locking
+func (ft *FullText) SearchInData(query string, limit int, schema map[string]bool) []map[string]interface{} {
 	ft.mutex.RLock()
 	defer ft.mutex.RUnlock()
-	return ft.searchInJson(query, limit, schema)
+	return ft.searchInData(query, limit, schema)
 }
 
-// searchInJson function
-func (ft *FullText) searchInJson(query string, limit int, schema map[string]bool) []map[string]interface{} {
+// searchInData function
+func (ft *FullText) searchInData(query string, limit int, schema map[string]bool) []map[string]interface{} {
 	// Define variables
 	var result []map[string]interface{} = []map[string]interface{}{}
 
 	// Iterate over the query result
 	for i := 0; i < len(ft.data); i++ {
-		// Iterate over the keys and values for the json data for that index
+		// Iterate over the keys and values for the data for that index
 		for key, value := range ft.data[i] {
 			if v, ok := value.(string); ok {
 				switch {
