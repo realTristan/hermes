@@ -19,7 +19,9 @@ func main() {
 	)
 
 	// Initialize the FT cache
-	cache.InitFT(maxWords, maxSizeBytes, schema)
+	if err := cache.InitFT(maxWords, maxSizeBytes, schema); err != nil {
+		fmt.Println(err)
+	}
 
 	// Track start time
 	var startTime time.Time = time.Now()
@@ -58,6 +60,20 @@ func main() {
 
 	// Search for a word in the cache
 	var result = cache.FT.SearchOne("tristan", 100, false)
+
+	/* Reset the FT cache
+	if err := cache.ResetFT(maxWords, maxSizeBytes, schema); err != nil {
+		fmt.Println(err)
+	}*/
+
+	// Delete the user_id key
+	cache.Delete("user_id")
+
+	// Search for a word in the cache
+	result = cache.FT.SearchOne("tristan", 100, false)
+
+	// Print the result
+	fmt.Println(result)
 
 	// Print result
 	fmt.Printf("Found %d results in %s\n", len(result), time.Since(startTime))

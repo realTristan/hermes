@@ -1,6 +1,8 @@
-package hermes
+package cache
 
-import "strings"
+import (
+	"strings"
+)
 
 // SearchWithSpaces function with Mutex Locking
 func (ft *FullText) SearchWithSpaces(query string, limit int, strict bool, schema map[string]bool) []map[string]interface{} {
@@ -30,9 +32,9 @@ func (ft *FullText) searchWithSpaces(query string, limit int, strict bool, schem
 	}
 
 	// Loop through the indices
-	var indices []int = ft.cache[words[0]]
-	for i := 0; i < len(indices); i++ {
-		for key, value := range ft.data[indices[i]] {
+	var keys []string = ft.cache[words[0]]
+	for i := 0; i < len(keys); i++ {
+		for key, value := range ft.data[keys[i]] {
 			if v, ok := value.(string); ok {
 				switch {
 				// Check if the key is in the schema
@@ -40,7 +42,7 @@ func (ft *FullText) searchWithSpaces(query string, limit int, strict bool, schem
 					continue
 				// Check if the value contains the query
 				case containsIgnoreCase(v, query):
-					result = append(result, ft.data[indices[i]])
+					result = append(result, ft.data[keys[i]])
 				}
 			}
 		}
@@ -63,11 +65,12 @@ func (ft *FullText) searchInDataWithKey(query string, key string, limit int) []m
 	var result []map[string]interface{} = []map[string]interface{}{}
 
 	// Iterate over the query result
-	for i := 0; i < len(ft.data); i++ {
-		var value interface{} = ft.data[i][key]
-		if v, ok := value.(string); ok {
-			if containsIgnoreCase(v, query) {
-				result = append(result, ft.data[i])
+	for _, item := range ft.data {
+		for _, v := range item {
+			if v, ok := v.(string); ok {
+				if containsIgnoreCase(v, query) {
+					result = append(result, item)
+				}
 			}
 		}
 	}
@@ -89,15 +92,15 @@ func (ft *FullText) searchInData(query string, limit int, schema map[string]bool
 	var result []map[string]interface{} = []map[string]interface{}{}
 
 	// Iterate over the query result
-	for i := 0; i < len(ft.data); i++ {
+	for _, item := range ft.data {
 		// Iterate over the keys and values for the data for that index
-		for key, value := range ft.data[i] {
+		for key, value := range item {
 			if v, ok := value.(string); ok {
 				switch {
 				case !schema[key]:
 					continue
 				case containsIgnoreCase(v, query):
-					result = append(result, ft.data[i])
+					result = append(result, item)
 				}
 			}
 		}
@@ -123,8 +126,8 @@ func (ft *FullText) searchOne(query string, limit int, strict bool) []map[string
 
 	// Define variables
 	var (
-		result  []map[string]interface{} = []map[string]interface{}{}
-		indices []int                    = make([]int, len(ft.data))
+		result       []map[string]interface{} = []map[string]interface{}{}
+		alreadyAdded map[string]int           = map[string]int{}
 	)
 
 	// If the user wants a strict search, just return the result
@@ -136,9 +139,8 @@ func (ft *FullText) searchOne(query string, limit int, strict bool) []map[string
 		}
 
 		// Loop through the indices
-		indices = ft.cache[query]
-		for i := 0; i < len(indices); i++ {
-			result = append(result, ft.data[indices[i]])
+		for i := 0; i < len(ft.cache[query]); i++ {
+			result = append(result, ft.data[ft.cache[query][i]])
 		}
 
 		// Return the result
@@ -156,14 +158,14 @@ func (ft *FullText) searchOne(query string, limit int, strict bool) []map[string
 
 		// Loop through the cache indices
 		for j := 0; j < len(ft.cache[ft.words[i]]); j++ {
-			var index int = ft.cache[ft.words[i]][j]
-			if indices[index] == -1 {
+			var value string = ft.cache[ft.words[i]][j]
+			if alreadyAdded[value] == -1 {
 				continue
 			}
 
 			// Else, append the index to the result
-			result = append(result, ft.data[index])
-			indices[index] = -1
+			result = append(result, ft.data[value])
+			alreadyAdded[value] = -1
 		}
 	}
 

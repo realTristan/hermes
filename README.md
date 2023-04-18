@@ -20,7 +20,7 @@ go get github.com/realTristan/Hermes
 # Remarks
 For small to medium-sized datasets (like the one I used in /examples/data.json), Hermes works great. Although, as the words in the dataset increases, the full-text-search cache will take up significantly more memory. I recommended setting a cache limit and/or a cache keys limit. If you prefer not having to worry about memory, and would prefer slower full-text-searches, I recommend BetterCache. ```https://github.com/realTristan/bettercache```
 
-# Example
+# Example of /cache
 ```go
 package main
 
@@ -35,7 +35,7 @@ func main() {
 	// Important Variables
 	var (
 		cache        *Hermes.Cache   = Hermes.InitCache()
-		maxWords      int             = 10 // -1 for no limit
+		maxWords     int             = 10 // -1 for no limit
 		maxSizeBytes int             = -1 // -1 for no limit
 
 		// The keys you want to search through in the FTS
@@ -44,9 +44,11 @@ func main() {
 		}
 	)
 
-	// Initialize the FTS cache
-	cache.InitFT(maxWords, maxSizeBytes, schema)
-
+	// Initialize the FT cache
+	if err := cache.InitFT(maxWords, maxSizeBytes, schema); err != nil {
+		fmt.Println(err)
+	}
+	
 	// The data for the user_id key
 	var data = map[string]interface{}{
 		"name":       "tristan",

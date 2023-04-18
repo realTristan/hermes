@@ -1,4 +1,4 @@
-package hermes
+package cache
 
 import "sync"
 
@@ -42,7 +42,7 @@ func (c *Cache) set(key string, value map[string]interface{}) error {
 	c.data[key] = value
 	// Update the value in the FT cache
 	if c.FT != nil {
-		return c.FT.set(key, value)
+		return c.FT.Set(key, value)
 	}
 	return nil
 }
@@ -70,7 +70,7 @@ func (c *Cache) Delete(key string) {
 func (c *Cache) delete(key string) {
 	delete(c.data, key)
 	if c.FT != nil {
-		c.FT.delete(key)
+		c.FT.Delete(key)
 	}
 }
 

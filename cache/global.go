@@ -1,6 +1,8 @@
-package hermes
+package cache
 
 import (
+	"encoding/json"
+	"os"
 	"regexp"
 	"strings"
 )
@@ -16,16 +18,6 @@ func removeDoubleSpaces(s string) string {
 		s = strings.Replace(s, "  ", " ", -1)
 	}
 	return s
-}
-
-// Check if an int is in an array
-func containsInt(array []int, value int) bool {
-	for i := 0; i < len(array); i++ {
-		if array[i] == value {
-			return true
-		}
-	}
-	return false
 }
 
 // Check if a string contains a substring
@@ -58,4 +50,29 @@ func containsIgnoreCase(s1 string, s2 string) bool {
 // Remove non alphanumeric characters from a string
 func removeNonAlphaNum(s string) string {
 	return regexp.MustCompile(`[^a-zA-Z0-9]+`).ReplaceAllString(s, "")
+}
+
+// Read a json file
+func readJson(file string) (map[string]map[string]interface{}, error) {
+	var v map[string]map[string]interface{} = map[string]map[string]interface{}{}
+
+	// Read the json data
+	if data, err := os.ReadFile(file); err != nil {
+		return nil, err
+	} else {
+		if err := json.Unmarshal(data, &v); err != nil {
+			return nil, err
+		}
+	}
+	return v, nil
+}
+
+// Check if an array already contains a string
+func containsString(array []string, value string) bool {
+	for i := 0; i < len(array); i++ {
+		if array[i] == value {
+			return true
+		}
+	}
+	return false
 }
