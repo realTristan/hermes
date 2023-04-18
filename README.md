@@ -45,7 +45,9 @@ func main() {
 
 		// The keys you want to search through in the FTS
 		schema       map[string]bool = map[string]bool{
-			"name": true,
+			"name":       true,
+			"age":        false,
+			"expiration": false,
 		}
 	)
 

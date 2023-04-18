@@ -14,7 +14,9 @@ func main() {
 		maxWords     int             = 10 // -1 for no limit
 		maxSizeBytes int             = -1 // -1 for no limit
 		schema       map[string]bool = map[string]bool{
-			"name": true,
+			"name":       true,
+			"age":        false,
+			"expiration": false,
 		}
 	)
 
