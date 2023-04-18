@@ -266,6 +266,15 @@ func (ft *FullText) delete(key string) {
 			// If the ft.cache slice is empty, remove the word from the ft.cache
 			if len(ft.cache[word]) == 0 {
 				delete(ft.cache, word)
+
+				// Remove the word from the ft.words
+				for i, _word := range ft.words {
+					if word != _word {
+						continue
+					}
+					ft.words = append(ft.words[:i], ft.words[i+1:]...)
+					break
+				}
 			}
 		}
 	}
