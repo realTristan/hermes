@@ -12,7 +12,7 @@ Dataset Array Entries: 4,115
 
 Dataset Total Words: 208,092
 
-Dataset Map Size: ≈2.3MB
+Dataset Map Size: ≈ 2.3MB
 
 ?q=computer&limit=100&strict=false: 52.5µs
 
@@ -26,7 +26,7 @@ Dataset Map Entries: 4,115
 
 Dataset Total Words: 208,092
 
-Dataset Map Size: ≈2.3MB
+Dataset Map Size: ≈ 2.3MB
 
 ?q=computer&limit=100&strict=false: 563.7µs
 
