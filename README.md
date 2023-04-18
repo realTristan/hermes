@@ -7,6 +7,7 @@ go get github.com/realTristan/Hermes
 ```
 
 ## Benchmarks /
+If you want to use only the full-text-search features, then just import hermes and load it using a .json file. (as shown in /example)
 ```
 Dataset Array Entries: 4,115
 
@@ -21,6 +22,11 @@ Dataset Map Size: ≈ 2.3MB
 
 
 ## Benchmarks /cache
+The full-text-search from /cache is significantly slower than the base FTS. Why? Because the FTS in /cache requires more memory, keys, and utilizes a map, instead of a slice to store data.
+
+
+If you want to use a cache along with the full text-search algorithm, then import the files from /cache. To setup a cache, check out /cache/example or /cache/testing. 
+
 ```
 Dataset Map Entries: 4,115
 
@@ -34,10 +40,7 @@ Dataset Map Size: ≈ 2.3MB
 ```
 
 # Remarks
-1. The full-text-search from /cache is significantly slower than the base FTS. Why? Because the FTS in /cache requires more memory, keys, and utilizes a map, instead of a slice to store data.
-2. If you want to use a cache along with the full text-search algorithm, then import the files from /cache. To setup a cache, check out /cache/example or /cache/testing. 
-3. If you want to use only the full-text-search features, then just import hermes and load it using a .json file. (as shown in /example)
-4. For small to medium-sized datasets (like the ones I used in /data), Hermes works great. Although, as the words in the dataset increases, the full-text-search cache will take up significantly more memory. I recommended setting a cache limit and/or a cache keys limit.
+For small to medium-sized datasets (like the ones I used in /data), Hermes works great. Although, as the words in the dataset increases, the full-text-search cache will take up significantly more memory. I recommended setting a cache limit and/or a cache keys limit.
 
 # Example of Cache Full-Text-Search (/cache)
 ```go
