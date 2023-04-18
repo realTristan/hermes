@@ -1,7 +1,6 @@
 package hermes
 
 import (
-	"fmt"
 	"strings"
 	"sync"
 )
@@ -24,7 +23,9 @@ func InitMap(data []map[string]string, schema map[string]bool) (*FullText, error
 	}
 
 	// Load the cache data
-	ft.loadCacheData(data, schema)
+	if err := ft.loadCacheData(data, schema); err != nil {
+		return nil, err
+	}
 
 	// Return the cache
 	return ft, nil
@@ -41,14 +42,15 @@ func InitJson(file string, schema map[string]bool) (*FullText, error) {
 
 	// Read the json data
 	if data, err := readJson(file); err != nil {
-		fmt.Println(err)
 		return nil, err
 	} else {
 		ft.data = data
 	}
 
 	// Load the cache data
-	ft.loadCacheData(ft.data, schema)
+	if err := ft.loadCacheData(ft.data, schema); err != nil {
+		return nil, err
+	}
 
 	// Return the cache
 	return ft, nil
