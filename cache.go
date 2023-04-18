@@ -4,7 +4,7 @@ import "sync"
 
 // Cache struct
 type Cache struct {
-	data  map[string]map[string]string
+	data  map[string]map[string]interface{}
 	mutex *sync.RWMutex
 	fts   *FTS
 }
@@ -12,7 +12,7 @@ type Cache struct {
 // Initialize the cache
 func InitCache() *Cache {
 	return &Cache{
-		data:  map[string]map[string]string{},
+		data:  map[string]map[string]interface{}{},
 		mutex: &sync.RWMutex{},
 		fts:   nil,
 	}
@@ -28,9 +28,9 @@ func (c *Cache) InitFTS(maxKeys int, maxSizeBytes int, schema map[string]bool) e
 // Initialize the FTS cache
 func (c *Cache) initFTS(maxKeys int, maxSizeBytes int, schema map[string]bool) error {
 	// Convert the cache data into an array of maps
-	var data []map[string]string = []map[string]string{}
-	for _, key := range c.keys() {
-		data = append(data, c.get(key))
+	var data []map[string]interface{} = []map[string]interface{}{}
+	for _, v := range c.data {
+		data = append(data, v)
 	}
 	c.fts = &FTS{
 		mutex:        &sync.RWMutex{},
@@ -52,21 +52,20 @@ func (c *Cache) Clean() {
 
 // Clean the cache
 func (c *Cache) clean() {
-	c.data = map[string]map[string]string{}
+	c.data = map[string]map[string]interface{}{}
 }
 
 // Set a value in the cache with Mutex Locking
-func (c *Cache) Set(key string, value map[string]string) error {
+func (c *Cache) Set(key string, value map[string]interface{}) error {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
 	return c.set(key, value)
 }
 
 // Set a value in the cache
-func (c *Cache) set(key string, value map[string]string) error {
+func (c *Cache) set(key string, value map[string]interface{}) error {
 	c.data[key] = value
-
-	// update the value in the FTS cache
+	// Update the value in the FTS cache
 	if c.fts != nil {
 		return c.fts.set(key, value)
 	}
@@ -74,14 +73,14 @@ func (c *Cache) set(key string, value map[string]string) error {
 }
 
 // Get a value from the cache with Mutex Locking
-func (c *Cache) Get(key string) map[string]string {
+func (c *Cache) Get(key string) map[string]interface{} {
 	c.mutex.RLock()
 	defer c.mutex.RUnlock()
 	return c.get(key)
 }
 
 // Get a value from the cache
-func (c *Cache) get(key string) map[string]string {
+func (c *Cache) get(key string) map[string]interface{} {
 	return c.data[key]
 }
 
@@ -127,15 +126,15 @@ func (c *Cache) keys() []string {
 }
 
 // Get all the values in the cache with Mutex Locking
-func (c *Cache) Values() []map[string]string {
+func (c *Cache) Values() []map[string]interface{} {
 	c.mutex.RLock()
 	defer c.mutex.RUnlock()
 	return c.values()
 }
 
 // Get all the values in the cache
-func (c *Cache) values() []map[string]string {
-	var values []map[string]string = []map[string]string{}
+func (c *Cache) values() []map[string]interface{} {
+	var values []map[string]interface{} = []map[string]interface{}{}
 	for _, value := range c.data {
 		values = append(values, value)
 	}
@@ -155,14 +154,14 @@ func (c *Cache) length() int {
 }
 
 // Search the cache with Mutex Locking
-func (c *Cache) Search(query string, limit int, strict bool) ([]map[string]string, []int) {
+func (c *Cache) Search(query string, limit int, strict bool) ([]map[string]interface{}, []int) {
 	c.mutex.RLock()
 	defer c.mutex.RUnlock()
 	return c.fts.Search(query, limit, strict)
 }
 
 // Search the cache with spaces with Mutex Locking
-func (c *Cache) SearchWithSpaces(query string, limit int, strict bool, schema map[string]bool) ([]map[string]string, []int) {
+func (c *Cache) SearchWithSpaces(query string, limit int, strict bool, schema map[string]bool) ([]map[string]interface{}, []int) {
 	c.mutex.RLock()
 	defer c.mutex.RUnlock()
 	return c.fts.SearchWithSpaces(query, limit, strict, schema)

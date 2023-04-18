@@ -24,8 +24,15 @@ func main() {
 	// Track start time
 	var startTime time.Time = time.Now()
 
-	// Set values in the cache
-	if err := cache.Set("user_id", map[string]string{"name": "tristan"}); err != nil {
+	// The data for the user_id key
+	var data = map[string]interface{}{
+		"name":       "tristan",
+		"age":        17,
+		"expiration": time.Now(),
+	}
+
+	// Set the value in the cache
+	if err := cache.Set("user_id", data); err != nil {
 		fmt.Println(err)
 	}
 
@@ -38,8 +45,13 @@ func main() {
 	// Get the user_id value
 	var user = cache.Get("user_id")
 
+	// Check if the user is expired
+	if user["expiration"].(time.Time).Before(time.Now()) {
+		fmt.Println("Expired")
+	}
+
 	// Print duration
-	fmt.Printf("Found %v in %s\n", user, time.Since(startTime))
+	fmt.Printf("Got %v in %s\n", user, time.Since(startTime))
 
 	// Track start time
 	startTime = time.Now()

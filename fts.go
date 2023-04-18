@@ -14,7 +14,7 @@ type FTS struct {
 	mutex        *sync.RWMutex
 	cache        map[string][]int
 	keys         []string
-	json         []map[string]string
+	json         []map[string]interface{}
 	maxKeys      int
 	maxSizeBytes int
 }
@@ -25,7 +25,7 @@ func InitJson(file string, maxKeys int, maxSizeBytes int, schema map[string]bool
 		mutex:        &sync.RWMutex{},
 		cache:        map[string][]int{},
 		keys:         []string{},
-		json:         []map[string]string{},
+		json:         []map[string]interface{}{},
 		maxKeys:      maxKeys,
 		maxSizeBytes: maxSizeBytes,
 	}
@@ -41,42 +41,44 @@ func InitJson(file string, maxKeys int, maxSizeBytes int, schema map[string]bool
 }
 
 // Set a value in the cache with Mutex Locking
-func (fts *FTS) Set(key string, value map[string]string) error {
+func (fts *FTS) Set(key string, value map[string]interface{}) error {
 	fts.mutex.Lock()
 	defer fts.mutex.Unlock()
 	return fts.set(key, value)
 }
 
 // Set a value in the cache
-func (fts *FTS) set(key string, value map[string]string) error {
+func (fts *FTS) set(key string, value map[string]interface{}) error {
 	fts.json = append(fts.json, value)
 	// Loop through the value
-	for _, v := range value {
-		// Loop through the words
-		for _, word := range strings.Split(v, " ") {
-			if fts.maxKeys != -1 {
-				if len(fts.keys) > fts.maxKeys {
-					return fmt.Errorf("fts cache key limit reached (%d/%d keys)", len(fts.keys), fts.maxKeys)
+	for _, _v := range value {
+		if v, ok := _v.(string); ok {
+			// Loop through the words
+			for _, word := range strings.Split(v, " ") {
+				if fts.maxKeys != -1 {
+					if len(fts.keys) > fts.maxKeys {
+						return fmt.Errorf("fts cache key limit reached (%d/%d keys)", len(fts.keys), fts.maxKeys)
+					}
 				}
-			}
-			if fts.maxSizeBytes != -1 {
-				var cacheSize int = int(unsafe.Sizeof(fts.cache))
-				if cacheSize > fts.maxSizeBytes {
-					return fmt.Errorf("fts cache size limit reached (%d/%d bytes)", cacheSize, fts.maxSizeBytes)
+				if fts.maxSizeBytes != -1 {
+					var cacheSize int = int(unsafe.Sizeof(fts.cache))
+					if cacheSize > fts.maxSizeBytes {
+						return fmt.Errorf("fts cache size limit reached (%d/%d bytes)", cacheSize, fts.maxSizeBytes)
+					}
 				}
+				switch {
+				case len(word) <= 1:
+					continue
+				case !isAlphaNum(word):
+					word = removeNonAlphaNum(word)
+				}
+				if _, ok := fts.cache[word]; !ok {
+					fts.cache[word] = []int{len(fts.json) - 1}
+					fts.keys = append(fts.keys, word)
+					continue
+				}
+				fts.cache[word] = append(fts.cache[word], len(fts.json)-1)
 			}
-			switch {
-			case len(word) <= 1:
-				continue
-			case !isAlphaNum(word):
-				word = removeNonAlphaNum(word)
-			}
-			if _, ok := fts.cache[word]; !ok {
-				fts.cache[word] = []int{len(fts.json) - 1}
-				fts.keys = append(fts.keys, word)
-				continue
-			}
-			fts.cache[word] = append(fts.cache[word], len(fts.json)-1)
 		}
 	}
 	return nil
@@ -114,7 +116,7 @@ func (fts *FTS) Clean() {
 func (fts *FTS) clean() {
 	fts.cache = map[string][]int{}
 	fts.keys = []string{}
-	fts.json = []map[string]string{}
+	fts.json = []map[string]interface{}{}
 }
 
 // Reset the FTS cache with Mutex Locking
@@ -141,48 +143,52 @@ func (fts *FTS) loadJson(file string) {
 }
 
 // Load the FTS cache
-func (fts *FTS) loadCacheJson(json []map[string]string, schema map[string]bool) error {
+func (fts *FTS) loadCacheJson(json []map[string]interface{}, schema map[string]bool) error {
 	// Loop through the json data
 	for i, item := range json {
 		// Loop through the map
 		for key, value := range item {
+			// Check if the key is in the schema
 			if !schema[key] {
 				continue
 			}
 
-			// Clean the value
-			value = strings.TrimSpace(value)
-			value = removeDoubleSpaces(value)
-			value = strings.ToLower(value)
+			// Check if the value is a string
+			if v, ok := value.(string); ok {
+				// Clean the value
+				v = strings.TrimSpace(v)
+				v = removeDoubleSpaces(v)
+				v = strings.ToLower(v)
 
-			// Loop through the words
-			for _, word := range strings.Split(value, " ") {
-				if fts.maxKeys != -1 {
-					if len(fts.keys) > fts.maxKeys {
-						return fmt.Errorf("fts cache key limit reached (%d/%d keys)", len(fts.keys), fts.maxKeys)
+				// Loop through the words
+				for _, word := range strings.Split(v, " ") {
+					if fts.maxKeys != -1 {
+						if len(fts.keys) > fts.maxKeys {
+							return fmt.Errorf("fts cache key limit reached (%d/%d keys)", len(fts.keys), fts.maxKeys)
+						}
 					}
-				}
-				if fts.maxSizeBytes != -1 {
-					var cacheSize int = int(unsafe.Sizeof(fts.cache))
-					if cacheSize > fts.maxSizeBytes {
-						return fmt.Errorf("fts cache size limit reached (%d/%d bytes)", cacheSize, fts.maxSizeBytes)
+					if fts.maxSizeBytes != -1 {
+						var cacheSize int = int(unsafe.Sizeof(fts.cache))
+						if cacheSize > fts.maxSizeBytes {
+							return fmt.Errorf("fts cache size limit reached (%d/%d bytes)", cacheSize, fts.maxSizeBytes)
+						}
 					}
+					switch {
+					case len(word) <= 1:
+						continue
+					case !isAlphaNum(word):
+						word = removeNonAlphaNum(word)
+					}
+					if _, ok := fts.cache[word]; !ok {
+						fts.cache[word] = []int{i}
+						fts.keys = append(fts.keys, word)
+						continue
+					}
+					if containsInt(fts.cache[word], i) {
+						continue
+					}
+					fts.cache[word] = append(fts.cache[word], i)
 				}
-				switch {
-				case len(word) <= 1:
-					continue
-				case !isAlphaNum(word):
-					word = removeNonAlphaNum(word)
-				}
-				if _, ok := fts.cache[word]; !ok {
-					fts.cache[word] = []int{i}
-					fts.keys = append(fts.keys, word)
-					continue
-				}
-				if containsInt(fts.cache[word], i) {
-					continue
-				}
-				fts.cache[word] = append(fts.cache[word], i)
 			}
 		}
 	}
