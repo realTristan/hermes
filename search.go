@@ -5,14 +5,14 @@ import (
 )
 
 // SearchWithSpaces function with Mutex Locking
-func (fts *FTS) SearchWithSpaces(query string, limit int, strict bool, keySettings map[string]bool) ([]map[string]string, []int) {
+func (fts *FTS) SearchWithSpaces(query string, limit int, strict bool, schema map[string]bool) ([]map[string]string, []int) {
 	fts.mutex.RLock()
 	defer fts.mutex.RUnlock()
-	return fts.searchWithSpaces(query, limit, strict, keySettings)
+	return fts.searchWithSpaces(query, limit, strict, schema)
 }
 
 // Search for multiple words
-func (fts *FTS) searchWithSpaces(query string, limit int, strict bool, keySettings map[string]bool) ([]map[string]string, []int) {
+func (fts *FTS) searchWithSpaces(query string, limit int, strict bool, schema map[string]bool) ([]map[string]string, []int) {
 	// Split the query into words
 	var words []string = strings.Split(strings.TrimSpace(query), " ")
 
@@ -37,7 +37,7 @@ func (fts *FTS) searchWithSpaces(query string, limit int, strict bool, keySettin
 			// Iterate over the keys and values for the json data for that index
 			for key, value := range queryResult[j] {
 				switch {
-				case !keySettings[key]:
+				case !schema[key]:
 					continue
 				case strings.Contains(value, query):
 					result = append(result, queryResult[j])
@@ -74,14 +74,14 @@ func (fts *FTS) searchInJsonWithKey(query string, key string, limit int) []map[s
 }
 
 // SearchInJson function with Mutex Locking
-func (fts *FTS) SearchInJson(query string, limit int, keySettings map[string]bool) []map[string]string {
+func (fts *FTS) SearchInJson(query string, limit int, schema map[string]bool) []map[string]string {
 	fts.mutex.RLock()
 	defer fts.mutex.RUnlock()
-	return fts.searchInJson(query, limit, keySettings)
+	return fts.searchInJson(query, limit, schema)
 }
 
 // searchInJson function
-func (fts *FTS) searchInJson(query string, limit int, keySettings map[string]bool) []map[string]string {
+func (fts *FTS) searchInJson(query string, limit int, schema map[string]bool) []map[string]string {
 	// Define variables
 	var result []map[string]string = []map[string]string{}
 
@@ -90,7 +90,7 @@ func (fts *FTS) searchInJson(query string, limit int, keySettings map[string]boo
 		// Iterate over the keys and values for the json data for that index
 		for key, value := range fts.json[i] {
 			switch {
-			case !keySettings[key]:
+			case !schema[key]:
 				continue
 			case containsIgnoreCase(value, query):
 				result = append(result, fts.json[i])

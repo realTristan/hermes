@@ -19,14 +19,14 @@ func InitCache() *Cache {
 }
 
 // Initialize the FTS cache with Mutex Locking
-func (c *Cache) InitFTS(maxKeys int, maxSizeBytes int, keySettings map[string]bool) error {
+func (c *Cache) InitFTS(maxKeys int, maxSizeBytes int, schema map[string]bool) error {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
-	return c.initFTS(maxKeys, maxSizeBytes, keySettings)
+	return c.initFTS(maxKeys, maxSizeBytes, schema)
 }
 
 // Initialize the FTS cache
-func (c *Cache) initFTS(maxKeys int, maxSizeBytes int, keySettings map[string]bool) error {
+func (c *Cache) initFTS(maxKeys int, maxSizeBytes int, schema map[string]bool) error {
 	// Convert the cache data into an array of maps
 	var data []map[string]string = []map[string]string{}
 	for _, key := range c.keys() {
@@ -40,7 +40,7 @@ func (c *Cache) initFTS(maxKeys int, maxSizeBytes int, keySettings map[string]bo
 		maxKeys:      maxKeys,
 		maxSizeBytes: maxSizeBytes,
 	}
-	return c.fts.loadCacheJson(data, keySettings)
+	return c.fts.loadCacheJson(data, schema)
 }
 
 // Clean the cache with Mutex Locking
@@ -162,8 +162,8 @@ func (c *Cache) Search(query string, limit int, strict bool) ([]map[string]strin
 }
 
 // Search the cache with spaces with Mutex Locking
-func (c *Cache) SearchWithSpaces(query string, limit int, strict bool, keySettings map[string]bool) ([]map[string]string, []int) {
+func (c *Cache) SearchWithSpaces(query string, limit int, strict bool, schema map[string]bool) ([]map[string]string, []int) {
 	c.mutex.RLock()
 	defer c.mutex.RUnlock()
-	return c.fts.SearchWithSpaces(query, limit, strict, keySettings)
+	return c.fts.SearchWithSpaces(query, limit, strict, schema)
 }

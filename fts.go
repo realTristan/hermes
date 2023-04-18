@@ -20,7 +20,7 @@ type FTS struct {
 }
 
 // InitCache function
-func InitJson(file string, maxKeys int, maxSizeBytes int, keySettings map[string]bool) (*FTS, error) {
+func InitJson(file string, maxKeys int, maxSizeBytes int, schema map[string]bool) (*FTS, error) {
 	var fts *FTS = &FTS{
 		mutex:        &sync.RWMutex{},
 		cache:        map[string][]int{},
@@ -32,7 +32,7 @@ func InitJson(file string, maxKeys int, maxSizeBytes int, keySettings map[string
 
 	// Load the json cache
 	fts.loadJson(file)
-	if err := fts.loadCacheJson(fts.json, keySettings); err != nil {
+	if err := fts.loadCacheJson(fts.json, schema); err != nil {
 		return nil, err
 	}
 
@@ -118,15 +118,15 @@ func (fts *FTS) clean() {
 }
 
 // Reset the FTS cache with Mutex Locking
-func (fts *FTS) Reset(file string, keySettings map[string]bool) error {
+func (fts *FTS) Reset(file string, schema map[string]bool) error {
 	fts.mutex.Lock()
 	defer fts.mutex.Unlock()
-	return fts.reset(file, keySettings)
+	return fts.reset(file, schema)
 }
 
 // Reset the FTS cache
-func (fts *FTS) reset(file string, keySettings map[string]bool) error {
-	var newFts, err = InitJson(file, fts.maxKeys, fts.maxSizeBytes, keySettings)
+func (fts *FTS) reset(file string, schema map[string]bool) error {
+	var newFts, err = InitJson(file, fts.maxKeys, fts.maxSizeBytes, schema)
 	if err != nil {
 		return err
 	}
@@ -141,12 +141,12 @@ func (fts *FTS) loadJson(file string) {
 }
 
 // Load the FTS cache
-func (fts *FTS) loadCacheJson(json []map[string]string, keySettings map[string]bool) error {
+func (fts *FTS) loadCacheJson(json []map[string]string, schema map[string]bool) error {
 	// Loop through the json data
 	for i, item := range json {
 		// Loop through the map
 		for key, value := range item {
-			if !keySettings[key] {
+			if !schema[key] {
 				continue
 			}
 

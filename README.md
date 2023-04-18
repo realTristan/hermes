@@ -37,13 +37,13 @@ func main() {
 		cache        *Hermes.Cache   = Hermes.InitCache()
 		maxKeys      int             = 10 // -1 for no limit
 		maxSizeBytes int             = -1 // -1 for no limit
-		keySettings  map[string]bool = map[string]bool{
+		schema  map[string]bool = map[string]bool{
 			"name": true,
 		}
 	)
 
 	// Initialize the FTS cache
-	cache.InitFTS(maxKeys, maxSizeBytes, keySettings)
+	cache.InitFTS(maxKeys, maxSizeBytes, schema)
 
 	// Set values in the cache
 	var data = map[string]string{"name": "tristan"}
