@@ -194,6 +194,12 @@ func (ft *FullText) Set(key string, value map[string]interface{}) error {
 
 // Set a value in the cache
 func (ft *FullText) set(key string, value map[string]interface{}) error {
+	// If the key already exists, return an error
+	if _, ok := ft.data[key]; ok {
+		return fmt.Errorf("full text cache key already exists (%s)", key)
+	}
+
+	// Add the value to the cache
 	ft.data[key] = value
 
 	// Loop through the value
@@ -244,17 +250,22 @@ func (ft *FullText) Delete(word string) {
 
 // Delete a word from the cache
 func (ft *FullText) delete(key string) {
-	// Remove the value from the data
+	// Remove the key from the ft.data
 	delete(ft.data, key)
 
 	// Remove the key from the ft.cache
 	for word, keys := range ft.cache {
 		for i, _key := range keys {
-			if key == _key {
-				ft.cache[word] = append(ft.cache[word][:i], ft.cache[word][i+1:]...)
-				if len(ft.cache[word]) == 0 {
-					delete(ft.cache, word)
-				}
+			if key != _key {
+				continue
+			}
+
+			// Remove the key from the ft.cache slice
+			ft.cache[word] = append(ft.cache[word][:i], ft.cache[word][i+1:]...)
+
+			// If the ft.cache slice is empty, remove the word from the ft.cache
+			if len(ft.cache[word]) == 0 {
+				delete(ft.cache, word)
 			}
 		}
 	}

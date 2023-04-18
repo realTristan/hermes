@@ -39,11 +39,17 @@ func (c *Cache) Set(key string, value map[string]interface{}) error {
 
 // Set a value in the cache
 func (c *Cache) set(key string, value map[string]interface{}) error {
-	c.data[key] = value
 	// Update the value in the FT cache
-	if c.FT != nil {
-		return c.FT.Set(key, value)
+	if c.FT != nil && c.FT.isInitialized {
+		if err := c.FT.Set(key, value); err != nil {
+			return err
+		}
 	}
+
+	// Update the value in the cache
+	c.data[key] = value
+
+	// Return nil for no error
 	return nil
 }
 
@@ -68,10 +74,13 @@ func (c *Cache) Delete(key string) {
 
 // Delete a key from the cache
 func (c *Cache) delete(key string) {
-	delete(c.data, key)
-	if c.FT != nil {
+	// Delete the key from the FT cache
+	if c.FT != nil && c.FT.isInitialized {
 		c.FT.Delete(key)
 	}
+
+	// Delete the key from the cache
+	delete(c.data, key)
 }
 
 // Check if a key exists in the cache with Mutex Locking
