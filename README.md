@@ -6,7 +6,7 @@
 go get github.com/realTristan/Hermes
 ```
 
-## Benchmarks
+## Benchmarks /
 ```
 Dataset Array Entries: 4,115
 
@@ -17,6 +17,20 @@ Dataset Map Size: ≈2.3MB
 ?q=computer&limit=100&strict=false: 52.5µs
 
 ?q=computer&limit=100&strict=true: 12.102µs
+```
+
+
+## Benchmarks /cache
+```
+Dataset Map Entries: 4,115
+
+Dataset Total Words: 208,092
+
+Dataset Map Size: ≈2.3MB
+
+?q=computer&limit=100&strict=false: 563.7µs
+
+?q=computer&limit=100&strict=true: 27.84µs
 ```
 
 # Remarks
