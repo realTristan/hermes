@@ -14,7 +14,23 @@ type FullText struct {
 	data  []map[string]string
 }
 
-// InitCache function
+// InitMap function
+func InitMap(data []map[string]string, schema map[string]bool) (*FullText, error) {
+	var ft *FullText = &FullText{
+		mutex: &sync.RWMutex{},
+		cache: map[string][]int{},
+		words: []string{},
+		data:  []map[string]string{},
+	}
+
+	// Load the cache data
+	ft.loadCacheData(data, schema)
+
+	// Return the cache
+	return ft, nil
+}
+
+// InitJson function
 func InitJson(file string, schema map[string]bool) (*FullText, error) {
 	var ft *FullText = &FullText{
 		mutex: &sync.RWMutex{},
