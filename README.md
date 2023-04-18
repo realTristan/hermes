@@ -39,7 +39,7 @@ Dataset Map Size: ≈ 2.3MB
 3. If you want to use only the full-text-search features, then just import hermes and load it using a .json file. (as shown in /example)
 4. For small to medium-sized datasets (like the ones I used in /data), Hermes works great. Although, as the words in the dataset increases, the full-text-search cache will take up significantly more memory. I recommended setting a cache limit and/or a cache keys limit.
 
-# Example of /cache
+# Example of Cache Full-Text-Search (/cache)
 ```go
 package main
 
@@ -100,7 +100,7 @@ func main() {
 }
 ```
 
-# Example of Json Full Text Search
+# Example of Base Full-Text-Search (/)
 ```go
 // /////////////////////////////////////////////////////////////////////////////
 //
