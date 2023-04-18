@@ -1,6 +1,8 @@
 package hermes
 
-import "strings"
+import (
+	"strings"
+)
 
 // SearchWithSpaces function with lock
 func (ft *FullText) SearchWithSpaces(query string, limit int, strict bool, schema map[string]bool) []map[string]string {
@@ -30,8 +32,8 @@ func (ft *FullText) searchWithSpaces(query string, limit int, strict bool, schem
 	}
 
 	// Loop through the indices
-	for i := 0; i < len(words); i++ {
-		for key, value := range ft.data[i] {
+	for i := 0; i < len(ft.cache[words[0]]); i++ {
+		for key, value := range ft.data[ft.cache[words[0]][i]] {
 			switch {
 			// Check if the key is in the schema
 			case !schema[key]:
