@@ -23,13 +23,13 @@ func (ft *FullText) searchWithSpaces(query string, limit int, strict bool, schem
 		return ft.searchOne(words[0], limit, strict)
 	}
 
-	// Define variables
-	var result []map[string]string = []map[string]string{}
-
 	// Check if the query is in the cache
 	if _, ok := ft.cache[words[0]]; !ok {
 		return []map[string]string{}
 	}
+
+	// Define variables
+	var result []map[string]string = []map[string]string{}
 
 	// Loop through the indices
 	for i := 0; i < len(ft.cache[words[0]]); i++ {
@@ -115,11 +115,8 @@ func (ft *FullText) searchOne(query string, limit int, strict bool) []map[string
 		return []map[string]string{}
 	}
 
-	// Define variables
-	var (
-		result  []map[string]string = []map[string]string{}
-		indices []int               = make([]int, len(ft.data))
-	)
+	// Define the result variable
+	var result []map[string]string = []map[string]string{}
 
 	// If the user wants a strict search, just return the result
 	// straight from the cache
@@ -130,7 +127,7 @@ func (ft *FullText) searchOne(query string, limit int, strict bool) []map[string
 		}
 
 		// Loop through the indices
-		indices = ft.cache[query]
+		var indices []int = ft.cache[query]
 		for i := 0; i < len(indices); i++ {
 			result = append(result, ft.data[indices[i]])
 		}
@@ -138,6 +135,9 @@ func (ft *FullText) searchOne(query string, limit int, strict bool) []map[string
 		// Return the result
 		return result
 	}
+
+	// Define variables
+	var indices []int = make([]int, len(ft.data))
 
 	// Loop through the cache keys
 	for i := 0; i < len(ft.words); i++ {
