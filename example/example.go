@@ -1,10 +1,10 @@
-// ////////////////////////////////////////////////////////////////////////////
+// /////////////////////////////////////////////////////////////////////////////
 //
 // Run Command: go run .
 //
 // Host URL: http://localhost:8000/courses?q=computer&limit=100&strict=false
 //
-// ////////////////////////////////////////////////////////////////////////////
+// /////////////////////////////////////////////////////////////////////////////
 package main
 
 import (
@@ -14,16 +14,15 @@ import (
 	"strconv"
 	"time"
 
-	Hermes "github.com/realTristan/Hermes/cache"
+	Hermes "github.com/realTristan/Hermes"
 )
 
-// Initialize the cache
-var cache *Hermes.Cache = Hermes.InitCache()
+// Global full text variable
+var ft *Hermes.FullText
 
 // Main function
 func main() {
-	// Initialize the FT cache with a json file
-	cache.InitFTJson("../../data/data_indices.json", -1, -1, map[string]bool{
+	ft, _ = Hermes.InitJson("../data/data_array.json", map[string]bool{
 		"id":             false,
 		"components":     false,
 		"units":          false,
@@ -69,7 +68,7 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 	// Search for a word in the cache
 	// Make sure the show which keys you do want to search through,
 	// and which ones you don't
-	var res = cache.FT.SearchWithSpaces(query, limit, strict, map[string]bool{
+	var res []map[string]string = ft.SearchWithSpaces(query, limit, strict, map[string]bool{
 		"id":             false,
 		"components":     false,
 		"units":          false,

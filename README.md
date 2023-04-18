@@ -7,18 +7,23 @@ go get github.com/realTristan/Hermes
 ```
 
 ## Benchmarks
-`Dataset Array Entries: 4,115`
+```
+Dataset Array Entries: 4,115
 
-`Dataset Total Words: 208,092`
+Dataset Total Words: 208,092
 
-`Dataset Map Size: ≈2.3MB`
+Dataset Map Size: ≈2.3MB
 
-`?q=computer&limit=100&strict=false: 52.5µs`
+?q=computer&limit=100&strict=false: 52.5µs
 
-`?q=computer&limit=100&strict=true: 12.102µs`
+?q=computer&limit=100&strict=true: 12.102µs
+```
 
 # Remarks
-For small to medium-sized datasets (like the one I used in /examples/data.json), Hermes works great. Although, as the words in the dataset increases, the full-text-search cache will take up significantly more memory. I recommended setting a cache limit and/or a cache keys limit. If you prefer not having to worry about memory, and would prefer slower full-text-searches, I recommend BetterCache. ```https://github.com/realTristan/bettercache```
+1. The full-text-search from /cache is significantly slower than the base FTS. Why? Because the FTS in /cache requires more memory, keys, and utilizes a map, instead of a slice to store data.
+2. If you want to use a cache along with the full text-search algorithm, then import the files from /cache. To setup a cache, check out /cache/example or /cache/testing. 
+3. If you want to use only the full-text-search features, then just import hermes and load it using a .json file. (as shown in /example)
+4. For small to medium-sized datasets (like the ones I used in /data), Hermes works great. Although, as the words in the dataset increases, the full-text-search cache will take up significantly more memory. I recommended setting a cache limit and/or a cache keys limit.
 
 # Example of /cache
 ```go
@@ -78,6 +83,97 @@ func main() {
 	// Print result
 	fmt.Printf("Found %d results in %s\n", len(result), time.Since(startTime))
 	fmt.Println(result)
+}
+```
+
+# Example of Json Full Text Search
+```go
+// /////////////////////////////////////////////////////////////////////////////
+//
+// Run Command: go run .
+//
+// Host URL: http://localhost:8000/courses?q=computer&limit=100&strict=false
+//
+// /////////////////////////////////////////////////////////////////////////////
+package main
+
+import (
+	"encoding/json"
+	"fmt"
+	"net/http"
+	"strconv"
+	"time"
+
+	Hermes "github.com/realTristan/Hermes"
+)
+
+// Global full text variable
+var ft *Hermes.FullText
+
+// Main function
+func main() {
+	ft, _ = Hermes.InitJson("../data/data_array.json", map[string]bool{
+		"id":             false,
+		"components":     false,
+		"units":          false,
+		"description":    true,
+		"name":           true,
+		"pre_requisites": true,
+		"title":          true,
+	})
+
+	// Print host
+	fmt.Println(" >> Listening on: http://localhost:8000/")
+
+	// Listen and serve on port 8000
+	http.HandleFunc("/courses", Handler)
+	http.ListenAndServe(":8000", nil)
+}
+
+// Handle the incoming http request
+func Handler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+
+	// Get the query parameter
+	var query string = "CS"
+	if _query := r.URL.Query().Get("q"); _query != "" {
+		query = _query
+	}
+
+	// Get the limit parameter
+	var limit int = 100
+	if _limit := r.URL.Query().Get("limit"); _limit != "" {
+		limit, _ = strconv.Atoi(_limit)
+	}
+
+	// Get the strict parameter
+	var strict bool = false
+	if _strict := r.URL.Query().Get("strict"); _strict != "" {
+		strict, _ = strconv.ParseBool(_strict)
+	}
+
+	// Track the start time
+	var start time.Time = time.Now()
+
+	// Search for a word in the cache
+	// Make sure the show which keys you do want to search through,
+	// and which ones you don't
+	var res []map[string]string = ft.SearchWithSpaces(query, limit, strict, map[string]bool{
+		"id":             false,
+		"components":     false,
+		"units":          false,
+		"description":    true,
+		"name":           true,
+		"pre_requisites": true,
+		"title":          true,
+	})
+
+	// Print the duration
+	fmt.Printf("\nFound %v results in %v", len(res), time.Since(start))
+
+	// Write the courses to the json response
+	var response, _ = json.Marshal(res)
+	w.Write(response)
 }
 ```
 

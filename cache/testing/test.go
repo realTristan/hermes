@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"time"
 
-	Hermes "github.com/realTristan/Hermes"
+	Hermes "github.com/realTristan/Hermes/cache"
 )
 
 func main() {
