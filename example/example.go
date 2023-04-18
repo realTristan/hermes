@@ -17,19 +17,22 @@ import (
 	Hermes "github.com/realTristan/Hermes"
 )
 
-// Initialize the cache from the hermes.go file
-var fts, _ = Hermes.InitJson("data.json", -1, -1, map[string]bool{
-	"id":             false,
-	"components":     false,
-	"units":          false,
-	"description":    true,
-	"name":           true,
-	"pre_requisites": true,
-	"title":          true,
-})
+// Initialize the cache
+var cache *Hermes.Cache = Hermes.InitCache()
 
 // Main function
 func main() {
+	// Initialize the FT cache with a json file
+	cache.InitFTJson("data.json", -1, -1, map[string]bool{
+		"id":             false,
+		"components":     false,
+		"units":          false,
+		"description":    true,
+		"name":           true,
+		"pre_requisites": true,
+		"title":          true,
+	})
+
 	// Print host
 	fmt.Println(" >> Listening on: http://localhost:8000/")
 
@@ -66,7 +69,7 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 	// Search for a word in the cache
 	// Make sure the show which keys you do want to search through,
 	// and which ones you don't
-	var res, _ = fts.SearchWithSpaces(query, limit, strict, map[string]bool{
+	var res = cache.FT.SearchWithSpaces(query, limit, strict, map[string]bool{
 		"id":             false,
 		"components":     false,
 		"units":          false,

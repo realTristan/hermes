@@ -11,15 +11,15 @@ func main() {
 	// Important Variables
 	var (
 		cache        *Hermes.Cache   = Hermes.InitCache()
-		maxKeys      int             = 10 // -1 for no limit
+		maxWords     int             = 10 // -1 for no limit
 		maxSizeBytes int             = -1 // -1 for no limit
 		schema       map[string]bool = map[string]bool{
 			"name": true,
 		}
 	)
 
-	// Initialize the FTS cache
-	cache.InitFTS(maxKeys, maxSizeBytes, schema)
+	// Initialize the FT cache
+	cache.InitFT(maxWords, maxSizeBytes, schema)
 
 	// Track start time
 	var startTime time.Time = time.Now()
@@ -57,7 +57,7 @@ func main() {
 	startTime = time.Now()
 
 	// Search for a word in the cache
-	var result, _ = cache.Search("tristan", 100, false)
+	var result = cache.FT.SearchOne("tristan", 100, false)
 
 	// Print result
 	fmt.Printf("Found %d results in %s\n", len(result), time.Since(startTime))

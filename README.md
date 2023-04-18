@@ -35,7 +35,7 @@ func main() {
 	// Important Variables
 	var (
 		cache        *Hermes.Cache   = Hermes.InitCache()
-		maxKeys      int             = 10 // -1 for no limit
+		maxWords      int             = 10 // -1 for no limit
 		maxSizeBytes int             = -1 // -1 for no limit
 
 		// The keys you want to search through in the FTS
@@ -45,7 +45,7 @@ func main() {
 	)
 
 	// Initialize the FTS cache
-	cache.InitFTS(maxKeys, maxSizeBytes, schema)
+	cache.InitFT(maxWords, maxSizeBytes, schema)
 
 	// The data for the user_id key
 	var data = map[string]interface{}{
@@ -70,7 +70,7 @@ func main() {
 	// Search for a word in the cache
 	var (
 		startTime time.Time = time.Now()
-		result, _ = cache.Search("tristan", 100, false)
+		result = cache.FT.SearchOne("tristan", 100, false)
 	)
 
 	// Print result
