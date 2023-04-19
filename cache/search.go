@@ -1,8 +1,6 @@
 package cache
 
-import (
-	"strings"
-)
+import "strings"
 
 // SearchWithSpaces function with Mutex Locking
 func (ft *FullText) SearchWithSpaces(query string, limit int, strict bool, schema map[string]bool) []map[string]interface{} {

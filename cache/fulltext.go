@@ -288,8 +288,8 @@ func (ft *FullText) delete(key string) {
 
 	// Remove the key from the ft.wordCache
 	for word, keys := range ft.wordCache {
-		for i, _key := range keys {
-			if key != _key {
+		for i := 0; i < len(keys); i++ {
+			if key != keys[i] {
 				continue
 			}
 
