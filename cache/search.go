@@ -150,7 +150,7 @@ func (ft *FullText) searchOne(query string, limit int, strict bool) []map[string
 	var alreadyAdded map[string]int = map[string]int{}
 
 	// Loop through the cache keys
-	for k := range ft.wordCache {
+	for k, v := range ft.wordCache {
 		switch {
 		case len(result) >= limit:
 			return result
@@ -159,15 +159,14 @@ func (ft *FullText) searchOne(query string, limit int, strict bool) []map[string
 		}
 
 		// Loop through the cache indices
-		for j := 0; j < len(ft.wordCache[k]); j++ {
-			var value string = ft.wordCache[k][j]
-			if _, ok := alreadyAdded[value]; ok {
+		for j := 0; j < len(v); j++ {
+			if _, ok := alreadyAdded[v[j]]; ok {
 				continue
 			}
 
 			// Else, append the index to the result
-			result = append(result, ft.data[value])
-			alreadyAdded[value] = -1
+			result = append(result, ft.data[v[j]])
+			alreadyAdded[v[j]] = -1
 		}
 	}
 
