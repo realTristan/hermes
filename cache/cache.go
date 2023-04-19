@@ -303,7 +303,7 @@ Example Usage:
 		fmt.Println("Key does not exist in cache!")
 	}
 
-In this example, we first create a new Cache instance using the NewCache() function (not shown),
+In this example, we first create a new Cache instance using the InitCache() function (not shown),
 then add three key-value pairs to the cache using the Set method. Next, we check if one of the keys
 exists in the cache using the Exists method with the key as its argument. Finally, we print a message
 indicating whether the key exists in the cache or not.
@@ -377,7 +377,7 @@ Example Usage:
 	// Print the keys in the cache
 	fmt.Println("Keys in cache:", keys)
 
-In this example, we first create a new Cache instance using the NewCache() function (not shown),
+In this example, we first create a new Cache instance using the InitCache() function (not shown),
 then add three key-value pairs to the cache using the Set method. Next, we call the Keys method
 to retrieve an array of all the keys in the cache, and store the result in a variable called keys.
 Finally, we print the keys in the cache using fmt.Println. Note that the order of the keys in the
@@ -458,7 +458,7 @@ Example Usage:
 	// Print the values in the cache
 	fmt.Println("Values in cache:", values)
 
-In this example, we first create a new Cache instance using the NewCache() function (not shown),
+In this example, we first create a new Cache instance using the InitCache() function (not shown),
 then add three key-value pairs to the cache using the Set method. Next, we call the Values method
 to retrieve an array of all the values in the cache, and store the result in a variable called values.
 Finally, we print the values in the cache using fmt.Println. Note that the order of the values in
@@ -482,7 +482,7 @@ Returns all the values stored in the cache.
 
 Example Usage:
 
-	cache := NewCache()
+	cache := InitCache()
 	cache.Set("key1", map[string]interface{}{"name": "John", "age": 30})
 	cache.Set("key2", map[string]interface{}{"name": "Jane", "age": 25})
 	cache.Set("key3", map[string]interface{}{"name": "Bob", "age": 40})
@@ -508,7 +508,7 @@ Returns the number of items stored in the cache using mutex locking to ensure th
 
 Example Usage:
 
-	cache := NewCache()
+	cache := InitCache()
 	cache.Set("key1", map[string]interface{}{"name": "John", "age": 30})
 	cache.Set("key2", map[string]interface{}{"name": "Jane", "age": 25})
 	cache.Set("key3", map[string]interface{}{"name": "Bob", "age": 40})
