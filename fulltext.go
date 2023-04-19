@@ -7,19 +7,19 @@ import (
 
 // Full Text struct
 type FullText struct {
-	mutex *sync.RWMutex
-	cache map[string][]int
-	words []string
-	data  []map[string]string
+	mutex     *sync.RWMutex
+	wordCache map[string][]int
+	words     []string
+	data      []map[string]string
 }
 
 // InitMap function
 func InitMap(data []map[string]string, schema map[string]bool) (*FullText, error) {
 	var ft *FullText = &FullText{
-		mutex: &sync.RWMutex{},
-		cache: map[string][]int{},
-		words: []string{},
-		data:  []map[string]string{},
+		mutex:     &sync.RWMutex{},
+		wordCache: map[string][]int{},
+		words:     []string{},
+		data:      []map[string]string{},
 	}
 
 	// Load the cache data
@@ -34,10 +34,10 @@ func InitMap(data []map[string]string, schema map[string]bool) (*FullText, error
 // InitJson function
 func InitJson(file string, schema map[string]bool) (*FullText, error) {
 	var ft *FullText = &FullText{
-		mutex: &sync.RWMutex{},
-		cache: map[string][]int{},
-		words: []string{},
-		data:  []map[string]string{},
+		mutex:     &sync.RWMutex{},
+		wordCache: map[string][]int{},
+		words:     []string{},
+		data:      []map[string]string{},
 	}
 
 	// Read the json data
@@ -79,15 +79,15 @@ func (ft *FullText) loadCacheData(data []map[string]string, schema map[string]bo
 				case !isAlphaNum(word):
 					word = removeNonAlphaNum(word)
 				}
-				if _, ok := ft.cache[word]; !ok {
-					ft.cache[word] = []int{i}
+				if _, ok := ft.wordCache[word]; !ok {
+					ft.wordCache[word] = []int{i}
 					ft.words = append(ft.words, word)
 					continue
 				}
-				if containsInt(ft.cache[word], i) {
+				if containsInt(ft.wordCache[word], i) {
 					continue
 				}
-				ft.cache[word] = append(ft.cache[word], i)
+				ft.wordCache[word] = append(ft.wordCache[word], i)
 			}
 		}
 	}

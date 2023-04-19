@@ -10,8 +10,7 @@ import (
 // Full Text struct
 type FullText struct {
 	mutex         *sync.RWMutex
-	cache         map[string][]string
-	words         []string
+	wordCache     map[string][]string
 	data          map[string]map[string]interface{}
 	maxWords      int
 	maxSizeBytes  int
@@ -39,8 +38,7 @@ func (c *Cache) initFTJson(file string, maxWords int, maxSizeBytes int, schema m
 	// Initialize the FT cache
 	c.FT = &FullText{
 		mutex:         &sync.RWMutex{},
-		cache:         map[string][]string{},
-		words:         []string{},
+		wordCache:     map[string][]string{},
 		data:          map[string]map[string]interface{}{},
 		maxWords:      maxWords,
 		maxSizeBytes:  maxSizeBytes,
@@ -98,8 +96,7 @@ func (c *Cache) initFT(maxWords int, maxSizeBytes int, schema map[string]bool) e
 	// Initialize the FT struct
 	c.FT = &FullText{
 		mutex:         &sync.RWMutex{},
-		cache:         map[string][]string{},
-		words:         []string{},
+		wordCache:     map[string][]string{},
 		data:          map[string]map[string]interface{}{},
 		maxWords:      maxWords,
 		maxSizeBytes:  maxSizeBytes,
@@ -189,8 +186,7 @@ func (ft *FullText) Clean() {
 
 // Clean the FullText cache
 func (ft *FullText) clean() {
-	ft.cache = map[string][]string{}
-	ft.words = []string{}
+	ft.wordCache = map[string][]string{}
 	ft.data = map[string]map[string]interface{}{}
 }
 
@@ -251,12 +247,12 @@ func (ft *FullText) set(key string, value map[string]interface{}) error {
 			// Loop through the words
 			for _, word := range strings.Split(v, " ") {
 				if ft.maxWords != -1 {
-					if len(ft.words) > ft.maxWords {
-						return fmt.Errorf("full text cache key limit reached (%d/%d keys)", len(ft.words), ft.maxWords)
+					if len(ft.wordCache) > ft.maxWords {
+						return fmt.Errorf("full text cache key limit reached (%d/%d keys)", len(ft.wordCache), ft.maxWords)
 					}
 				}
 				if ft.maxSizeBytes != -1 {
-					var cacheSize int = int(unsafe.Sizeof(ft.cache))
+					var cacheSize int = int(unsafe.Sizeof(ft.wordCache))
 					if cacheSize > ft.maxSizeBytes {
 						return fmt.Errorf("full text cache size limit reached (%d/%d bytes)", cacheSize, ft.maxSizeBytes)
 					}
@@ -267,12 +263,11 @@ func (ft *FullText) set(key string, value map[string]interface{}) error {
 				case !isAlphaNum(word):
 					word = removeNonAlphaNum(word)
 				}
-				if _, ok := ft.cache[word]; !ok {
-					ft.cache[word] = []string{key}
-					ft.words = append(ft.words, word)
+				if _, ok := ft.wordCache[word]; !ok {
+					ft.wordCache[word] = []string{key}
 					continue
 				}
-				ft.cache[word] = append(ft.cache[word], key)
+				ft.wordCache[word] = append(ft.wordCache[word], key)
 			}
 		}
 	}
@@ -291,29 +286,20 @@ func (ft *FullText) delete(key string) {
 	// Remove the key from the ft.data
 	delete(ft.data, key)
 
-	// Remove the key from the ft.cache
-	for word, keys := range ft.cache {
+	// Remove the key from the ft.wordCache
+	for word, keys := range ft.wordCache {
 		for i, _key := range keys {
 			if key != _key {
 				continue
 			}
 
-			// Remove the key from the ft.cache slice
-			ft.cache[word] = append(ft.cache[word][:i], ft.cache[word][i+1:]...)
+			// Remove the key from the ft.wordCache slice
+			ft.wordCache[word] = append(ft.wordCache[word][:i], ft.wordCache[word][i+1:]...)
 		}
 
-		// If the ft.cache slice is empty, remove the word from the ft.cache
-		if len(ft.cache[word]) == 0 {
-			delete(ft.cache, word)
-
-			// Remove the word from the ft.words
-			for i, _word := range ft.words {
-				if word != _word {
-					continue
-				}
-				ft.words = append(ft.words[:i], ft.words[i+1:]...)
-				break
-			}
+		// If the ft.wordCache[word] is empty, remove it from the cache
+		if len(ft.wordCache[word]) == 0 {
+			delete(ft.wordCache, word)
 		}
 	}
 }
@@ -339,12 +325,12 @@ func (ft *FullText) loadCacheData(data map[string]map[string]interface{}, schema
 				// Loop through the words
 				for _, word := range strings.Split(v, " ") {
 					if ft.maxWords != -1 {
-						if len(ft.words) > ft.maxWords {
-							return fmt.Errorf("full text cache key limit reached (%d/%d keys)", len(ft.words), ft.maxWords)
+						if len(ft.wordCache) > ft.maxWords {
+							return fmt.Errorf("full text cache key limit reached (%d/%d keys)", len(ft.wordCache), ft.maxWords)
 						}
 					}
 					if ft.maxSizeBytes != -1 {
-						var cacheSize int = int(unsafe.Sizeof(ft.cache))
+						var cacheSize int = int(unsafe.Sizeof(ft.wordCache))
 						if cacheSize > ft.maxSizeBytes {
 							return fmt.Errorf("full text cache size limit reached (%d/%d bytes)", cacheSize, ft.maxSizeBytes)
 						}
@@ -355,15 +341,14 @@ func (ft *FullText) loadCacheData(data map[string]map[string]interface{}, schema
 					case !isAlphaNum(word):
 						word = removeNonAlphaNum(word)
 					}
-					if _, ok := ft.cache[word]; !ok {
-						ft.cache[word] = []string{itemKey}
-						ft.words = append(ft.words, word)
+					if _, ok := ft.wordCache[word]; !ok {
+						ft.wordCache[word] = []string{itemKey}
 						continue
 					}
-					if containsString(ft.cache[word], itemKey) {
+					if containsString(ft.wordCache[word], itemKey) {
 						continue
 					}
-					ft.cache[word] = append(ft.cache[word], itemKey)
+					ft.wordCache[word] = append(ft.wordCache[word], itemKey)
 				}
 			}
 		}

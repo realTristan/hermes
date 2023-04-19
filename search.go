@@ -24,7 +24,7 @@ func (ft *FullText) searchWithSpaces(query string, limit int, strict bool, schem
 	}
 
 	// Check if the query is in the cache
-	if _, ok := ft.cache[words[0]]; !ok {
+	if _, ok := ft.wordCache[words[0]]; !ok {
 		return []map[string]string{}
 	}
 
@@ -32,8 +32,9 @@ func (ft *FullText) searchWithSpaces(query string, limit int, strict bool, schem
 	var result []map[string]string = []map[string]string{}
 
 	// Loop through the indices
-	for i := 0; i < len(ft.cache[words[0]]); i++ {
-		for key, value := range ft.data[ft.cache[words[0]][i]] {
+	var indices []int = ft.wordCache[words[0]]
+	for i := 0; i < len(indices); i++ {
+		for key, value := range ft.data[indices[i]] {
 			switch {
 			// Check if the key is in the schema
 			case !schema[key]:
@@ -122,12 +123,12 @@ func (ft *FullText) searchOne(query string, limit int, strict bool) []map[string
 	// straight from the cache
 	if strict {
 		// Check if the query is in the cache
-		if _, ok := ft.cache[query]; !ok {
+		if _, ok := ft.wordCache[query]; !ok {
 			return result
 		}
 
 		// Loop through the indices
-		var indices []int = ft.cache[query]
+		var indices []int = ft.wordCache[query]
 		for i := 0; i < len(indices); i++ {
 			result = append(result, ft.data[indices[i]])
 		}
@@ -149,8 +150,8 @@ func (ft *FullText) searchOne(query string, limit int, strict bool) []map[string
 		}
 
 		// Loop through the cache indices
-		for j := 0; j < len(ft.cache[ft.words[i]]); j++ {
-			var index int = ft.cache[ft.words[i]][j]
+		for j := 0; j < len(ft.wordCache[ft.words[i]]); j++ {
+			var index int = ft.wordCache[ft.words[i]][j]
 			if indices[index] == -1 {
 				continue
 			}
