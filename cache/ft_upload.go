@@ -1,5 +1,7 @@
 package cache
 
+import "fmt"
+
 /*
 Uploads JSON data to the FullText cache with Mutex Locking.
 
@@ -20,6 +22,9 @@ Note:
 func (c *Cache) UploadJson(file string, schema map[string]bool) error {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
+	if c.FT == nil || !c.FT.isInitialized {
+		return fmt.Errorf("full text is not initialized")
+	}
 	return c.FT.uploadJson(file, schema)
 }
 
@@ -73,6 +78,9 @@ Example Usage:
 func (c *Cache) UploadMap(data map[string]map[string]interface{}, schema map[string]bool) error {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
+	if c.FT == nil || !c.FT.isInitialized {
+		return fmt.Errorf("full text is not initialized")
+	}
 	return c.FT.uploadMap(data, schema)
 }
 

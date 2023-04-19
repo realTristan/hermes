@@ -1,5 +1,7 @@
 package cache
 
+import "errors"
+
 /*
 This function is used to delete a value from the cache with Mutex Locking. It takes a string word as
 an argument and locks the mutex to prevent concurrent access while calling the delete method.
@@ -19,10 +21,14 @@ Example usage:
 
 	ft.Delete("example") // Deletes the key "example" and its corresponding value from the cache with Mutex Locking.
 */
-func (c *Cache) DeleteFT(word string) {
+func (c *Cache) DeleteFT(word string) error {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
+	if c.FT == nil || !c.FT.isInitialized {
+		return errors.New("full text is not initialized")
+	}
 	c.deleteFT(word)
+	return nil
 }
 
 /*

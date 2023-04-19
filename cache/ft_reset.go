@@ -53,7 +53,7 @@ If the FullText cache is not already initialized, an error will be returned.
 func (c *Cache) resetFT(maxWords int, maxSizeBytes int, schema map[string]bool) error {
 	// If the FT cache is not initialized, return an error
 	if c.FT == nil {
-		return fmt.Errorf("full text cache not initialized")
+		return fmt.Errorf("full text is not initialized")
 	}
 
 	// Reset the FT cache
@@ -101,7 +101,7 @@ Returns:
 func (c *Cache) resetFTJson(file string, maxWords int, maxSizeBytes int, schema map[string]bool) error {
 	// If the FT cache is not initialized, return an error
 	if c.FT == nil {
-		return fmt.Errorf("FT cache not initialized")
+		return fmt.Errorf("full text is not initialized")
 	}
 
 	// Reset the FT cache

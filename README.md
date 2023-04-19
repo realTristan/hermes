@@ -90,7 +90,7 @@ func main() {
 	// Search for a word in the cache
 	var (
 		startTime time.Time = time.Now()
-		result = cache.FT.SearchOne("tristan", 100, false)
+		result, _ = cache.FT.SearchOne("tristan", 100, false)
 	)
 
 	// Print result

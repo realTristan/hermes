@@ -1,5 +1,7 @@
 package cache
 
+import "errors"
+
 /*
 The Clean function is a method of the FullText struct that cleans the cache of the FullText index.
 It uses Mutex Locking to ensure that the cleaning process is thread-safe and can be accessed by only one thread at a time.
@@ -10,10 +12,14 @@ Usage:
 	ft := &FullText{}
 	ft.Clean()
 */
-func (c *Cache) CleanFT() {
-	c.mutex.Lock()         // Locks the mutex to ensure thread-safety
-	defer c.mutex.Unlock() // Unlocks the mutex before returning
-	c.FT.clean()           // Calls the clean function to clean the cache
+func (c *Cache) CleanFT() error {
+	c.mutex.Lock()
+	defer c.mutex.Unlock()
+	if c.FT == nil || !c.FT.isInitialized {
+		return errors.New("full text is not initialized")
+	}
+	c.FT.clean()
+	return nil
 }
 
 /*
@@ -27,5 +33,5 @@ Usage:
 	It should not be called directly from outside the package.
 */
 func (ft *FullText) clean() {
-	ft.wordCache = map[string][]string{} // Clears the word cache by creating a new empty map
+	ft.wordCache = map[string][]string{}
 }

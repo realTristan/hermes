@@ -32,6 +32,9 @@ Example:
 func (c *Cache) SetFT(key string, value map[string]interface{}) error {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
+	if c.FT == nil || !c.FT.isInitialized {
+		return fmt.Errorf("full text is not initialized")
+	}
 	return c.setFT(key, value)
 }
 

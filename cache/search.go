@@ -1,6 +1,10 @@
 package cache
 
-import "strings"
+import (
+	"errors"
+	"fmt"
+	"strings"
+)
 
 /* SearchWithSpaces function with Mutex Locking
  *
@@ -27,11 +31,11 @@ import "strings"
  *     schema := map[string]bool{"title": true, "content": true, "date": false}
  *     result := ft.SearchWithSpaces(query, limit, strict, schema)
  */
-func (c *Cache) SearchWithSpaces(query string, limit int, strict bool, schema map[string]bool) []map[string]interface{} {
+func (c *Cache) SearchWithSpaces(query string, limit int, strict bool, schema map[string]bool) ([]map[string]interface{}, error) {
 	c.mutex.RLock()
 	defer c.mutex.RUnlock()
 	if c.FT == nil || !c.FT.isInitialized {
-		return []map[string]interface{}{}
+		return []map[string]interface{}{}, fmt.Errorf("full text is not initialized")
 	}
 	return c.searchWithSpaces(query, limit, strict, schema)
 }
@@ -48,7 +52,7 @@ Parameters:
 Returns:
   - []map[string]interface{}: An array of maps containing the search results
 */
-func (c *Cache) searchWithSpaces(query string, limit int, strict bool, schema map[string]bool) []map[string]interface{} {
+func (c *Cache) searchWithSpaces(query string, limit int, strict bool, schema map[string]bool) ([]map[string]interface{}, error) {
 	// Split the query into separate words
 	var words []string = strings.Split(strings.TrimSpace(query), " ")
 
@@ -56,7 +60,7 @@ func (c *Cache) searchWithSpaces(query string, limit int, strict bool, schema ma
 	switch {
 	// If the words array is empty
 	case len(words) == 0:
-		return []map[string]interface{}{}
+		return []map[string]interface{}{}, fmt.Errorf("invalid query: %s", query)
 	// Get the search result of the first word
 	case len(words) == 1:
 		return c.searchOne(words[0], limit, strict)
@@ -67,7 +71,7 @@ func (c *Cache) searchWithSpaces(query string, limit int, strict bool, schema ma
 
 	// Check if the query is in the cache
 	if _, ok := c.FT.wordCache[words[0]]; !ok {
-		return []map[string]interface{}{}
+		return []map[string]interface{}{}, fmt.Errorf("invalid query: %s", query)
 	}
 
 	// Loop through the indices
@@ -88,7 +92,7 @@ func (c *Cache) searchWithSpaces(query string, limit int, strict bool, schema ma
 	}
 
 	// Return the result
-	return result
+	return result, nil
 }
 
 /*
@@ -246,11 +250,11 @@ Example Usage:
 		fmt.Printf("Result: %v\n", result)
 	}
 */
-func (c *Cache) SearchOne(query string, limit int, strict bool) []map[string]interface{} {
+func (c *Cache) SearchOne(query string, limit int, strict bool) ([]map[string]interface{}, error) {
 	c.mutex.RLock()
 	defer c.mutex.RUnlock()
 	if c.FT == nil || !c.FT.isInitialized {
-		return []map[string]interface{}{}
+		return []map[string]interface{}{}, errors.New("full text is not initialized")
 	}
 	return c.searchOne(query, limit, strict)
 }
@@ -272,10 +276,10 @@ Example Usage:
 
 	This is an internal function and is not intended to be called directly by the user.
 */
-func (c *Cache) searchOne(query string, limit int, strict bool) []map[string]interface{} {
+func (c *Cache) searchOne(query string, limit int, strict bool) ([]map[string]interface{}, error) {
 	// If the query is empty
 	if len(query) == 0 {
-		return []map[string]interface{}{}
+		return []map[string]interface{}{}, fmt.Errorf("query is empty")
 	}
 
 	// Set the query to lowercase
@@ -289,7 +293,7 @@ func (c *Cache) searchOne(query string, limit int, strict bool) []map[string]int
 	if strict {
 		// Check if the query is in the cache
 		if _, ok := c.FT.wordCache[query]; !ok {
-			return result
+			return result, nil
 		}
 
 		// Loop through the indices
@@ -298,7 +302,7 @@ func (c *Cache) searchOne(query string, limit int, strict bool) []map[string]int
 		}
 
 		// Return the result
-		return result
+		return result, nil
 	}
 
 	// Define a map to store the indices that have already been added
@@ -308,7 +312,7 @@ func (c *Cache) searchOne(query string, limit int, strict bool) []map[string]int
 	for k, v := range c.FT.wordCache {
 		switch {
 		case len(result) >= limit:
-			return result
+			return result, nil
 		case !contains(k, query):
 			continue
 		}
@@ -326,5 +330,5 @@ func (c *Cache) searchOne(query string, limit int, strict bool) []map[string]int
 	}
 
 	// Return the result
-	return result
+	return result, nil
 }
