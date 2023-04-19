@@ -29,7 +29,7 @@ Usage:
 type Cache struct {
 	data  map[string]map[string]interface{} // The cache data.
 	mutex *sync.RWMutex                     // Mutex for thread-safe access to the cache.
-	FT    *FullText                         // FullText instance to store data in text format.
+	ft    *FullText                         // FullText instance to store data in text format.
 }
 
 /*
@@ -53,7 +53,7 @@ func InitCache() *Cache {
 	return &Cache{
 		data:  map[string]map[string]interface{}{},
 		mutex: &sync.RWMutex{},
-		FT:    nil,
+		ft:    nil,
 	}
 }
 
@@ -145,7 +145,7 @@ Usage:
 */
 func (c *Cache) set(key string, value map[string]interface{}) error {
 	// Update the value in the FT cache
-	if c.FT != nil && c.FT.isInitialized {
+	if c.ft != nil && c.ft.isInitialized {
 		if err := c.setFT(key, value); err != nil {
 			return err
 		}
@@ -256,7 +256,7 @@ pair from the main cache using the built-in delete function.
 */
 func (c *Cache) delete(key string) {
 	// Delete the key from the FT cache
-	if c.FT != nil && c.FT.isInitialized {
+	if c.ft != nil && c.ft.isInitialized {
 		c.deleteFT(key)
 	}
 

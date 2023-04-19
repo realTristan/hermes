@@ -24,7 +24,7 @@ Example:
 
 	cache := InitCache()
 	cache.InitFT(100, 1000000, map[string]bool{"title": true, "body": true})
-	err := cache.FT.Set("document123", map[string]interface{}{"title": "Document Title", "body": "Document Body"})
+	err := cache.ft.Set("document123", map[string]interface{}{"title": "Document Title", "body": "Document Body"})
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -32,7 +32,7 @@ Example:
 func (c *Cache) SetFT(key string, value map[string]interface{}) error {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
-	if c.FT == nil || !c.FT.isInitialized {
+	if c.ft == nil || !c.ft.isInitialized {
 		return fmt.Errorf("full text is not initialized")
 	}
 	return c.setFT(key, value)
@@ -74,7 +74,7 @@ Example usage:
 			"content": "This is some example content",
 			"title":   "Example",
 	}
-	err = cache.FT.Set("example_key", data)
+	err = cache.ft.Set("example_key", data)
 	if err != nil {
 			log.Fatalf("Error setting FullText cache: %s", err)
 	}
@@ -98,15 +98,15 @@ func (c *Cache) setFT(key string, value map[string]interface{}) error {
 
 			// Loop through the words
 			for _, word := range strings.Split(v, " ") {
-				if c.FT.maxWords != -1 {
-					if len(c.FT.wordCache) > c.FT.maxWords {
-						return fmt.Errorf("full text cache key limit reached (%d/%d keys)", len(c.FT.wordCache), c.FT.maxWords)
+				if c.ft.maxWords != -1 {
+					if len(c.ft.wordCache) > c.ft.maxWords {
+						return fmt.Errorf("full text cache key limit reached (%d/%d keys)", len(c.ft.wordCache), c.ft.maxWords)
 					}
 				}
-				if c.FT.maxSizeBytes != -1 {
-					var cacheSize int = int(unsafe.Sizeof(c.FT.wordCache))
-					if cacheSize > c.FT.maxSizeBytes {
-						return fmt.Errorf("full text cache size limit reached (%d/%d bytes)", cacheSize, c.FT.maxSizeBytes)
+				if c.ft.maxSizeBytes != -1 {
+					var cacheSize int = int(unsafe.Sizeof(c.ft.wordCache))
+					if cacheSize > c.ft.maxSizeBytes {
+						return fmt.Errorf("full text cache size limit reached (%d/%d bytes)", cacheSize, c.ft.maxSizeBytes)
 					}
 				}
 				switch {
@@ -115,11 +115,11 @@ func (c *Cache) setFT(key string, value map[string]interface{}) error {
 				case !isAlphaNum(word):
 					word = removeNonAlphaNum(word)
 				}
-				if _, ok := c.FT.wordCache[word]; !ok {
-					c.FT.wordCache[word] = []string{key}
+				if _, ok := c.ft.wordCache[word]; !ok {
+					c.ft.wordCache[word] = []string{key}
 					continue
 				}
-				c.FT.wordCache[word] = append(c.FT.wordCache[word], key)
+				c.ft.wordCache[word] = append(c.ft.wordCache[word], key)
 			}
 		}
 	}

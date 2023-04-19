@@ -22,10 +22,10 @@ Note:
 func (c *Cache) UploadJson(file string, schema map[string]bool) error {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
-	if c.FT == nil || !c.FT.isInitialized {
+	if c.ft == nil || !c.ft.isInitialized {
 		return fmt.Errorf("full text is not initialized")
 	}
-	return c.FT.uploadJson(file, schema)
+	return c.ft.uploadJson(file, schema)
 }
 
 /*
@@ -78,10 +78,10 @@ Example Usage:
 func (c *Cache) UploadMap(data map[string]map[string]interface{}, schema map[string]bool) error {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
-	if c.FT == nil || !c.FT.isInitialized {
+	if c.ft == nil || !c.ft.isInitialized {
 		return fmt.Errorf("full text is not initialized")
 	}
-	return c.FT.uploadMap(data, schema)
+	return c.ft.uploadMap(data, schema)
 }
 
 /*

@@ -24,7 +24,7 @@ Example usage:
 func (c *Cache) DeleteFT(word string) error {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
-	if c.FT == nil || !c.FT.isInitialized {
+	if c.ft == nil || !c.ft.isInitialized {
 		return errors.New("full text is not initialized")
 	}
 	c.deleteFT(word)
@@ -50,19 +50,19 @@ Example usage:
 */
 func (c *Cache) deleteFT(key string) {
 	// Remove the key from the ft.wordCache
-	for word, keys := range c.FT.wordCache {
+	for word, keys := range c.ft.wordCache {
 		for i := 0; i < len(keys); i++ {
 			if key != keys[i] {
 				continue
 			}
 
 			// Remove the key from the ft.wordCache slice
-			c.FT.wordCache[word] = append(c.FT.wordCache[word][:i], c.FT.wordCache[word][i+1:]...)
+			c.ft.wordCache[word] = append(c.ft.wordCache[word][:i], c.ft.wordCache[word][i+1:]...)
 		}
 
 		// If the ft.wordCache[word] is empty, remove it from the cache
-		if len(c.FT.wordCache[word]) == 0 {
-			delete(c.FT.wordCache, word)
+		if len(c.ft.wordCache[word]) == 0 {
+			delete(c.ft.wordCache, word)
 		}
 	}
 }

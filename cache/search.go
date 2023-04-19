@@ -34,7 +34,7 @@ import (
 func (c *Cache) SearchWithSpaces(query string, limit int, strict bool, schema map[string]bool) ([]map[string]interface{}, error) {
 	c.mutex.RLock()
 	defer c.mutex.RUnlock()
-	if c.FT == nil || !c.FT.isInitialized {
+	if c.ft == nil || !c.ft.isInitialized {
 		return []map[string]interface{}{}, fmt.Errorf("full text is not initialized")
 	}
 	return c.searchWithSpaces(query, limit, strict, schema)
@@ -70,12 +70,12 @@ func (c *Cache) searchWithSpaces(query string, limit int, strict bool, schema ma
 	var result []map[string]interface{} = []map[string]interface{}{}
 
 	// Check if the query is in the cache
-	if _, ok := c.FT.wordCache[words[0]]; !ok {
+	if _, ok := c.ft.wordCache[words[0]]; !ok {
 		return []map[string]interface{}{}, fmt.Errorf("invalid query: %s", query)
 	}
 
 	// Loop through the indices
-	var keys []string = c.FT.wordCache[words[0]]
+	var keys []string = c.ft.wordCache[words[0]]
 	for i := 0; i < len(keys); i++ {
 		for key, value := range c.data[keys[i]] {
 			if !schema[key] {
@@ -253,7 +253,7 @@ Example Usage:
 func (c *Cache) SearchOne(query string, limit int, strict bool) ([]map[string]interface{}, error) {
 	c.mutex.RLock()
 	defer c.mutex.RUnlock()
-	if c.FT == nil || !c.FT.isInitialized {
+	if c.ft == nil || !c.ft.isInitialized {
 		return []map[string]interface{}{}, errors.New("full text is not initialized")
 	}
 	return c.searchOne(query, limit, strict)
@@ -292,13 +292,13 @@ func (c *Cache) searchOne(query string, limit int, strict bool) ([]map[string]in
 	// straight from the cache
 	if strict {
 		// Check if the query is in the cache
-		if _, ok := c.FT.wordCache[query]; !ok {
+		if _, ok := c.ft.wordCache[query]; !ok {
 			return result, nil
 		}
 
 		// Loop through the indices
-		for i := 0; i < len(c.FT.wordCache[query]); i++ {
-			result = append(result, c.data[c.FT.wordCache[query][i]])
+		for i := 0; i < len(c.ft.wordCache[query]); i++ {
+			result = append(result, c.data[c.ft.wordCache[query][i]])
 		}
 
 		// Return the result
@@ -309,7 +309,7 @@ func (c *Cache) searchOne(query string, limit int, strict bool) ([]map[string]in
 	var alreadyAdded map[string]int = map[string]int{}
 
 	// Loop through the cache keys
-	for k, v := range c.FT.wordCache {
+	for k, v := range c.ft.wordCache {
 		switch {
 		case len(result) >= limit:
 			return result, nil

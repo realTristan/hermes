@@ -64,12 +64,12 @@ be used within the context of the Cache struct, which already has its own mutex 
 */
 func (c *Cache) initFTJson(file string, maxWords int, maxSizeBytes int, schema map[string]bool) error {
 	// If the FT cache is already initialized, return an error
-	if c.FT != nil && c.FT.isInitialized {
+	if c.ft != nil && c.ft.isInitialized {
 		return fmt.Errorf("full text cache already initialized")
 	}
 
 	// Initialize the FT cache
-	c.FT = &FullText{
+	c.ft = &FullText{
 		wordCache:     map[string][]string{},
 		maxWords:      maxWords,
 		maxSizeBytes:  maxSizeBytes,
@@ -94,13 +94,13 @@ func (c *Cache) initFTJson(file string, maxWords int, maxSizeBytes int, schema m
 	}
 
 	// Load the cache data
-	if err := c.FT.loadCacheData(c.data, schema); err != nil {
-		c.FT.clean()
+	if err := c.ft.loadCacheData(c.data, schema); err != nil {
+		c.ft.clean()
 		return err
 	}
 
 	// Set the FT cache as initialized
-	c.FT.isInitialized = true
+	c.ft.isInitialized = true
 
 	// Return the cache
 	return nil
@@ -145,12 +145,12 @@ data into an array of maps and loads it into the FT cache. If the FT cache is al
 */
 func (c *Cache) initFT(maxWords int, maxSizeBytes int, schema map[string]bool) error {
 	// If the FT cache is already initialized, return an error
-	if c.FT != nil && c.FT.isInitialized {
+	if c.ft != nil && c.ft.isInitialized {
 		return fmt.Errorf("full text cache already initialized")
 	}
 
 	// Initialize the FT struct
-	c.FT = &FullText{
+	c.ft = &FullText{
 		wordCache:     map[string][]string{},
 		maxWords:      maxWords,
 		maxSizeBytes:  maxSizeBytes,
@@ -158,13 +158,13 @@ func (c *Cache) initFT(maxWords int, maxSizeBytes int, schema map[string]bool) e
 	}
 
 	// Load the cache data
-	if err := c.FT.loadCacheData(c.data, schema); err != nil {
-		c.FT.clean()
+	if err := c.ft.loadCacheData(c.data, schema); err != nil {
+		c.ft.clean()
 		return err
 	}
 
 	// Set the FT cache as initialized
-	c.FT.isInitialized = true
+	c.ft.isInitialized = true
 
 	// Return the cache
 	return nil

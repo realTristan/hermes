@@ -15,10 +15,10 @@ Usage:
 func (c *Cache) CleanFT() error {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
-	if c.FT == nil || !c.FT.isInitialized {
+	if c.ft == nil || !c.ft.isInitialized {
 		return errors.New("full text is not initialized")
 	}
-	c.FT.clean()
+	c.ft.clean()
 	return nil
 }
 
