@@ -31,9 +31,9 @@ Dataset Total Words: 208,092
 
 Dataset Map Size: ≈ 2.3MB
 
-?q=computer&limit=100&strict=false: 563.7µs
+?q=computer&limit=100&strict=false: 363.7µs
 
-?q=computer&limit=100&strict=true: 27.84µs
+?q=computer&limit=100&strict=true: 80.84µs
 ```
 
 # Example of Cache Full-Text-Search (/cache)
