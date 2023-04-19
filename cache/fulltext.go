@@ -120,7 +120,6 @@ func (c *Cache) resetFT(maxWords int, maxSizeBytes int, schema map[string]bool) 
 	}
 
 	// Reset the FT cache
-	c.FT.clean()
 	c.FT.isInitialized = false
 	return c.initFT(maxWords, maxSizeBytes, schema)
 }
@@ -149,7 +148,6 @@ func (c *Cache) resetFTJson(file string, maxWords int, maxSizeBytes int, schema 
 	}
 
 	// Reset the FT cache
-	c.FT.clean()
 	c.FT.isInitialized = false
 	return c.initFTJson(file, maxWords, maxSizeBytes, schema)
 }
@@ -183,6 +181,18 @@ func (ft *FullText) uploadJson(file string, schema map[string]bool) error {
 	} else {
 		return ft.loadCacheData(data, schema)
 	}
+}
+
+// Upload map data to the FullText cache with Mutex Locking
+func (ft *FullText) UploadMap(data map[string]map[string]interface{}, schema map[string]bool) error {
+	ft.mutex.Lock()
+	defer ft.mutex.Unlock()
+	return ft.uploadMap(data, schema)
+}
+
+// Upload map data to the FullText cache
+func (ft *FullText) uploadMap(data map[string]map[string]interface{}, schema map[string]bool) error {
+	return ft.loadCacheData(data, schema)
 }
 
 // Set a value in the cache with Mutex Locking
@@ -262,19 +272,19 @@ func (ft *FullText) delete(key string) {
 
 			// Remove the key from the ft.cache slice
 			ft.cache[word] = append(ft.cache[word][:i], ft.cache[word][i+1:]...)
+		}
 
-			// If the ft.cache slice is empty, remove the word from the ft.cache
-			if len(ft.cache[word]) == 0 {
-				delete(ft.cache, word)
+		// If the ft.cache slice is empty, remove the word from the ft.cache
+		if len(ft.cache[word]) == 0 {
+			delete(ft.cache, word)
 
-				// Remove the word from the ft.words
-				for i, _word := range ft.words {
-					if word != _word {
-						continue
-					}
-					ft.words = append(ft.words[:i], ft.words[i+1:]...)
-					break
+			// Remove the word from the ft.words
+			for i, _word := range ft.words {
+				if word != _word {
+					continue
 				}
+				ft.words = append(ft.words[:i], ft.words[i+1:]...)
+				break
 			}
 		}
 	}

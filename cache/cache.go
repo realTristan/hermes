@@ -105,7 +105,7 @@ func (c *Cache) Keys() []string {
 
 // Get all the keys in the cache
 func (c *Cache) keys() []string {
-	keys := []string{}
+	var keys []string = []string{}
 	for key := range c.data {
 		keys = append(keys, key)
 	}

@@ -155,7 +155,7 @@ func (ft *FullText) searchOne(query string, limit int, strict bool) []map[string
 				continue
 			}
 
-			// Else, append the index to the result
+			// Append the index to the result
 			result = append(result, ft.data[index])
 			indices[index] = -1
 		}

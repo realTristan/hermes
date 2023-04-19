@@ -35,13 +35,13 @@ func (ft *FullText) searchWithSpaces(query string, limit int, strict bool, schem
 	var keys []string = ft.cache[words[0]]
 	for i := 0; i < len(keys); i++ {
 		for key, value := range ft.data[keys[i]] {
+			if !schema[key] {
+				continue
+			}
+
+			// Check if the value contains the query
 			if v, ok := value.(string); ok {
-				switch {
-				// Check if the key is in the schema
-				case !schema[key]:
-					continue
-				// Check if the value contains the query
-				case containsIgnoreCase(v, query):
+				if containsIgnoreCase(v, query) {
 					result = append(result, ft.data[keys[i]])
 				}
 			}
@@ -95,11 +95,13 @@ func (ft *FullText) searchInData(query string, limit int, schema map[string]bool
 	for _, item := range ft.data {
 		// Iterate over the keys and values for the data for that index
 		for key, value := range item {
+			if !schema[key] {
+				continue
+			}
+
+			// Check if the value contains the query
 			if v, ok := value.(string); ok {
-				switch {
-				case !schema[key]:
-					continue
-				case containsIgnoreCase(v, query):
+				if containsIgnoreCase(v, query) {
 					result = append(result, item)
 				}
 			}
@@ -125,10 +127,7 @@ func (ft *FullText) searchOne(query string, limit int, strict bool) []map[string
 	}
 
 	// Define variables
-	var (
-		result       []map[string]interface{} = []map[string]interface{}{}
-		alreadyAdded map[string]int           = map[string]int{}
-	)
+	var result []map[string]interface{} = []map[string]interface{}{}
 
 	// If the user wants a strict search, just return the result
 	// straight from the cache
@@ -147,6 +146,9 @@ func (ft *FullText) searchOne(query string, limit int, strict bool) []map[string
 		return result
 	}
 
+	// Define a map to store the indices that have already been added
+	var alreadyAdded map[string]int = map[string]int{}
+
 	// Loop through the cache keys
 	for i := 0; i < len(ft.words); i++ {
 		switch {
@@ -159,13 +161,13 @@ func (ft *FullText) searchOne(query string, limit int, strict bool) []map[string
 		// Loop through the cache indices
 		for j := 0; j < len(ft.cache[ft.words[i]]); j++ {
 			var value string = ft.cache[ft.words[i]][j]
-			if alreadyAdded[value] == -1 {
+			if _, ok := alreadyAdded[value]; ok {
 				continue
 			}
 
 			// Else, append the index to the result
 			result = append(result, ft.data[value])
-			alreadyAdded[value] = -1
+			alreadyAdded[value] = 0
 		}
 	}
 
