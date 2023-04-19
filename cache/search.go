@@ -126,6 +126,9 @@ func (ft *FullText) searchOne(query string, limit int, strict bool) []map[string
 		return []map[string]interface{}{}
 	}
 
+	// Set the query to lowercase
+	query = strings.ToLower(query)
+
 	// Define variables
 	var result []map[string]interface{} = []map[string]interface{}{}
 
