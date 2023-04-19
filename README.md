@@ -33,7 +33,7 @@ Dataset Map Size: ≈ 2.3MB
 
 ?q=computer&limit=100&strict=false: 263.7µs
 
-?q=computer&limit=100&strict=true: 80.84µs
+?q=computer&limit=100&strict=true: 40.84µs
 ```
 
 # Example of Cache Full-Text-Search (/cache)
