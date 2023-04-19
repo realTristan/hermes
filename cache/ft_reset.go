@@ -56,15 +56,6 @@ func (c *Cache) resetFT(maxWords int, maxSizeBytes int, schema map[string]bool) 
 		return fmt.Errorf("full text cache not initialized")
 	}
 
-	// Lock the FT cache
-	c.FT.mutex.Lock()
-	defer c.FT.mutex.Unlock()
-
-	// If the FT cache is not initialized, return an error
-	if !c.FT.isInitialized {
-		return fmt.Errorf("full text cache not initialized")
-	}
-
 	// Reset the FT cache
 	c.FT.isInitialized = false
 	return c.initFT(maxWords, maxSizeBytes, schema)
@@ -110,15 +101,6 @@ Returns:
 func (c *Cache) resetFTJson(file string, maxWords int, maxSizeBytes int, schema map[string]bool) error {
 	// If the FT cache is not initialized, return an error
 	if c.FT == nil {
-		return fmt.Errorf("FT cache not initialized")
-	}
-
-	// Lock the FT cache
-	c.FT.mutex.Lock()
-	defer c.FT.mutex.Unlock()
-
-	// If the FT cache is not initialized, return an error
-	if !c.FT.isInitialized {
 		return fmt.Errorf("FT cache not initialized")
 	}
 

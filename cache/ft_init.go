@@ -1,9 +1,6 @@
 package cache
 
-import (
-	"fmt"
-	"sync"
-)
+import "fmt"
 
 /*
 This function is used to initialize the FT cache with a JSON file with Mutex Locking. It takes the file path,
@@ -34,10 +31,6 @@ Note that this function is a wrapper around the initFTJson method that adds mute
 func (c *Cache) InitFTJson(file string, maxWords int, maxSizeBytes int, schema map[string]bool) error {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
-	if c.FT != nil {
-		c.FT.mutex.Lock()
-		defer c.FT.mutex.Unlock()
-	}
 	return c.initFTJson(file, maxWords, maxSizeBytes, schema)
 }
 
@@ -77,9 +70,7 @@ func (c *Cache) initFTJson(file string, maxWords int, maxSizeBytes int, schema m
 
 	// Initialize the FT cache
 	c.FT = &FullText{
-		mutex:         &sync.RWMutex{},
 		wordCache:     map[string][]string{},
-		data:          map[string]map[string]interface{}{},
 		maxWords:      maxWords,
 		maxSizeBytes:  maxSizeBytes,
 		isInitialized: false,
@@ -89,21 +80,21 @@ func (c *Cache) initFTJson(file string, maxWords int, maxSizeBytes int, schema m
 	if data, err := readJson(file); err != nil {
 		return err
 	} else {
-		c.FT.data = data
-	}
-
-	// Iterate over the regular cache data and
-	// add it to the FT cache data
-	for k, v := range c.data {
-		if _, ok := c.FT.data[k]; ok {
-			c.FT.clean()
-			return fmt.Errorf("the key: %s has already been imported via json file. unable to add it to the cache", k)
+		// Verify that none of the data has already been imported
+		for k := range data {
+			if _, ok := c.data[k]; ok {
+				return fmt.Errorf("the key: %s has already been imported via json file. unable to add it to the cache", k)
+			}
 		}
-		c.FT.data[k] = v
+
+		// Set the data
+		for k, v := range data {
+			c.data[k] = v
+		}
 	}
 
 	// Load the cache data
-	if err := c.FT.loadCacheData(c.FT.data, schema); err != nil {
+	if err := c.FT.loadCacheData(c.data, schema); err != nil {
 		c.FT.clean()
 		return err
 	}
@@ -135,10 +126,6 @@ Returns:
 func (c *Cache) InitFT(maxWords int, maxSizeBytes int, schema map[string]bool) error {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
-	if c.FT != nil {
-		c.FT.mutex.Lock()
-		defer c.FT.mutex.Unlock()
-	}
 	return c.initFT(maxWords, maxSizeBytes, schema)
 }
 
@@ -164,21 +151,14 @@ func (c *Cache) initFT(maxWords int, maxSizeBytes int, schema map[string]bool) e
 
 	// Initialize the FT struct
 	c.FT = &FullText{
-		mutex:         &sync.RWMutex{},
 		wordCache:     map[string][]string{},
-		data:          map[string]map[string]interface{}{},
 		maxWords:      maxWords,
 		maxSizeBytes:  maxSizeBytes,
 		isInitialized: false,
 	}
 
-	// Convert the cache data into an array of maps
-	for k, v := range c.data {
-		c.FT.data[k] = v
-	}
-
 	// Load the cache data
-	if err := c.FT.loadCacheData(c.FT.data, schema); err != nil {
+	if err := c.FT.loadCacheData(c.data, schema); err != nil {
 		c.FT.clean()
 		return err
 	}

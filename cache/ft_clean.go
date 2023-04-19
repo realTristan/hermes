@@ -10,10 +10,10 @@ Usage:
 	ft := &FullText{}
 	ft.Clean()
 */
-func (ft *FullText) Clean() {
-	ft.mutex.Lock()         // Locks the mutex to ensure thread-safety
-	defer ft.mutex.Unlock() // Unlocks the mutex before returning
-	ft.clean()              // Calls the clean function to clean the cache
+func (c *Cache) CleanFT() {
+	c.mutex.Lock()         // Locks the mutex to ensure thread-safety
+	defer c.mutex.Unlock() // Unlocks the mutex before returning
+	c.FT.clean()           // Calls the clean function to clean the cache
 }
 
 /*
@@ -27,6 +27,5 @@ Usage:
 	It should not be called directly from outside the package.
 */
 func (ft *FullText) clean() {
-	ft.wordCache = map[string][]string{}          // Clears the word cache by creating a new empty map
-	ft.data = map[string]map[string]interface{}{} // Clears the data by creating a new empty map of maps
+	ft.wordCache = map[string][]string{} // Clears the word cache by creating a new empty map
 }

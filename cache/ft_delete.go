@@ -19,10 +19,10 @@ Example usage:
 
 	ft.Delete("example") // Deletes the key "example" and its corresponding value from the cache with Mutex Locking.
 */
-func (ft *FullText) Delete(word string) {
-	ft.mutex.Lock()
-	defer ft.mutex.Unlock()
-	ft.delete(word)
+func (c *Cache) DeleteFT(word string) {
+	c.mutex.Lock()
+	defer c.mutex.Unlock()
+	c.deleteFT(word)
 }
 
 /*
@@ -42,24 +42,21 @@ Example usage:
 
 	ft.delete("example") // Deletes the key "example" and its corresponding value from the cache.
 */
-func (ft *FullText) delete(key string) {
-	// Remove the key from the ft.data
-	delete(ft.data, key)
-
+func (c *Cache) deleteFT(key string) {
 	// Remove the key from the ft.wordCache
-	for word, keys := range ft.wordCache {
+	for word, keys := range c.FT.wordCache {
 		for i := 0; i < len(keys); i++ {
 			if key != keys[i] {
 				continue
 			}
 
 			// Remove the key from the ft.wordCache slice
-			ft.wordCache[word] = append(ft.wordCache[word][:i], ft.wordCache[word][i+1:]...)
+			c.FT.wordCache[word] = append(c.FT.wordCache[word][:i], c.FT.wordCache[word][i+1:]...)
 		}
 
 		// If the ft.wordCache[word] is empty, remove it from the cache
-		if len(ft.wordCache[word]) == 0 {
-			delete(ft.wordCache, word)
+		if len(c.FT.wordCache[word]) == 0 {
+			delete(c.FT.wordCache, word)
 		}
 	}
 }

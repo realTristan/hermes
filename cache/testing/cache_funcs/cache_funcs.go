@@ -36,6 +36,10 @@ func main() {
 		if err := cache.Set("user_id", data); err != nil {
 			fmt.Println(err)
 		}
+
+		if err := cache.Set("user_id", data); err != nil {
+			fmt.Println(err)
+		}
 	})
 
 	// Get the user_id value
@@ -46,7 +50,7 @@ func main() {
 
 	// Search for a word in the cache
 	duration("Search", func() {
-		var result = cache.FT.SearchOne("tristan", 100, false)
+		var result = cache.SearchOne("tristan", 100, false)
 		fmt.Println(result)
 	})
 
@@ -62,7 +66,7 @@ func main() {
 
 	// Search for a word in the cache
 	duration("Search", func() {
-		var result = cache.FT.SearchOne("tristan", 100, false)
+		var result = cache.SearchOne("tristan", 100, false)
 		fmt.Println(result)
 	})
 }

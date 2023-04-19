@@ -146,7 +146,7 @@ Usage:
 func (c *Cache) set(key string, value map[string]interface{}) error {
 	// Update the value in the FT cache
 	if c.FT != nil && c.FT.isInitialized {
-		if err := c.FT.Set(key, value); err != nil {
+		if err := c.setFT(key, value); err != nil {
 			return err
 		}
 	}
@@ -257,7 +257,7 @@ pair from the main cache using the built-in delete function.
 func (c *Cache) delete(key string) {
 	// Delete the key from the FT cache
 	if c.FT != nil && c.FT.isInitialized {
-		c.FT.Delete(key)
+		c.deleteFT(key)
 	}
 
 	// Delete the key from the cache

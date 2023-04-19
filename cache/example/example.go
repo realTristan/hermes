@@ -69,7 +69,7 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 	// Search for a word in the cache
 	// Make sure the show which keys you do want to search through,
 	// and which ones you don't
-	var res = cache.FT.SearchWithSpaces(query, limit, strict, map[string]bool{
+	var res = cache.SearchWithSpaces(query, limit, strict, map[string]bool{
 		"id":             false,
 		"components":     false,
 		"units":          false,

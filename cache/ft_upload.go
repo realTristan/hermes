@@ -17,10 +17,10 @@ Note:
 	The JSON file must be an array of JSON objects where each object represents a key-value pair to add to the cache.
 	The "id" field is reserved and should not be used as a field name in the schema.
 */
-func (ft *FullText) UploadJson(file string, schema map[string]bool) error {
-	ft.mutex.Lock()
-	defer ft.mutex.Unlock()
-	return ft.uploadJson(file, schema)
+func (c *Cache) UploadJson(file string, schema map[string]bool) error {
+	c.mutex.Lock()
+	defer c.mutex.Unlock()
+	return c.FT.uploadJson(file, schema)
 }
 
 /*
@@ -70,10 +70,10 @@ Example Usage:
 	schema := map[string]bool{"text": true}
 	err := ft.UploadMap(data, schema)
 */
-func (ft *FullText) UploadMap(data map[string]map[string]interface{}, schema map[string]bool) error {
-	ft.mutex.Lock()
-	defer ft.mutex.Unlock()
-	return ft.uploadMap(data, schema)
+func (c *Cache) UploadMap(data map[string]map[string]interface{}, schema map[string]bool) error {
+	c.mutex.Lock()
+	defer c.mutex.Unlock()
+	return c.FT.uploadMap(data, schema)
 }
 
 /*

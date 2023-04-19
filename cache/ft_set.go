@@ -29,10 +29,10 @@ Example:
 		log.Fatal(err)
 	}
 */
-func (ft *FullText) Set(key string, value map[string]interface{}) error {
-	ft.mutex.Lock()
-	defer ft.mutex.Unlock()
-	return ft.set(key, value)
+func (c *Cache) SetFT(key string, value map[string]interface{}) error {
+	c.mutex.Lock()
+	defer c.mutex.Unlock()
+	return c.setFT(key, value)
 }
 
 /*
@@ -76,14 +76,14 @@ Example usage:
 			log.Fatalf("Error setting FullText cache: %s", err)
 	}
 */
-func (ft *FullText) set(key string, value map[string]interface{}) error {
+func (c *Cache) setFT(key string, value map[string]interface{}) error {
 	// If the key already exists, return an error
-	if _, ok := ft.data[key]; ok {
-		return fmt.Errorf("full text cache key already exists (%s)", key)
+	if _, ok := c.data[key]; ok {
+		return fmt.Errorf("full text cache key already exists (%s). please delete it before setting it another value", key)
 	}
 
 	// Add the value to the cache
-	ft.data[key] = value
+	c.data[key] = value
 
 	// Loop through the value
 	for _, _v := range value {
@@ -95,15 +95,15 @@ func (ft *FullText) set(key string, value map[string]interface{}) error {
 
 			// Loop through the words
 			for _, word := range strings.Split(v, " ") {
-				if ft.maxWords != -1 {
-					if len(ft.wordCache) > ft.maxWords {
-						return fmt.Errorf("full text cache key limit reached (%d/%d keys)", len(ft.wordCache), ft.maxWords)
+				if c.FT.maxWords != -1 {
+					if len(c.FT.wordCache) > c.FT.maxWords {
+						return fmt.Errorf("full text cache key limit reached (%d/%d keys)", len(c.FT.wordCache), c.FT.maxWords)
 					}
 				}
-				if ft.maxSizeBytes != -1 {
-					var cacheSize int = int(unsafe.Sizeof(ft.wordCache))
-					if cacheSize > ft.maxSizeBytes {
-						return fmt.Errorf("full text cache size limit reached (%d/%d bytes)", cacheSize, ft.maxSizeBytes)
+				if c.FT.maxSizeBytes != -1 {
+					var cacheSize int = int(unsafe.Sizeof(c.FT.wordCache))
+					if cacheSize > c.FT.maxSizeBytes {
+						return fmt.Errorf("full text cache size limit reached (%d/%d bytes)", cacheSize, c.FT.maxSizeBytes)
 					}
 				}
 				switch {
@@ -112,11 +112,11 @@ func (ft *FullText) set(key string, value map[string]interface{}) error {
 				case !isAlphaNum(word):
 					word = removeNonAlphaNum(word)
 				}
-				if _, ok := ft.wordCache[word]; !ok {
-					ft.wordCache[word] = []string{key}
+				if _, ok := c.FT.wordCache[word]; !ok {
+					c.FT.wordCache[word] = []string{key}
 					continue
 				}
-				ft.wordCache[word] = append(ft.wordCache[word], key)
+				c.FT.wordCache[word] = append(c.FT.wordCache[word], key)
 			}
 		}
 	}

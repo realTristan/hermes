@@ -27,16 +27,16 @@ import "strings"
  *     schema := map[string]bool{"title": true, "content": true, "date": false}
  *     result := ft.SearchWithSpaces(query, limit, strict, schema)
  */
-func (ft *FullText) SearchWithSpaces(query string, limit int, strict bool, schema map[string]bool) []map[string]interface{} {
-	ft.mutex.RLock()
-	defer ft.mutex.RUnlock()
-	return ft.searchWithSpaces(query, limit, strict, schema)
+func (c *Cache) SearchWithSpaces(query string, limit int, strict bool, schema map[string]bool) []map[string]interface{} {
+	c.mutex.RLock()
+	defer c.mutex.RUnlock()
+	return c.searchWithSpaces(query, limit, strict, schema)
 }
 
 /*
 This function searches for a query by splitting the query into separate words and returning the search results.
 Parameters:
-  - ft (*FullText): A pointer to the FullText struct
+  - c (c *Cache): A pointer to the Cache struct
   - query (string): The search query
   - limit (int): The limit of search results to return
   - strict (bool): A boolean to indicate whether the search should be strict or not
@@ -45,7 +45,7 @@ Parameters:
 Returns:
   - []map[string]interface{}: An array of maps containing the search results
 */
-func (ft *FullText) searchWithSpaces(query string, limit int, strict bool, schema map[string]bool) []map[string]interface{} {
+func (c *Cache) searchWithSpaces(query string, limit int, strict bool, schema map[string]bool) []map[string]interface{} {
 	var words []string = strings.Split(strings.TrimSpace(query), " ")
 	switch {
 	// If the words array is empty
@@ -53,21 +53,21 @@ func (ft *FullText) searchWithSpaces(query string, limit int, strict bool, schem
 		return []map[string]interface{}{}
 	// Get the search result of the first word
 	case len(words) == 1:
-		return ft.searchOne(words[0], limit, strict)
+		return c.searchOne(words[0], limit, strict)
 	}
 
 	// Define variables
 	var result []map[string]interface{} = []map[string]interface{}{}
 
 	// Check if the query is in the cache
-	if _, ok := ft.wordCache[words[0]]; !ok {
+	if _, ok := c.FT.wordCache[words[0]]; !ok {
 		return []map[string]interface{}{}
 	}
 
 	// Loop through the indices
-	var keys []string = ft.wordCache[words[0]]
+	var keys []string = c.FT.wordCache[words[0]]
 	for i := 0; i < len(keys); i++ {
-		for key, value := range ft.data[keys[i]] {
+		for key, value := range c.data[keys[i]] {
 			if !schema[key] {
 				continue
 			}
@@ -75,7 +75,7 @@ func (ft *FullText) searchWithSpaces(query string, limit int, strict bool, schem
 			// Check if the value contains the query
 			if v, ok := value.(string); ok {
 				if containsIgnoreCase(v, query) {
-					result = append(result, ft.data[keys[i]])
+					result = append(result, c.data[keys[i]])
 				}
 			}
 		}
@@ -105,10 +105,10 @@ Example usage:
 	We can search for all records containing the word "apple" in the "description" column with a limit of 10 as follows:
 	results := ft.SearchInDataWithKey("apple", "description", 10)
 */
-func (ft *FullText) SearchInDataWithKey(query string, key string, limit int) []map[string]interface{} {
-	ft.mutex.RLock()
-	defer ft.mutex.RUnlock()
-	return ft.searchInDataWithKey(query, key, limit)
+func (c *Cache) SearchInDataWithKey(query string, key string, limit int) []map[string]interface{} {
+	c.mutex.RLock()
+	defer c.mutex.RUnlock()
+	return c.searchInDataWithKey(query, key, limit)
 }
 
 /*
@@ -130,12 +130,12 @@ Example usage:
 	We can search for all records containing the word "apple" in the "description" column with a limit of 10 as follows:
 	results := ft.searchInDataWithKey("apple", "description", 10)
 */
-func (ft *FullText) searchInDataWithKey(query string, key string, limit int) []map[string]interface{} {
+func (c *Cache) searchInDataWithKey(query string, key string, limit int) []map[string]interface{} {
 	// Define variables
 	var result []map[string]interface{} = []map[string]interface{}{}
 
 	// Iterate over the query result
-	for _, item := range ft.data {
+	for _, item := range c.data {
 		for _, v := range item {
 			if v, ok := v.(string); ok {
 				if containsIgnoreCase(v, query) {
@@ -170,10 +170,10 @@ Example usage:
 	schema := map[string]bool{"description": true, "name": true}
 	results := ft.SearchInData("apple", 10, schema)
 */
-func (ft *FullText) SearchInData(query string, limit int, schema map[string]bool) []map[string]interface{} {
-	ft.mutex.RLock()
-	defer ft.mutex.RUnlock()
-	return ft.searchInData(query, limit, schema)
+func (c *Cache) SearchInData(query string, limit int, schema map[string]bool) []map[string]interface{} {
+	c.mutex.RLock()
+	defer c.mutex.RUnlock()
+	return c.searchInData(query, limit, schema)
 }
 
 /*
@@ -195,12 +195,12 @@ Example usage:
 	schema := map[string]bool{"description": true, "name": true}
 	results := ft.searchInData("apple", 10, schema)
 */
-func (ft *FullText) searchInData(query string, limit int, schema map[string]bool) []map[string]interface{} {
+func (c *Cache) searchInData(query string, limit int, schema map[string]bool) []map[string]interface{} {
 	// Define variables
 	var result []map[string]interface{} = []map[string]interface{}{}
 
 	// Iterate over the query result
-	for _, item := range ft.data {
+	for _, item := range c.data {
 		// Iterate over the keys and values for the data for that index
 		for key, value := range item {
 			if !schema[key] {
@@ -240,10 +240,10 @@ Example Usage:
 		fmt.Printf("Result: %v\n", result)
 	}
 */
-func (ft *FullText) SearchOne(query string, limit int, strict bool) []map[string]interface{} {
-	ft.mutex.RLock()
-	defer ft.mutex.RUnlock()
-	return ft.searchOne(query, limit, strict)
+func (c *Cache) SearchOne(query string, limit int, strict bool) []map[string]interface{} {
+	c.mutex.RLock()
+	defer c.mutex.RUnlock()
+	return c.searchOne(query, limit, strict)
 }
 
 /*
@@ -263,7 +263,7 @@ Example Usage:
 
 	This is an internal function and is not intended to be called directly by the user.
 */
-func (ft *FullText) searchOne(query string, limit int, strict bool) []map[string]interface{} {
+func (c *Cache) searchOne(query string, limit int, strict bool) []map[string]interface{} {
 	// If the query is empty
 	if len(query) == 0 {
 		return []map[string]interface{}{}
@@ -279,13 +279,13 @@ func (ft *FullText) searchOne(query string, limit int, strict bool) []map[string
 	// straight from the cache
 	if strict {
 		// Check if the query is in the cache
-		if _, ok := ft.wordCache[query]; !ok {
+		if _, ok := c.FT.wordCache[query]; !ok {
 			return result
 		}
 
 		// Loop through the indices
-		for i := 0; i < len(ft.wordCache[query]); i++ {
-			result = append(result, ft.data[ft.wordCache[query][i]])
+		for i := 0; i < len(c.FT.wordCache[query]); i++ {
+			result = append(result, c.data[c.FT.wordCache[query][i]])
 		}
 
 		// Return the result
@@ -296,7 +296,7 @@ func (ft *FullText) searchOne(query string, limit int, strict bool) []map[string
 	var alreadyAdded map[string]int = map[string]int{}
 
 	// Loop through the cache keys
-	for k, v := range ft.wordCache {
+	for k, v := range c.FT.wordCache {
 		switch {
 		case len(result) >= limit:
 			return result
@@ -311,7 +311,7 @@ func (ft *FullText) searchOne(query string, limit int, strict bool) []map[string
 			}
 
 			// Else, append the index to the result
-			result = append(result, ft.data[v[j]])
+			result = append(result, c.data[v[j]])
 			alreadyAdded[v[j]] = -1
 		}
 	}
