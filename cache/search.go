@@ -30,6 +30,9 @@ import "strings"
 func (c *Cache) SearchWithSpaces(query string, limit int, strict bool, schema map[string]bool) []map[string]interface{} {
 	c.mutex.RLock()
 	defer c.mutex.RUnlock()
+	if c.FT == nil || !c.FT.isInitialized {
+		return []map[string]interface{}{}
+	}
 	return c.searchWithSpaces(query, limit, strict, schema)
 }
 
@@ -46,7 +49,10 @@ Returns:
   - []map[string]interface{}: An array of maps containing the search results
 */
 func (c *Cache) searchWithSpaces(query string, limit int, strict bool, schema map[string]bool) []map[string]interface{} {
+	// Split the query into separate words
 	var words []string = strings.Split(strings.TrimSpace(query), " ")
+
+	// Check words validity
 	switch {
 	// If the words array is empty
 	case len(words) == 0:
@@ -243,6 +249,9 @@ Example Usage:
 func (c *Cache) SearchOne(query string, limit int, strict bool) []map[string]interface{} {
 	c.mutex.RLock()
 	defer c.mutex.RUnlock()
+	if c.FT == nil || !c.FT.isInitialized {
+		return []map[string]interface{}{}
+	}
 	return c.searchOne(query, limit, strict)
 }
 
