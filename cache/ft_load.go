@@ -41,8 +41,8 @@ func (ft *FullText) loadCacheData(data map[string]map[string]interface{}, schema
 							return fmt.Errorf("full text cache key limit reached (%d/%d keys)", len(ft.keys), ft.maxWords)
 						}
 					}
-					if ft.maxSizeBytes != -1 {
-						var cacheSize int = int(unsafe.Sizeof(ft.wordCache))
+					if ft.maxSizeBytes > 0 {
+						var cacheSize uintptr = unsafe.Sizeof(ft.wordCache)
 						if cacheSize > ft.maxSizeBytes {
 							return fmt.Errorf("full text cache size limit reached (%d/%d bytes)", cacheSize, ft.maxSizeBytes)
 						}

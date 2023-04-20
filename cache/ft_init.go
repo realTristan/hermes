@@ -21,7 +21,7 @@ Returns:
 
 	error: An error if the FullText cache is already initialized or an error occurs during initialization.
 */
-func (c *Cache) InitFT(maxWords int, maxSizeBytes int, schema map[string]bool) error {
+func (c *Cache) InitFT(maxWords int, maxSizeBytes uintptr, schema map[string]bool) error {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
 	if c.ft != nil && c.ft.isInitialized {
@@ -51,7 +51,7 @@ The `initFT` method initializes the FullText index for the cache.
 			log.Fatalf("Error initializing FullText index: %v", err)
 	}
 */
-func (c *Cache) initFT(maxWords int, maxSizeBytes int, schema map[string]bool) error {
+func (c *Cache) initFT(maxWords int, maxSizeBytes uintptr, schema map[string]bool) error {
 	// Initialize the FT struct
 	c.ft = &FullText{
 		wordCache:     make(map[string][]int),
@@ -93,7 +93,7 @@ Returns:
 
 	error: An error if the FT cache is already initialized or an error occurs during initialization.
 */
-func (c *Cache) InitFTWithMap(data map[string]map[string]interface{}, maxWords int, maxSizeBytes int, schema map[string]bool) error {
+func (c *Cache) InitFTWithMap(data map[string]map[string]interface{}, maxWords int, maxSizeBytes uintptr, schema map[string]bool) error {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
 	if c.ft != nil && c.ft.isInitialized {
@@ -118,7 +118,7 @@ Returns:
 
 	error: An error if the FT cache is already initialized or an error occurs during initialization.
 */
-func (c *Cache) initFTWithMap(data map[string]map[string]interface{}, maxWords int, maxSizeBytes int, schema map[string]bool) error {
+func (c *Cache) initFTWithMap(data map[string]map[string]interface{}, maxWords int, maxSizeBytes uintptr, schema map[string]bool) error {
 	// Initialize the FT struct
 	c.ft = &FullText{
 		wordCache:     make(map[string][]int),
@@ -177,7 +177,7 @@ Example usage:
 
 Note that this function is a wrapper around the initFTJson method that adds mutex locking to prevent concurrent access.
 */
-func (c *Cache) InitFTWithJson(file string, maxWords int, maxSizeBytes int, schema map[string]bool) error {
+func (c *Cache) InitFTWithJson(file string, maxWords int, maxSizeBytes uintptr, schema map[string]bool) error {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
 	if c.ft != nil && c.ft.isInitialized {
@@ -202,7 +202,7 @@ the initFTJson method.
 
 	error: An error indicating if there was a problem initializing the FT cache with the JSON file.
 */
-func (c *Cache) initFTWithJson(file string, maxWords int, maxSizeBytes int, schema map[string]bool) error {
+func (c *Cache) initFTWithJson(file string, maxWords int, maxSizeBytes uintptr, schema map[string]bool) error {
 	if data, err := readJson(file); err != nil {
 		return err
 	} else {

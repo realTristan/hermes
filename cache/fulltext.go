@@ -1,5 +1,7 @@
 package cache
 
+import "unsafe"
+
 /*
 FullText represents a data structure for storing and searching full-text documents. It uses a map to cache word positions for each word in the text, and an array to store the keys in sorted order for faster iteration. The maximum number of words that can be cached and the maximum size of the text can be set when initializing the struct.
 
@@ -14,6 +16,44 @@ type FullText struct {
 	wordCache     map[string][]int
 	keys          []string
 	maxWords      int
-	maxSizeBytes  int
+	maxSizeBytes  uintptr
 	isInitialized bool
+}
+
+func (c *Cache) FTWordCache() map[string][]int {
+	c.mutex.RLock()
+	defer c.mutex.RUnlock()
+
+	// Copy the wordCache map
+	var copy map[string][]int = make(map[string][]int, len(c.ft.wordCache))
+	copy = c.ft.wordCache
+	return copy
+}
+
+func (c *Cache) FTWordCacheSize() uintptr {
+	c.mutex.RLock()
+	defer c.mutex.RUnlock()
+	return unsafe.Sizeof(c.ft.wordCache)
+}
+
+func (c *Cache) FTKeys() []string {
+	c.mutex.RLock()
+	defer c.mutex.RUnlock()
+
+	// Copy the keys array
+	var copy []string = make([]string, len(c.ft.keys))
+	copy = c.ft.keys
+	return copy
+}
+
+func (c *Cache) FTIsInitialized() bool {
+	c.mutex.RLock()
+	defer c.mutex.RUnlock()
+	return c.ft.isInitialized
+}
+
+func (c *Cache) FTSpaceLeft() uintptr {
+	c.mutex.RLock()
+	defer c.mutex.RUnlock()
+	return uintptr(c.ft.maxSizeBytes) - unsafe.Sizeof(c.ft.wordCache)
 }

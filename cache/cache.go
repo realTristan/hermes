@@ -141,6 +141,9 @@ Usage:
 	It should not be called directly from outside the package.
 */
 func (c *Cache) clean() {
+	if c.ft != nil && c.ft.isInitialized {
+		c.ft.clean()
+	}
 	c.data = map[string]map[string]interface{}{}
 }
 

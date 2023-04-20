@@ -75,8 +75,8 @@ func (c *Cache) setFT(key string, value map[string]interface{}) error {
 						return fmt.Errorf("full text cache key limit reached (%d/%d keys)", len(c.ft.keys), c.ft.maxWords)
 					}
 				}
-				if c.ft.maxSizeBytes != -1 {
-					var cacheSize int = int(unsafe.Sizeof(c.ft.wordCache))
+				if c.ft.maxSizeBytes > 0 {
+					var cacheSize uintptr = unsafe.Sizeof(c.ft.wordCache)
 					if cacheSize > c.ft.maxSizeBytes {
 						return fmt.Errorf("full text cache size limit reached (%d/%d bytes)", cacheSize, c.ft.maxSizeBytes)
 					}
