@@ -23,15 +23,16 @@ func (c *Cache) CleanFT() error {
 }
 
 /*
-*
-The clean function is a private method of the FullText struct that is used to clear the cache of the FullText index.
-@Parameters: None
-@Returns: None
-Usage:
+The `clean` method removes all data from the FullText index.
 
-	This function is called internally by the Clean method of the FullText struct to clear the cache.
-	It should not be called directly from outside the package.
+	This method is private and not meant to be called directly by external code. It is used internally by the `Cache` struct when the cache is cleared.
+
+	The method removes all data from the wordCache map and sets the keys slice to an empty slice.
+
+	Example usage:
+	(not meant to be called directly)
 */
 func (ft *FullText) clean() {
-	ft.wordCache = map[string][]string{}
+	ft.wordCache = map[string][]int{}
+	ft.keys = []string{}
 }

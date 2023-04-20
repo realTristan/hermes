@@ -21,6 +21,11 @@ func main() {
 	)
 
 	// Initialize the FT cache
+	if err := cache.InitFTJson("cache.json", maxWords, maxSizeBytes, schema); err != nil {
+		fmt.Println(err)
+	}
+
+	// Initialize the FT cache
 	if err := cache.InitFT(maxWords, maxSizeBytes, schema); err != nil {
 		fmt.Println(err)
 	}
@@ -54,6 +59,9 @@ func main() {
 		fmt.Println(result)
 	})
 
+	// Print all the cache info
+	cache.Info()
+
 	/* Reset the FT cache
 	if err := cache.ResetFT(maxWords, maxSizeBytes, schema); err != nil {
 		fmt.Println(err)
@@ -69,6 +77,9 @@ func main() {
 		var result, _ = cache.SearchOne("tristan", 100, false)
 		fmt.Println(result)
 	})
+
+	// Print all the cache info
+	cache.Info()
 }
 
 // Track the duration of a function

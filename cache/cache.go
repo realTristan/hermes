@@ -1,39 +1,85 @@
 package cache
 
-import "sync"
+import (
+	"fmt"
+	"sync"
+)
 
 /*
-The Cache struct is a data structure that represents a cache, which is a mechanism for temporarily
-storing data in memory for faster access. The Cache struct contains a map that stores the cached
-data, a pointer to a sync.RWMutex to provide thread-safe access to the cache, and a pointer to a
-FullText struct for indexing and searching the cached data.
+Cache represents an in-memory cache that stores arbitrary data under string keys.
 
-Fields:
-@data: a map that stores the cached data in the form of a map of maps.
-The outer map's keys represent the cache keys and the inner map's keys represent the field names of the cached data.
+	The cache is thread-safe, and uses a RWMutex to coordinate access to the underlying data.
 
-@mutex: a pointer to a sync.RWMutex to provide thread-safe access to the cache.
-The mutex is used to ensure that multiple threads do not access the cache concurrently and cause race conditions.
+	The cache also supports full-text search via a FullText index that can be optionally enabled.
 
-@FT: a pointer to a FullText struct for indexing and searching the cached data.
-The FullText struct is used to create a search index for the cached data to enable fast text-based searches.
+	Fields:
+	- data: A map that stores the data in the cache. The keys of the map are strings that represent the cache keys, and the values are sub-maps that store the actual data under string keys.
+	- mutex: A RWMutex that guards access to the cache data.
+	- ft: A FullText index that can be used for full-text search. If nil, full-text search is disabled.
 
-Usage:
-
-	cache := &Cache{
-	  data: map[string]map[string]interface{}{},
-	  mutex: &sync.RWMutex{},
-	  FT: &FullText{},
+	Example usage:
+	c := Cache{
+	    data: make(map[string]map[string]interface{}),
+	    mutex: &sync.RWMutex{},
+	    ft: NewFullText(),
 	}
 */
 type Cache struct {
-	data  map[string]map[string]interface{} // The cache data.
-	mutex *sync.RWMutex                     // Mutex for thread-safe access to the cache.
-	ft    *FullText                         // FullText instance to store data in text format.
+	data  map[string]map[string]interface{}
+	mutex *sync.RWMutex
+	ft    *FullText
 }
 
 /*
-*
+Info prints diagnostic information about the cache to standard output.
+
+	The method acquires a read lock on the cache mutex, calls the private `info` method to collect the information, and then releases the lock.
+
+	Example usage:
+	c := Cache{
+	    data: make(map[string]map[string]interface{}),
+	    mutex: &sync.RWMutex{},
+	    ft: NewFullText(),
+	}
+	c.Info()  // prints diagnostic information about the cache to standard output
+*/
+func (c *Cache) Info() {
+	c.mutex.RLock()
+	defer c.mutex.RUnlock()
+	c.info()
+}
+
+/*
+The `info` method prints diagnostic information about the cache and its FullText index to standard output.
+
+	This method is private and not meant to be called directly by external code.
+	It is used by the public `Info` method to retrieve and print diagnostic information.
+
+	The method prints the number of keys in the cache, followed by the content of the cache.
+	If the cache has a FullText index, the method also prints diagnostic information about the index.
+
+	Example usage:
+	(not meant to be called directly)
+*/
+func (c *Cache) info() {
+	fmt.Println("Cache Info:")
+	fmt.Println("-----------")
+	fmt.Println("Number of keys:", len(c.data))
+	fmt.Println("Data:", c.data)
+
+	if c.ft == nil {
+		return
+	}
+	fmt.Println("\nCache FullText Info:")
+	fmt.Println("-----------")
+	fmt.Println("Number of words:", len(c.ft.wordCache))
+	fmt.Println("Number of keys:", len(c.ft.keys))
+	fmt.Println("Is initialized:", c.ft.isInitialized)
+	fmt.Println("Word cache:", c.ft.wordCache)
+	fmt.Println("Keys:", c.ft.keys)
+}
+
+/*
 The InitCache function is a factory function that creates and initializes a new Cache struct.
 @Parameters: None
 @Returns: A pointer to a newly created and initialized Cache struct.
@@ -51,7 +97,7 @@ Example:
 */
 func InitCache() *Cache {
 	return &Cache{
-		data:  map[string]map[string]interface{}{},
+		data:  make(map[string]map[string]interface{}),
 		mutex: &sync.RWMutex{},
 		ft:    nil,
 	}

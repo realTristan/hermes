@@ -39,45 +39,13 @@ func (c *Cache) SetFT(key string, value map[string]interface{}) error {
 }
 
 /*
-The Set function adds a key-value pair to the FullText cache. The cache is locked with a mutex to ensure thread-safety.
-If the key already exists, an error is returned.
-If the maxWords or maxSizeBytes are exceeded, an error is returned.
-The value is cleaned and tokenized before being added to the cache.
+setFT sets the value of a key in the cache and updates the full text search index.
 
-@Parameters:
+Parameters:
+- key: the key to set.
+- value: the value to set.
 
-	key (string): The key to be added to the cache
-	value (map[string]interface{}): The value to be added to the cache
-
-@Returns:
-
-	error: If an error occurs, it is returned. If the operation was successful, nil is returned.
-
-Example usage:
-
-	cache := InitCache()
-	schema := map[string]bool{
-		"content": true,
-		"title":   true,
-	}
-	maxWords := 1000
-	maxSizeBytes := 1024 * 1024 // 1MB
-
-	// Add data to cache
-	err := cache.ResetFT(maxWords, maxSizeBytes, schema)
-	if err != nil {
-			log.Fatalf("Error resetting FullText cache: %s", err)
-	}
-
-	// Set a key-value pair in the cache
-	data := map[string]interface{}{
-			"content": "This is some example content",
-			"title":   "Example",
-	}
-	err = cache.ft.Set("example_key", data)
-	if err != nil {
-			log.Fatalf("Error setting FullText cache: %s", err)
-	}
+Returns an error if the key already exists in the cache or if the full text cache limit has been reached.
 */
 func (c *Cache) setFT(key string, value map[string]interface{}) error {
 	// If the key already exists, return an error
@@ -87,6 +55,10 @@ func (c *Cache) setFT(key string, value map[string]interface{}) error {
 
 	// Add the value to the cache
 	c.data[key] = value
+
+	// Add the provided key to the keys slice
+	c.ft.keys = append(c.ft.keys, key)
+	var index int = len(c.ft.keys) - 1
 
 	// Loop through the value
 	for _, _v := range value {
@@ -116,10 +88,10 @@ func (c *Cache) setFT(key string, value map[string]interface{}) error {
 					word = removeNonAlphaNum(word)
 				}
 				if _, ok := c.ft.wordCache[word]; !ok {
-					c.ft.wordCache[word] = []string{key}
+					c.ft.wordCache[word] = []int{index}
 					continue
 				}
-				c.ft.wordCache[word] = append(c.ft.wordCache[word], key)
+				c.ft.wordCache[word] = append(c.ft.wordCache[word], index)
 			}
 		}
 	}

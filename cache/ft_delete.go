@@ -32,32 +32,31 @@ func (c *Cache) DeleteFT(word string) error {
 }
 
 /*
-This function is used to delete a word from the cache. It takes a string key as
-an argument and removes the corresponding key-value pair from the ft.data map.
-Additionally, it searches for the key in the ft.wordCache map and removes it from
-the slice of keys associated with its corresponding word. If the slice becomes empty
-after the removal, the word is removed from the ft.wordCache map as well.
+The `deleteFT` method removes a key from the FullText index.
 
-@Parameters:
+	This method is private and not meant to be called directly by external code. It is used internally by the `Cache` struct when a key is deleted from the cache.
 
-	key (string): The key that needs to be removed from the cache.
+	The method removes the key from the ft.keys slice and removes all references to the key from the ft.wordCache map.
 
-@Returns: This function does not return any values.
-
-Example usage:
-
-	ft.delete("example") // Deletes the key "example" and its corresponding value from the cache.
+	Example usage:
+	(not meant to be called directly)
 */
 func (c *Cache) deleteFT(key string) {
+	var indexOfKey int = indexOfString(c.ft.keys, key)
+	if indexOfKey == -1 {
+		return
+	}
+
 	// Remove the key from the ft.wordCache
-	for word, keys := range c.ft.wordCache {
-		for i := 0; i < len(keys); i++ {
-			if key != keys[i] {
+	for word, indices := range c.ft.wordCache {
+		for i := 0; i < len(indices); i++ {
+			if indexOfKey != indices[i] {
 				continue
 			}
 
 			// Remove the key from the ft.wordCache slice
 			c.ft.wordCache[word] = append(c.ft.wordCache[word][:i], c.ft.wordCache[word][i+1:]...)
+			break
 		}
 
 		// If the ft.wordCache[word] is empty, remove it from the cache
@@ -65,4 +64,7 @@ func (c *Cache) deleteFT(key string) {
 			delete(c.ft.wordCache, word)
 		}
 	}
+
+	// Remove the key from the ft.keys slice
+	c.ft.keys = append(c.ft.keys[:indexOfKey], c.ft.keys[indexOfKey+1:]...)
 }

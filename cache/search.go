@@ -75,9 +75,9 @@ func (c *Cache) searchWithSpaces(query string, limit int, strict bool, schema ma
 	}
 
 	// Loop through the indices
-	var keys []string = c.ft.wordCache[words[0]]
-	for i := 0; i < len(keys); i++ {
-		for key, value := range c.data[keys[i]] {
+	var indices []int = c.ft.wordCache[words[0]]
+	for i := 0; i < len(indices); i++ {
+		for key, value := range c.data[c.ft.keys[indices[i]]] {
 			if !schema[key] {
 				continue
 			}
@@ -85,7 +85,7 @@ func (c *Cache) searchWithSpaces(query string, limit int, strict bool, schema ma
 			// Check if the value contains the query
 			if v, ok := value.(string); ok {
 				if containsIgnoreCase(v, query) {
-					result = append(result, c.data[keys[i]])
+					result = append(result, c.data[c.ft.keys[indices[i]]])
 				}
 			}
 		}
@@ -298,7 +298,7 @@ func (c *Cache) searchOne(query string, limit int, strict bool) ([]map[string]in
 
 		// Loop through the indices
 		for i := 0; i < len(c.ft.wordCache[query]); i++ {
-			result = append(result, c.data[c.ft.wordCache[query][i]])
+			result = append(result, c.data[c.ft.keys[c.ft.wordCache[query][i]]])
 		}
 
 		// Return the result
@@ -306,7 +306,7 @@ func (c *Cache) searchOne(query string, limit int, strict bool) ([]map[string]in
 	}
 
 	// Define a map to store the indices that have already been added
-	var alreadyAdded map[string]int = map[string]int{}
+	var alreadyAdded map[int]int = map[int]int{}
 
 	// Loop through the cache keys
 	for k, v := range c.ft.wordCache {
@@ -324,7 +324,7 @@ func (c *Cache) searchOne(query string, limit int, strict bool) ([]map[string]in
 			}
 
 			// Else, append the index to the result
-			result = append(result, c.data[v[j]])
+			result = append(result, c.data[c.ft.keys[v[j]]])
 			alreadyAdded[v[j]] = -1
 		}
 	}

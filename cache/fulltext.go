@@ -1,25 +1,18 @@
 package cache
 
 /*
-The FullText struct represents a full text search cache that stores words and the keys of the documents where they appear.
-It uses a read-write mutex to ensure safe access to the cache data, a map to store the words and their associated keys, and a map to store the document data.
-The maxWords and maxSizeBytes fields represent optional limits on the size of the cache. If either limit is reached, additional data will not be added to the cache.
-When initialized, the isInitialized field is set to true to indicate that the cache is ready for use.
+FullText represents a data structure for storing and searching full-text documents. It uses a map to cache word positions for each word in the text, and an array to store the keys in sorted order for faster iteration. The maximum number of words that can be cached and the maximum size of the text can be set when initializing the struct.
 
-@Variables:
-
-	mutex *sync.RWMutex: a reader/writer mutex used to synchronize access to the wordCache and data maps when reading and writing to them.
-
-	wordCache map[string][]string: a map of words to a slice of keys for items that contain the word. The keys represent the unique identifiers for each item in the cache.
-
-	maxWords int: the maximum number of unique keys that can be stored in the wordCache map. If the cache size exceeds this value, an error is returned when attempting to add a new item.
-
-	maxSizeBytes int: the maximum size of the wordCache map in bytes. If the cache size exceeds this value, an error is returned when attempting to add a new item.
-
-	isInitialized bool: a flag indicating whether the cache has been initialized or not. If the cache is not initialized, attempting to read or write to it will result in an error.
+Fields:
+- wordCache: a map of words to an array of positions where the word appears in the text
+- keys: an array of keys sorted in ascending order
+- maxWords: the maximum number of words to cache
+- maxSizeBytes: the maximum size of the text to cache in bytes
+- isInitialized: a boolean flag indicating whether the struct has been initialized
 */
 type FullText struct {
-	wordCache     map[string][]string
+	wordCache     map[string][]int
+	keys          []string
 	maxWords      int
 	maxSizeBytes  int
 	isInitialized bool

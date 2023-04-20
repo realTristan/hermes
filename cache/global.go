@@ -169,27 +169,80 @@ func readJson(file string) (map[string]map[string]interface{}, error) {
 }
 
 /*
-Checks whether a given string is already present in the specified string array.
+indexOfString function returns the index of a string in a string array.
 
 Parameters:
-  - array: the string array to be searched
-  - value: the string value to search for
+
+	array ([]string): The string array to search.
+	value (string): The string to search for.
 
 Returns:
+
+	The index of the string in the array. If the string is not found, this function returns -1.
+
+Example Usage:
+
+	array := []string{"apple", "banana", "orange"}
+	value := "banana"
+	index := indexOfString(array, value)
+	fmt.Println(index) // Output: 1
+*/
+func indexOfString(array []string, value string) int {
+	for i := 0; i < len(array); i++ {
+		if array[i] == value {
+			return i
+		}
+	}
+	return -1
+}
+
+/*
+Checks whether a given integer is already present in the specified integer array.
+
+Parameters:
+
+  - array: the integer array to be searched
+  - value: the integer value to search for
+
+Returns:
+
   - bool: true if the array contains the value, false otherwise
 
 Example usage:
 
-	array := []string{"apple", "banana", "orange"}
-	value := "banana"
-	result := containsString(array, value)
-	fmt.Println(result) // Output: true
+	array := []int{1, 2, 3}
+	value := 2
+	result := containsInt(array, value)
+	fmt.Println(result) // Output: 1
 */
-func containsString(array []string, value string) bool {
+func indexOfInt(array []int, value int) int {
 	for i := 0; i < len(array); i++ {
 		if array[i] == value {
-			return true
+			return i
 		}
 	}
-	return false
+	return -1
+}
+
+/*
+Checks whether a given integer is already present in the specified integer array.
+
+Parameters:
+
+  - array: the integer array to be searched
+  - value: the integer value to search for
+
+Returns:
+
+  - bool: true if the array contains the value, false otherwise
+
+Example usage:
+
+	array := []int{1, 2, 3}
+	value := 2
+	result := containsInt(array, value)
+	fmt.Println(result) // Output: true
+*/
+func containsInt(array []int, value int) bool {
+	return indexOfInt(array, value) != -1
 }
