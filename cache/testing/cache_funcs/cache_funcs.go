@@ -11,7 +11,7 @@ func main() {
 	// Important Variables
 	var (
 		cache        *Hermes.Cache   = Hermes.InitCache()
-		maxWords     int             = 10 // -1 for no limit
+		maxWords     int             = -1 // -1 for no limit
 		maxSizeBytes int             = -1 // -1 for no limit
 		schema       map[string]bool = map[string]bool{
 			"name":       true,
@@ -20,10 +20,11 @@ func main() {
 		}
 	)
 
-	// Initialize the FT cache
-	if err := cache.InitFTJson("cache.json", maxWords, maxSizeBytes, schema); err != nil {
+	/* Initialize the FT cache
+	if err := cache.InitFTJson("../../../data/data_hash.json", maxWords, maxSizeBytes, schema); err != nil {
 		fmt.Println(err)
 	}
+	*/
 
 	// Initialize the FT cache
 	if err := cache.InitFT(maxWords, maxSizeBytes, schema); err != nil {
@@ -60,7 +61,7 @@ func main() {
 	})
 
 	// Print all the cache info
-	cache.Info()
+	//cache.Info()
 
 	/* Reset the FT cache
 	if err := cache.ResetFT(maxWords, maxSizeBytes, schema); err != nil {
@@ -79,7 +80,7 @@ func main() {
 	})
 
 	// Print all the cache info
-	cache.Info()
+	//cache.Info()
 }
 
 // Track the duration of a function
