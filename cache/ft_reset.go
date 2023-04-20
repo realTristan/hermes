@@ -55,10 +55,53 @@ func (c *Cache) resetFT(maxWords int, maxSizeBytes int, schema map[string]bool) 
 	if c.ft == nil {
 		return fmt.Errorf("full text is not initialized")
 	}
-
-	// Reset the FT cache
-	c.ft.isInitialized = false
 	return c.initFT(maxWords, maxSizeBytes, schema)
+}
+
+/*
+ResetFTWithMap resets the FullText cache with a map and Mutex Locking.
+
+This function takes a map of map[string]interface{}, maximum number of words to index, maximum size in bytes, and a schema as input arguments.
+It acquires a lock on the cache using a mutex to ensure that only one goroutine can access the cache at a time.
+Then it calls the `resetFTWithMap` method to reset the cache and initialize it with new data from the specified map.
+If an error occurs during the process, it will return an error.
+
+@Parameters:
+  - data (map[string]map[string]interface{}): The map containing the data to be imported
+  - maxWords (int): The maximum number of words to index
+  - maxSizeBytes (int): The maximum size in bytes
+  - schema (map[string]bool): The schema to be used for the imported data
+
+@Returns:
+  - error: An error if the FullText cache is not initialized or if there is an error during the reset process
+*/
+func (c *Cache) ResetFTWithMap(data map[string]map[string]interface{}, maxWords int, maxSizeBytes int, schema map[string]bool) error {
+	c.mutex.Lock()
+	defer c.mutex.Unlock()
+	return c.resetFTWithMap(data, maxWords, maxSizeBytes, schema)
+}
+
+/*
+resetFTWithMap resets the FullText cache using data from a map.
+If the FT cache is not initialized, an error is returned.
+The FT cache is locked during the reset process using a mutex.
+The FT cache is then reset and initialized with the data from the map.
+
+@Parameters:
+  - data (map[string]map[string]interface{}): The map containing the data to be imported
+  - maxWords (int): The maximum number of words to index
+  - maxSizeBytes (int): The maximum size in bytes
+  - schema (map[string]bool): The schema to be used for the imported data
+
+@Returns:
+  - error: An error if the FullText cache is not initialized or if there is an error during the reset process
+*/
+func (c *Cache) resetFTWithMap(data map[string]map[string]interface{}, maxWords int, maxSizeBytes int, schema map[string]bool) error {
+	// If the FT cache is not initialized, return an error
+	if c.ft == nil {
+		return fmt.Errorf("full text is not initialized")
+	}
+	return c.initFTWithMap(data, maxWords, maxSizeBytes, schema)
 }
 
 /*
@@ -78,10 +121,10 @@ If an error occurs during the process, it will return an error.
 @Returns:
   - error: If the FullText cache has not been initialized, or if an error occurs during the reset and initialization process, it will return an error. Otherwise, it will return nil.
 */
-func (c *Cache) ResetFTJson(file string, maxWords int, maxSizeBytes int, schema map[string]bool) error {
+func (c *Cache) ResetFTWithJson(file string, maxWords int, maxSizeBytes int, schema map[string]bool) error {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
-	return c.resetFTJson(file, maxWords, maxSizeBytes, schema)
+	return c.resetFTWithJson(file, maxWords, maxSizeBytes, schema)
 }
 
 /*
@@ -98,13 +141,10 @@ Args:
 Returns:
   - error: An error if the FT cache is not initialized, or an error occurs during initialization.
 */
-func (c *Cache) resetFTJson(file string, maxWords int, maxSizeBytes int, schema map[string]bool) error {
+func (c *Cache) resetFTWithJson(file string, maxWords int, maxSizeBytes int, schema map[string]bool) error {
 	// If the FT cache is not initialized, return an error
 	if c.ft == nil {
 		return fmt.Errorf("full text is not initialized")
 	}
-
-	// Reset the FT cache
-	c.ft.isInitialized = false
-	return c.initFTJson(file, maxWords, maxSizeBytes, schema)
+	return c.initFTWithJson(file, maxWords, maxSizeBytes, schema)
 }
