@@ -47,7 +47,7 @@ func HermesSearch() {
 	var cache *Hermes.Cache = Hermes.InitCache()
 
 	// Initialize the FT cache with a json file
-	cache.InitFTJson("../../../data/data_indices.json", -1, -1, map[string]bool{
+	cache.InitFTWithJson("../../../data/data_indices.json", -1, -1, map[string]bool{
 		"id":             false,
 		"components":     false,
 		"units":          false,

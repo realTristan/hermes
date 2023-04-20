@@ -71,8 +71,8 @@ func (c *Cache) setFT(key string, value map[string]interface{}) error {
 			// Loop through the words
 			for _, word := range strings.Split(v, " ") {
 				if c.ft.maxWords != -1 {
-					if len(c.ft.wordCache) > c.ft.maxWords {
-						return fmt.Errorf("full text cache key limit reached (%d/%d keys)", len(c.ft.wordCache), c.ft.maxWords)
+					if len(c.ft.keys) > c.ft.maxWords {
+						return fmt.Errorf("full text cache key limit reached (%d/%d keys)", len(c.ft.keys), c.ft.maxWords)
 					}
 				}
 				if c.ft.maxSizeBytes != -1 {

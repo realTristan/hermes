@@ -37,8 +37,8 @@ func (ft *FullText) loadCacheData(data map[string]map[string]interface{}, schema
 				// Loop through the words
 				for _, word := range strings.Split(v, " ") {
 					if ft.maxWords != -1 {
-						if len(ft.wordCache) > ft.maxWords {
-							return fmt.Errorf("full text cache key limit reached (%d/%d keys)", len(ft.wordCache), ft.maxWords)
+						if len(ft.keys) > ft.maxWords {
+							return fmt.Errorf("full text cache key limit reached (%d/%d keys)", len(ft.keys), ft.maxWords)
 						}
 					}
 					if ft.maxSizeBytes != -1 {

@@ -21,7 +21,7 @@ func main() {
 	)
 
 	/* Initialize the FT cache
-	if err := cache.InitFTJson("../../../data/data_hash.json", maxWords, maxSizeBytes, schema); err != nil {
+	if err := cache.InitFTWithJson("../../../data/data_hash.json", maxWords, maxSizeBytes, schema); err != nil {
 		fmt.Println(err)
 	}
 	*/
