@@ -31,6 +31,30 @@ type Cache struct {
 }
 
 /*
+The InitCache function is a factory function that creates and initializes a new Cache struct.
+@Parameters: None
+@Returns: A pointer to a newly created and initialized Cache struct.
+
+Usage:
+
+	cache := InitCache()
+
+Example:
+
+	cache := InitCache()
+	// use the cache object for storing data
+	cache.Set("key1", "field1", "value1")
+	cache.Set("key2", "field2", "value2")
+*/
+func InitCache() *Cache {
+	return &Cache{
+		data:  make(map[string]map[string]interface{}),
+		mutex: &sync.RWMutex{},
+		ft:    nil,
+	}
+}
+
+/*
 Info prints diagnostic information about the cache to standard output.
 
 	The method acquires a read lock on the cache mutex, calls the private `info` method to collect the information, and then releases the lock.
@@ -70,35 +94,18 @@ func (c *Cache) info() {
 	if c.ft == nil {
 		return
 	}
+
 	fmt.Println("\nCache FullText Info:")
 	fmt.Println("-----------")
-	fmt.Println("Number of words:", len(c.ft.wordCache))
-	fmt.Println("Initialized:", c.ft.isInitialized)
-	fmt.Println("Word cache:", c.ft.wordCache)
-}
-
-/*
-The InitCache function is a factory function that creates and initializes a new Cache struct.
-@Parameters: None
-@Returns: A pointer to a newly created and initialized Cache struct.
-
-Usage:
-
-	cache := InitCache()
-
-Example:
-
-	cache := InitCache()
-	// use the cache object for storing data
-	cache.Set("key1", "field1", "value1")
-	cache.Set("key2", "field2", "value2")
-*/
-func InitCache() *Cache {
-	return &Cache{
-		data:  make(map[string]map[string]interface{}),
-		mutex: &sync.RWMutex{},
-		ft:    nil,
+	var wordCacheSize, err = size(c.ft.wordCache)
+	if err != nil {
+		fmt.Println("Error:", err)
+		return
 	}
+	fmt.Println("Number of words:", len(c.FTWordCache()))
+	fmt.Println("Initialized:", c.ft.isInitialized())
+	fmt.Println("Word cache:", c.FTWordCache())
+	fmt.Println("Word cache size:", wordCacheSize)
 }
 
 /*
@@ -139,7 +146,7 @@ Usage:
 	It should not be called directly from outside the package.
 */
 func (c *Cache) clean() {
-	if c.ft != nil && c.ft.isInitialized {
+	if c.ft.isInitialized() {
 		c.ft.clean()
 	}
 	c.data = map[string]map[string]interface{}{}
@@ -192,7 +199,7 @@ Usage:
 */
 func (c *Cache) set(key string, value map[string]interface{}) error {
 	// Update the value in the FT cache
-	if c.ft != nil && c.ft.isInitialized {
+	if c.ft.isInitialized() {
 		if err := c.setFT(key, value); err != nil {
 			return err
 		}
@@ -303,7 +310,7 @@ pair from the main cache using the built-in delete function.
 */
 func (c *Cache) delete(key string) {
 	// Delete the key from the FT cache
-	if c.ft != nil && c.ft.isInitialized {
+	if c.ft.isInitialized() {
 		c.deleteFT(key)
 	}
 

@@ -24,7 +24,7 @@ Returns:
 func (c *Cache) InitFT(maxWords int, maxSizeBytes int, schema map[string]bool) error {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
-	if c.ft != nil && c.ft.isInitialized {
+	if c.ft.isInitialized() {
 		return fmt.Errorf("full text cache already initialized")
 	}
 	return c.initFT(maxWords, maxSizeBytes, schema)
@@ -53,21 +53,20 @@ The `initFT` method initializes the FullText index for the cache.
 */
 func (c *Cache) initFT(maxWords int, maxSizeBytes int, schema map[string]bool) error {
 	// Initialize the FT struct
-	c.ft = &FullText{
-		wordCache:     make(map[string][]string, maxWords),
-		maxWords:      maxWords,
-		maxSizeBytes:  maxSizeBytes,
-		isInitialized: false,
+	var ft *FullText = &FullText{
+		wordCache:    make(map[string][]string, maxWords),
+		maxWords:     maxWords,
+		maxSizeBytes: maxSizeBytes,
+		initialized:  true,
 	}
 
 	// Load the cache data
-	if err := c.ft.loadCacheData(c.data, schema); err != nil {
-		c.ft.clean()
+	if err := ft.loadCacheData(c.data, schema); err != nil {
 		return err
 	}
 
-	// Set the FT cache as initialized
-	c.ft.isInitialized = true
+	// Set the cache ft
+	c.ft = ft
 
 	// Return no error
 	return nil
@@ -92,7 +91,7 @@ Returns:
 func (c *Cache) InitFTWithMap(data map[string]map[string]interface{}, maxWords int, maxSizeBytes int, schema map[string]bool) error {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
-	if c.ft != nil && c.ft.isInitialized {
+	if c.ft.isInitialized() {
 		return fmt.Errorf("full text cache already initialized")
 	}
 	return c.initFTWithMap(data, maxWords, maxSizeBytes, schema)
@@ -116,11 +115,11 @@ Returns:
 */
 func (c *Cache) initFTWithMap(data map[string]map[string]interface{}, maxWords int, maxSizeBytes int, schema map[string]bool) error {
 	// Initialize the FT struct
-	c.ft = &FullText{
-		wordCache:     make(map[string][]string, maxWords),
-		maxWords:      maxWords,
-		maxSizeBytes:  maxSizeBytes,
-		isInitialized: false,
+	var ft *FullText = &FullText{
+		wordCache:    make(map[string][]string, maxWords),
+		maxWords:     maxWords,
+		maxSizeBytes: maxSizeBytes,
+		initialized:  true,
 	}
 
 	// Iterate over the cache keys and add them to the data
@@ -132,16 +131,13 @@ func (c *Cache) initFTWithMap(data map[string]map[string]interface{}, maxWords i
 	}
 
 	// Load the cache data
-	if err := c.ft.loadCacheData(data, schema); err != nil {
-		c.ft.clean()
+	if err := ft.loadCacheData(data, schema); err != nil {
 		return err
 	}
 
-	// Set the data
+	// Update the cache data
 	c.data = data
-
-	// Set the FT cache as initialized
-	c.ft.isInitialized = true
+	c.ft = ft
 
 	// Return no error
 	return nil
@@ -175,7 +171,7 @@ Note that this function is a wrapper around the initFTJson method that adds mute
 func (c *Cache) InitFTWithJson(file string, maxWords int, maxSizeBytes int, schema map[string]bool) error {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
-	if c.ft != nil && c.ft.isInitialized {
+	if c.ft.isInitialized() {
 		return fmt.Errorf("full text cache already initialized")
 	}
 	return c.initFTWithJson(file, maxWords, maxSizeBytes, schema)

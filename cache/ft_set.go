@@ -3,7 +3,6 @@ package cache
 import (
 	"fmt"
 	"strings"
-	"unsafe"
 )
 
 /*
@@ -30,7 +29,7 @@ Example:
 func (c *Cache) SetFT(key string, value map[string]interface{}) error {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
-	if c.ft == nil || !c.ft.isInitialized {
+	if !c.ft.isInitialized() {
 		return fmt.Errorf("full text is not initialized")
 	}
 	return c.setFT(key, value)
@@ -99,8 +98,9 @@ func (c *Cache) setFT(key string, value map[string]interface{}) error {
 					}
 				}
 				if c.ft.maxSizeBytes != -1 {
-					var cacheSize int = int(unsafe.Sizeof(c.ft.wordCache))
-					if cacheSize > c.ft.maxSizeBytes {
+					if cacheSize, err := size(c.ft.wordCache); err != nil {
+						return err
+					} else if cacheSize > c.ft.maxSizeBytes {
 						return fmt.Errorf("full text cache size limit reached (%d/%d bytes)", cacheSize, c.ft.maxSizeBytes)
 					}
 				}

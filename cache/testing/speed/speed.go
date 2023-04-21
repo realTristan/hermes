@@ -67,7 +67,6 @@ func HermesSearch() {
 		// Print the duration
 		average += time.Since(start).Nanoseconds()
 	}
-
 	var averageNanos float64 = float64(average) / 100
 	var averageMillis float64 = averageNanos / 1000000
 	fmt.Println("Hermes: Average time is: ", averageNanos, "ns or", averageMillis, "ms")

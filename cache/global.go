@@ -1,6 +1,8 @@
 package cache
 
 import (
+	"bytes"
+	"encoding/gob"
 	"encoding/json"
 	"os"
 	"regexp"
@@ -269,4 +271,24 @@ Example usage:
 */
 func containsInt(array []int, value int) bool {
 	return indexOfInt(array, value) != -1
+}
+
+/*
+Gets the real size in memory of a given value.
+
+Parameters:
+
+  - v: the value to get the size of
+
+Returns:
+
+  - int: the size of the value in bytes
+  - error: an error if there was a problem getting the size of the value
+*/
+func size(v interface{}) (int, error) {
+	var b *bytes.Buffer = new(bytes.Buffer)
+	if err := gob.NewEncoder(b).Encode(v); err != nil {
+		return 0, err
+	}
+	return b.Len(), nil
 }

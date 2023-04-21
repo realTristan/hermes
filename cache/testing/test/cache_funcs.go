@@ -25,6 +25,7 @@ func main() {
 		fmt.Println(err)
 	}
 	*/
+	// cache.Info()
 
 	// Initialize the FT cache
 	if err := cache.InitFT(maxWords, maxSizeBytes, schema); err != nil {

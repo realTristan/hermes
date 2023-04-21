@@ -1,7 +1,5 @@
 package cache
 
-import "unsafe"
-
 /*
 FullText represents a data structure for storing and searching full-text documents. It uses a map to cache word positions for each word in the text, and an array to store the keys in sorted order for faster iteration. The maximum number of words that can be cached and the maximum size of the text can be set when initializing the struct.
 
@@ -13,10 +11,14 @@ Fields:
 - isInitialized: a boolean flag indicating whether the struct has been initialized
 */
 type FullText struct {
-	wordCache     map[string][]string
-	maxWords      int
-	maxSizeBytes  int
-	isInitialized bool
+	wordCache    map[string][]string
+	maxWords     int
+	maxSizeBytes int
+	initialized  bool
+}
+
+func (ft *FullText) isInitialized() bool {
+	return ft != nil && ft.initialized
 }
 
 func (c *Cache) FTWordCache() map[string][]string {
@@ -29,20 +31,14 @@ func (c *Cache) FTWordCache() map[string][]string {
 	return copy
 }
 
-func (c *Cache) FTWordCacheSize() uintptr {
+func (c *Cache) FTWordCacheSize() (int, error) {
 	c.mutex.RLock()
 	defer c.mutex.RUnlock()
-	return unsafe.Sizeof(c.ft.wordCache)
+	return size(c.ft.wordCache)
 }
 
 func (c *Cache) FTIsInitialized() bool {
 	c.mutex.RLock()
 	defer c.mutex.RUnlock()
-	return c.ft.isInitialized
-}
-
-func (c *Cache) FTSpaceLeft() uintptr {
-	c.mutex.RLock()
-	defer c.mutex.RUnlock()
-	return uintptr(c.ft.maxSizeBytes) - unsafe.Sizeof(c.ft.wordCache)
+	return c.ft.isInitialized()
 }

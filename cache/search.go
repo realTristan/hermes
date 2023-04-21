@@ -34,7 +34,7 @@ import (
 func (c *Cache) SearchWithSpaces(query string, limit int, strict bool, schema map[string]bool) ([]map[string]interface{}, error) {
 	c.mutex.RLock()
 	defer c.mutex.RUnlock()
-	if c.ft == nil || !c.ft.isInitialized {
+	if !c.ft.isInitialized() {
 		return []map[string]interface{}{}, fmt.Errorf("full text is not initialized")
 	}
 	return c.searchWithSpaces(query, limit, strict, schema)
@@ -246,7 +246,7 @@ Example Usage:
 func (c *Cache) SearchOne(query string, limit int, strict bool) ([]map[string]interface{}, error) {
 	c.mutex.RLock()
 	defer c.mutex.RUnlock()
-	if c.ft == nil || !c.ft.isInitialized {
+	if !c.ft.isInitialized() {
 		return []map[string]interface{}{}, errors.New("full text is not initialized")
 	}
 	return c.searchOne(query, limit, strict)

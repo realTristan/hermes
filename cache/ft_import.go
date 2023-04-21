@@ -26,7 +26,7 @@ Example Usage:
 func (c *Cache) Import(data map[string]map[string]interface{}, schema map[string]bool) error {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
-	if c.ft == nil || !c.ft.isInitialized {
+	if !c.ft.isInitialized() {
 		return fmt.Errorf("full text is not initialized")
 	}
 	return c.ft.loadCacheData(data, schema)
@@ -52,7 +52,7 @@ Example Usage:
 func (c *Cache) ImportJson(file string, schema map[string]bool) error {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
-	if c.ft == nil || !c.ft.isInitialized {
+	if !c.ft.isInitialized() {
 		return fmt.Errorf("full text is not initialized")
 	}
 

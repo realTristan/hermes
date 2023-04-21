@@ -24,7 +24,7 @@ Example usage:
 func (c *Cache) DeleteFT(word string) error {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
-	if c.ft == nil || !c.ft.isInitialized {
+	if !c.ft.isInitialized() {
 		return errors.New("full text is not initialized")
 	}
 	c.deleteFT(word)

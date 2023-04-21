@@ -134,15 +134,15 @@ schema := map[string]bool{"name": true, "description": true}
 		{"name": "orange", "description": "a citrus fruit"},
 	}
 
-ft := FullText{}
-err := ft.loadCacheData(data, schema)
+	ft := FullText{}
+	err := ft.loadCacheData(data, schema)
 
 	if err != nil {
 		fmt.Println("Error loading data into wordCache:", err)
 		return
 	}
 
-fmt.Println("Data successfully loaded into wordCache")
+	fmt.Println("Data successfully loaded into wordCache")
 */
 func (ft *FullText) loadCacheData(data []map[string]string, schema map[string]bool) error {
 	// Loop through the data

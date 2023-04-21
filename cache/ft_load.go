@@ -3,7 +3,6 @@ package cache
 import (
 	"fmt"
 	"strings"
-	"unsafe"
 )
 
 /*
@@ -41,8 +40,9 @@ func (ft *FullText) loadCacheData(data map[string]map[string]interface{}, schema
 						}
 					}
 					if ft.maxSizeBytes != -1 {
-						var cacheSize int = int(unsafe.Sizeof(ft.wordCache))
-						if cacheSize > ft.maxSizeBytes {
+						if cacheSize, err := size(ft.wordCache); err != nil {
+							return err
+						} else if cacheSize > ft.maxSizeBytes {
 							return fmt.Errorf("full text cache size limit reached (%d/%d bytes)", cacheSize, ft.maxSizeBytes)
 						}
 					}
