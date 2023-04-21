@@ -6,7 +6,7 @@ import (
 )
 
 /*
-loadCacheData() loops through a map of data and extracts relevant information to populate the wordCache map in the FullText struct.
+insertIntoWordCache() loops through a map of data and extracts relevant information to populate the wordCache map in the FullText struct.
 
 Parameters:
 - data (map[string]map[string]interface{}): a map of data to be loaded into the cache
@@ -15,7 +15,8 @@ Parameters:
 Returns:
 - error: if an error occurs during the loading process, it is returned. Otherwise, returns nil.
 */
-func (ft *FullText) loadCache(data map[string]map[string]interface{}, schema map[string]bool) (map[string][]string, error) {
+func (ft *FullText) insertIntoWordCache(data map[string]map[string]interface{}, schema map[string]bool) error {
+	// Create a copy of the existing word cache
 	var temp map[string][]string = ft.wordCache
 
 	// Loop through the json data
@@ -38,14 +39,14 @@ func (ft *FullText) loadCache(data map[string]map[string]interface{}, schema map
 				for _, word := range strings.Split(v, " ") {
 					if ft.maxWords > 0 {
 						if len(temp) > ft.maxWords {
-							return ft.wordCache, fmt.Errorf("full text cache key limit reached (%d/%d keys). load cancelled", len(temp), ft.maxWords)
+							return fmt.Errorf("full text cache key limit reached (%d/%d keys). load cancelled", len(temp), ft.maxWords)
 						}
 					}
 					if ft.maxSizeBytes > 0 {
 						if cacheSize, err := size(temp); err != nil {
-							return ft.wordCache, err
+							return err
 						} else if cacheSize > ft.maxSizeBytes {
-							return ft.wordCache, fmt.Errorf("full text cache size limit reached (%d/%d bytes). load cancelled", cacheSize, ft.maxSizeBytes)
+							return fmt.Errorf("full text cache size limit reached (%d/%d bytes). load cancelled", cacheSize, ft.maxSizeBytes)
 						}
 					}
 					switch {
@@ -66,5 +67,10 @@ func (ft *FullText) loadCache(data map[string]map[string]interface{}, schema map
 			}
 		}
 	}
-	return temp, nil
+
+	// Set the word cache to the temp map
+	ft.wordCache = temp
+
+	// Return nil for no errors
+	return nil
 }

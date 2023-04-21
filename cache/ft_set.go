@@ -43,7 +43,7 @@ Example usage:
 			log.Fatalf("Error setting FullText cache: %s", err)
 	}
 */
-func (ft *FullText) set(key string, value map[string]interface{}) (map[string][]string, error) {
+func (ft *FullText) set(key string, value map[string]interface{}) error {
 	var temp map[string][]string = ft.wordCache
 
 	// Loop through the value
@@ -58,14 +58,14 @@ func (ft *FullText) set(key string, value map[string]interface{}) (map[string][]
 			for _, word := range strings.Split(v, " ") {
 				if ft.maxWords > 0 {
 					if len(temp) > ft.maxWords {
-						return ft.wordCache, fmt.Errorf("full text cache key limit reached (%d/%d keys). set cancelled. cache reverted", len(temp), ft.maxWords)
+						return fmt.Errorf("full text cache key limit reached (%d/%d keys). set cancelled. cache reverted", len(temp), ft.maxWords)
 					}
 				}
 				if ft.maxSizeBytes > 0 {
 					if cacheSize, err := size(temp); err != nil {
-						return ft.wordCache, err
+						return err
 					} else if cacheSize > ft.maxSizeBytes {
-						return ft.wordCache, fmt.Errorf("full text cache size limit reached (%d/%d bytes). set cancelled. cache reverted", cacheSize, ft.maxSizeBytes)
+						return fmt.Errorf("full text cache size limit reached (%d/%d bytes). set cancelled. cache reverted", cacheSize, ft.maxSizeBytes)
 					}
 				}
 				switch {
@@ -82,5 +82,10 @@ func (ft *FullText) set(key string, value map[string]interface{}) (map[string][]
 			}
 		}
 	}
-	return temp, nil
+
+	// Set the word cache to the temp map
+	ft.wordCache = temp
+
+	// Return nil for no errors
+	return nil
 }
