@@ -21,13 +21,13 @@ Returns:
 
 	error: An error if the FullText cache is already initialized or an error occurs during initialization.
 */
-func (c *Cache) InitFT(maxWords int, maxSizeBytes int, schema map[string]bool) error {
+func (c *Cache) FTInit(maxWords int, maxSizeBytes int, schema map[string]bool) error {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
 	if c.ft.isInitialized() {
 		return fmt.Errorf("full text cache already initialized")
 	}
-	return c.initFT(maxWords, maxSizeBytes, schema)
+	return c.ftInit(maxWords, maxSizeBytes, schema)
 }
 
 /*
@@ -51,7 +51,7 @@ The `initFT` method initializes the FullText index for the cache.
 			log.Fatalf("Error initializing FullText index: %v", err)
 	}
 */
-func (c *Cache) initFT(maxWords int, maxSizeBytes int, schema map[string]bool) error {
+func (c *Cache) ftInit(maxWords int, maxSizeBytes int, schema map[string]bool) error {
 	// Initialize the FT struct
 	var ft *FullText = &FullText{
 		wordCache:    make(map[string][]string, maxWords),
@@ -61,12 +61,11 @@ func (c *Cache) initFT(maxWords int, maxSizeBytes int, schema map[string]bool) e
 	}
 
 	// Load the cache data
-	if err := ft.loadCacheData(c.data, schema); err != nil {
+	if new, err := ft.loadCache(c.data, schema); err != nil {
 		return err
+	} else {
+		c.ft = new
 	}
-
-	// Set the cache ft
-	c.ft = ft
 
 	// Return no error
 	return nil
@@ -88,13 +87,13 @@ Returns:
 
 	error: An error if the FT cache is already initialized or an error occurs during initialization.
 */
-func (c *Cache) InitFTWithMap(data map[string]map[string]interface{}, maxWords int, maxSizeBytes int, schema map[string]bool) error {
+func (c *Cache) FTInitWithMap(data map[string]map[string]interface{}, maxWords int, maxSizeBytes int, schema map[string]bool) error {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
 	if c.ft.isInitialized() {
 		return fmt.Errorf("full text cache already initialized")
 	}
-	return c.initFTWithMap(data, maxWords, maxSizeBytes, schema)
+	return c.ftInitWithMap(data, maxWords, maxSizeBytes, schema)
 }
 
 /*
@@ -113,7 +112,7 @@ Returns:
 
 	error: An error if the FT cache is already initialized or an error occurs during initialization.
 */
-func (c *Cache) initFTWithMap(data map[string]map[string]interface{}, maxWords int, maxSizeBytes int, schema map[string]bool) error {
+func (c *Cache) ftInitWithMap(data map[string]map[string]interface{}, maxWords int, maxSizeBytes int, schema map[string]bool) error {
 	// Initialize the FT struct
 	var ft *FullText = &FullText{
 		wordCache:    make(map[string][]string, maxWords),
@@ -131,13 +130,14 @@ func (c *Cache) initFTWithMap(data map[string]map[string]interface{}, maxWords i
 	}
 
 	// Load the cache data
-	if err := ft.loadCacheData(data, schema); err != nil {
+	if new, err := ft.loadCache(data, schema); err != nil {
 		return err
+	} else {
+		c.ft = new
 	}
 
 	// Update the cache data
 	c.data = data
-	c.ft = ft
 
 	// Return no error
 	return nil
@@ -168,13 +168,13 @@ Example usage:
 
 Note that this function is a wrapper around the initFTJson method that adds mutex locking to prevent concurrent access.
 */
-func (c *Cache) InitFTWithJson(file string, maxWords int, maxSizeBytes int, schema map[string]bool) error {
+func (c *Cache) FTInitWithJson(file string, maxWords int, maxSizeBytes int, schema map[string]bool) error {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
 	if c.ft.isInitialized() {
 		return fmt.Errorf("full text cache already initialized")
 	}
-	return c.initFTWithJson(file, maxWords, maxSizeBytes, schema)
+	return c.ftInitWithJson(file, maxWords, maxSizeBytes, schema)
 }
 
 /*
@@ -204,10 +204,10 @@ Example usage:
 Note that this function does not use mutex locking to prevent concurrent access, as it is intended to
 be used within the context of the Cache struct, which already has its own mutex locking.
 */
-func (c *Cache) initFTWithJson(file string, maxWords int, maxSizeBytes int, schema map[string]bool) error {
+func (c *Cache) ftInitWithJson(file string, maxWords int, maxSizeBytes int, schema map[string]bool) error {
 	if data, err := readJson(file); err != nil {
 		return err
 	} else {
-		return c.initFTWithMap(data, maxWords, maxSizeBytes, schema)
+		return c.ftInitWithMap(data, maxWords, maxSizeBytes, schema)
 	}
 }

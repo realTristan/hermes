@@ -177,10 +177,10 @@ Example:
 		// handle error
 	}
 */
-func (c *Cache) Set(key string, value map[string]interface{}) error {
+func (c *Cache) Set(key string, value map[string]interface{}, fullText bool) error {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
-	return c.set(key, value)
+	return c.set(key, value, fullText)
 }
 
 /*
@@ -197,16 +197,14 @@ Usage:
 	This function is called internally by the Set method of the Cache struct to set the value in the cache.
 	It should not be called directly from outside the package.
 */
-func (c *Cache) set(key string, value map[string]interface{}) error {
+func (c *Cache) set(key string, value map[string]interface{}, fullText bool) error {
 	if _, ok := c.data[key]; ok {
 		return fmt.Errorf("full text cache key already exists (%s). please delete it before setting it another value", key)
 	}
 
 	// Update the value in the FT cache
-	if c.ft.isInitialized() {
-		if err := c.ft.set(key, value); err != nil {
-			return err
-		}
+	if fullText && c.ft.isInitialized() {
+		c.ft.set(key, value)
 	}
 
 	// Update the value in the cache

@@ -12,7 +12,7 @@ Usage:
 	ft := &FullText{}
 	ft.Clean()
 */
-func (c *Cache) CleanFT() error {
+func (c *Cache) FTClean() error {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
 	if !c.ft.isInitialized() {
@@ -33,5 +33,5 @@ The `clean` method removes all data from the FullText index.
 	(not meant to be called directly)
 */
 func (ft *FullText) clean() {
-	ft.wordCache = map[string][]string{}
+	ft.wordCache = make(map[string][]string, ft.maxWords)
 }

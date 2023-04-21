@@ -28,7 +28,7 @@ func main() {
 	// cache.Info()
 
 	// Initialize the FT cache
-	if err := cache.InitFT(maxWords, maxSizeBytes, schema); err != nil {
+	if err := cache.FTInit(maxWords, maxSizeBytes, schema); err != nil {
 		fmt.Println(err)
 	}
 
@@ -40,11 +40,11 @@ func main() {
 
 	// Set the value in the cache
 	duration("Set", func() {
-		if err := cache.Set("user_id", data); err != nil {
+		if err := cache.Set("user_id", data, true); err != nil {
 			fmt.Println(err)
 		}
 
-		if err := cache.Set("user_id", data); err != nil {
+		if err := cache.Set("user_id", data, true); err != nil {
 			fmt.Println(err)
 		}
 	})

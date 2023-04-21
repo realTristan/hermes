@@ -10,7 +10,7 @@ func main() {
 	var cache *Hermes.Cache = Hermes.InitCache()
 
 	// Initialize the FT cache
-	cache.InitFT(-1, -1, map[string]bool{
+	cache.FTInit(-1, -1, map[string]bool{
 		"name": true,
 	})
 
@@ -24,9 +24,9 @@ func main() {
 	cache.Info()
 
 	// Set data
-	cache.Set("user_id1", data)
-	cache.Set("user_id1", data)
-	cache.Set("user_id2", data)
+	cache.Set("user_id1", data, true)
+	cache.Set("user_id1", data, true)
+	cache.Set("user_id2", data, true)
 
 	// print cache info
 	cache.Info()

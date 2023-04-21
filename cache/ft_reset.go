@@ -55,7 +55,7 @@ func (c *Cache) resetFT(maxWords int, maxSizeBytes int, schema map[string]bool) 
 	if c.ft == nil {
 		return fmt.Errorf("full text is not initialized")
 	}
-	return c.initFT(maxWords, maxSizeBytes, schema)
+	return c.ftInit(maxWords, maxSizeBytes, schema)
 }
 
 /*
@@ -101,7 +101,7 @@ func (c *Cache) resetFTWithMap(data map[string]map[string]interface{}, maxWords 
 	if c.ft == nil {
 		return fmt.Errorf("full text is not initialized")
 	}
-	return c.initFTWithMap(data, maxWords, maxSizeBytes, schema)
+	return c.ftInitWithMap(data, maxWords, maxSizeBytes, schema)
 }
 
 /*
@@ -146,5 +146,5 @@ func (c *Cache) resetFTWithJson(file string, maxWords int, maxSizeBytes int, sch
 	if c.ft == nil {
 		return fmt.Errorf("full text is not initialized")
 	}
-	return c.initFTWithJson(file, maxWords, maxSizeBytes, schema)
+	return c.ftInitWithJson(file, maxWords, maxSizeBytes, schema)
 }

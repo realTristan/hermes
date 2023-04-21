@@ -15,7 +15,14 @@ Parameters:
 Returns:
 - error: if an error occurs during the loading process, it is returned. Otherwise, returns nil.
 */
-func (ft *FullText) loadCacheData(data map[string]map[string]interface{}, schema map[string]bool) error {
+func (ft *FullText) loadCache(data map[string]map[string]interface{}, schema map[string]bool) (*FullText, error) {
+	var temp *FullText = &FullText{
+		wordCache:    make(map[string][]string, ft.maxWords),
+		maxWords:     ft.maxWords,
+		maxSizeBytes: ft.maxSizeBytes,
+		initialized:  ft.initialized,
+	}
+
 	// Loop through the json data
 	for itemKey, itemValue := range data {
 		// Loop through the map
@@ -34,16 +41,16 @@ func (ft *FullText) loadCacheData(data map[string]map[string]interface{}, schema
 
 				// Loop through the words
 				for _, word := range strings.Split(v, " ") {
-					if ft.maxWords != -1 {
-						if len(ft.wordCache) > ft.maxWords {
-							return fmt.Errorf("full text cache key limit reached (%d/%d keys)", len(ft.wordCache), ft.maxWords)
+					if temp.maxWords != -1 {
+						if len(temp.wordCache) > temp.maxWords {
+							return ft, fmt.Errorf("full text cache key limit reached (%d/%d keys). load cancelled", len(temp.wordCache), temp.maxWords)
 						}
 					}
-					if ft.maxSizeBytes != -1 {
-						if cacheSize, err := size(ft.wordCache); err != nil {
-							return err
-						} else if cacheSize > ft.maxSizeBytes {
-							return fmt.Errorf("full text cache size limit reached (%d/%d bytes)", cacheSize, ft.maxSizeBytes)
+					if temp.maxSizeBytes != -1 {
+						if cacheSize, err := size(temp.wordCache); err != nil {
+							return ft, err
+						} else if cacheSize > temp.maxSizeBytes {
+							return ft, fmt.Errorf("full text cache size limit reached (%d/%d bytes). load cancelled", cacheSize, temp.maxSizeBytes)
 						}
 					}
 					switch {
@@ -52,17 +59,17 @@ func (ft *FullText) loadCacheData(data map[string]map[string]interface{}, schema
 					case !isAlphaNum(word):
 						word = removeNonAlphaNum(word)
 					}
-					if _, ok := ft.wordCache[word]; !ok {
-						ft.wordCache[word] = []string{itemKey}
+					if _, ok := temp.wordCache[word]; !ok {
+						temp.wordCache[word] = []string{itemKey}
 						continue
 					}
-					if containsString(ft.wordCache[word], itemKey) {
+					if containsString(temp.wordCache[word], itemKey) {
 						continue
 					}
-					ft.wordCache[word] = append(ft.wordCache[word], itemKey)
+					temp.wordCache[word] = append(temp.wordCache[word], itemKey)
 				}
 			}
 		}
 	}
-	return nil
+	return temp, nil
 }

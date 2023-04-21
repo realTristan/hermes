@@ -1,5 +1,7 @@
 package cache
 
+import "fmt"
+
 /*
 FullText represents a data structure for storing and searching full-text documents.
 It uses a map to cache word positions for each word in the text. The maximum number of words that
@@ -18,8 +20,34 @@ type FullText struct {
 	initialized  bool
 }
 
+func (c *Cache) FTIsInitialized() bool {
+	c.mutex.RLock()
+	defer c.mutex.RUnlock()
+	return c.ft.isInitialized()
+}
+
 func (ft *FullText) isInitialized() bool {
 	return ft != nil && ft.initialized
+}
+
+func (c *Cache) FTSetMaxBytes(maxBytes int) error {
+	c.mutex.Lock()
+	defer c.mutex.Unlock()
+	if !c.ft.isInitialized() {
+		return fmt.Errorf("full text cache not initialized")
+	}
+	c.ft.maxSizeBytes = maxBytes
+	return nil
+}
+
+func (c *Cache) FTSetMaxWords(maxWords int) error {
+	c.mutex.Lock()
+	defer c.mutex.Unlock()
+	if !c.ft.isInitialized() {
+		return fmt.Errorf("full text cache not initialized")
+	}
+	c.ft.maxWords = maxWords
+	return nil
 }
 
 func (c *Cache) FTWordCache() map[string][]string {
@@ -36,10 +64,4 @@ func (c *Cache) FTWordCacheSize() (int, error) {
 	c.mutex.RLock()
 	defer c.mutex.RUnlock()
 	return size(c.ft.wordCache)
-}
-
-func (c *Cache) FTIsInitialized() bool {
-	c.mutex.RLock()
-	defer c.mutex.RUnlock()
-	return c.ft.isInitialized()
 }

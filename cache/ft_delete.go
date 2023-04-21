@@ -21,7 +21,7 @@ Example usage:
 
 	ft.Delete("example") // Deletes the key "example" and its corresponding value from the cache with Mutex Locking.
 */
-func (c *Cache) DeleteFT(word string) error {
+func (c *Cache) FTDelete(word string) error {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
 	if !c.ft.isInitialized() {
