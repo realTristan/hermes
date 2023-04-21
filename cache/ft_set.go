@@ -26,7 +26,7 @@ Example:
 		log.Fatal(err)
 	}
 */
-func (c *Cache) FTSetInCache(key string, value map[string]interface{}) error {
+func (c *Cache) FTSet(key string, value map[string]interface{}) error {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
 	if !c.ft.isInitialized() {
