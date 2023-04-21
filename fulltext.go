@@ -31,7 +31,7 @@ type FullText struct {
 }
 
 /*
-InitMap initializes a FullText object by loading data into the wordCache field, based on the specified schema.
+InitWithMap initializes a FullText object by loading data into the wordCache field, based on the specified schema.
 It takes in two parameters:
   - data ([]map[string]string): a slice of maps representing the data to be loaded into the wordCache field
   - schema (map[string]bool): a map representing the schema for the data, where the keys are the names of the fields and
@@ -47,7 +47,7 @@ Example Usage:
 	}
 
 schema := map[string]bool{"name": true, "description": true}
-ft, err := InitMap(data, schema)
+ft, err := InitWithMap(data, schema)
 
 	if err != nil {
 		fmt.Println("Error initializing FullText object:", err)
@@ -56,7 +56,7 @@ ft, err := InitMap(data, schema)
 
 fmt.Println("FullText object successfully initialized:", ft)
 */
-func InitMap(data []map[string]string, schema map[string]bool) (*FullText, error) {
+func InitWithMap(data []map[string]string, schema map[string]bool) (*FullText, error) {
 	var ft *FullText = &FullText{
 		mutex:     &sync.RWMutex{},
 		wordCache: map[string][]int{},
@@ -69,12 +69,15 @@ func InitMap(data []map[string]string, schema map[string]bool) (*FullText, error
 		return nil, err
 	}
 
+	// Set the data
+	ft.data = data
+
 	// Return the cache
 	return ft, nil
 }
 
 /*
-InitJson initializes a FullText object by loading data from a JSON file into the wordCache field, based on the specified schema.
+InitWithJson initializes a FullText object by loading data from a JSON file into the wordCache field, based on the specified schema.
 It takes in two parameters:
   - file (string): the path of the JSON file containing the data to be loaded into the wordCache field
   - schema (map[string]bool): a map representing the schema for the data, where the keys are the names of the fields and the values are booleans
@@ -93,28 +96,13 @@ ft, err := InitJson("data.json", schema)
 
 fmt.Println("FullText object successfully initialized:", ft)
 */
-func InitJson(file string, schema map[string]bool) (*FullText, error) {
-	var ft *FullText = &FullText{
-		mutex:     &sync.RWMutex{},
-		wordCache: map[string][]int{},
-		words:     []string{},
-		data:      []map[string]string{},
-	}
-
+func InitWithJson(file string, schema map[string]bool) (*FullText, error) {
 	// Read the json data
 	if data, err := readJson(file); err != nil {
 		return nil, err
 	} else {
-		ft.data = data
+		return InitWithMap(data, schema)
 	}
-
-	// Load the cache data
-	if err := ft.loadCacheData(ft.data, schema); err != nil {
-		return nil, err
-	}
-
-	// Return the cache
-	return ft, nil
 }
 
 /*

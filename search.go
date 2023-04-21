@@ -317,8 +317,8 @@ func (ft *FullText) searchOne(query string, limit int, strict bool) []map[string
 		return result
 	}
 
-	// Define variables
-	var indices []int = make([]int, len(ft.data))
+	// true for already checked
+	var alreadyChecked map[int]bool = map[int]bool{}
 
 	// Loop through the cache keys
 	for i := 0; i < len(ft.words); i++ {
@@ -332,13 +332,13 @@ func (ft *FullText) searchOne(query string, limit int, strict bool) []map[string
 		// Loop through the cache indices
 		for j := 0; j < len(ft.wordCache[ft.words[i]]); j++ {
 			var index int = ft.wordCache[ft.words[i]][j]
-			if indices[index] == -1 {
+			if alreadyChecked[index] {
 				continue
 			}
 
 			// Append the index to the result
 			result = append(result, ft.data[index])
-			indices[index] = -1
+			alreadyChecked[index] = true
 		}
 	}
 

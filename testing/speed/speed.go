@@ -46,15 +46,18 @@ func BasicSearch() {
 // Hermes Search
 func HermesSearch() {
 	// Initialize the cache
-	var cache, _ = Hermes.InitJson("../../data/data_array.json", map[string]bool{
+	var cache, err = Hermes.InitWithJson("../../data/data_array.json", map[string]bool{
 		"id":             false,
 		"components":     false,
 		"units":          false,
+		"pre_requisites": false,
+		"title":          false,
 		"description":    true,
 		"name":           true,
-		"pre_requisites": true,
-		"title":          true,
 	})
+	if err != nil {
+		panic(err)
+	}
 
 	var average int64 = 0
 	for i := 0; i < 100; i++ {
