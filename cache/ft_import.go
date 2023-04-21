@@ -58,7 +58,7 @@ func (c *Cache) FTImport(data map[string]map[string]interface{}, schema map[stri
 
 	// Create a new FullText object
 	var ft *FullText = &FullText{
-		wordCache:    make(map[string][]string, c.ft.maxWords),
+		wordCache:    c.ft.wordCache,
 		maxWords:     c.ft.maxWords,
 		maxSizeBytes: c.ft.maxSizeBytes,
 		initialized:  c.ft.initialized,
@@ -68,9 +68,11 @@ func (c *Cache) FTImport(data map[string]map[string]interface{}, schema map[stri
 	if new, err := ft.loadCache(data, schema); err != nil {
 		return err
 	} else {
-		// Set the new FullText cache
-		c.ft = new
+		ft.wordCache = new
 	}
+
+	// Update the cache data
+	c.ft = ft
 
 	// Return nil if no errors
 	return nil
@@ -106,7 +108,7 @@ func (c *Cache) FTImportJson(file string, schema map[string]bool) error {
 	} else {
 		// Create a new FullText object
 		var ft *FullText = &FullText{
-			wordCache:    make(map[string][]string, c.ft.maxWords),
+			wordCache:    c.ft.wordCache,
 			maxWords:     c.ft.maxWords,
 			maxSizeBytes: c.ft.maxSizeBytes,
 			initialized:  c.ft.initialized,
@@ -116,9 +118,11 @@ func (c *Cache) FTImportJson(file string, schema map[string]bool) error {
 		if new, err := ft.loadCache(data, schema); err != nil {
 			return err
 		} else {
-			// Set the new FullText cache
-			c.ft = new
+			ft.wordCache = new
 		}
+
+		// Update the cache data
+		c.ft = ft
 	}
 
 	// Return nil if no errors

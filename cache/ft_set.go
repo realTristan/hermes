@@ -6,45 +6,6 @@ import (
 )
 
 /*
-Set a value in the FullText cache with Mutex Locking
-This method locks the FullText cache mutex, sets the given value for the specified key in the cache, and then unlocks the mutex.
-@Parameters:
-
-	key: A string representing the key for the cache entry
-	value: A map[string]interface{} representing the value to be stored in the cache
-
-@Returns:
-
-	error: Returns an error if the FullText cache is not initialized or the cache size limit is reached
-
-Example:
-
-	cache := InitCache()
-	cache.InitFT(100, 1000000, map[string]bool{"title": true, "body": true})
-	err := cache.ft.Set("document123", map[string]interface{}{"title": "Document Title", "body": "Document Body"})
-	if err != nil {
-		log.Fatal(err)
-	}
-*/
-func (c *Cache) FTSet(key string, value map[string]interface{}) error {
-	c.mutex.Lock()
-	defer c.mutex.Unlock()
-	if !c.ft.isInitialized() {
-		return fmt.Errorf("full text is not initialized")
-	}
-
-	// Set the key-value pair in the cache
-	if new, err := c.ft.set(key, value); err != nil {
-		return err
-	} else {
-		c.ft = new
-	}
-
-	// Return no error
-	return nil
-}
-
-/*
 The Set function adds a key-value pair to the FullText cache. The cache is locked with a mutex to ensure thread-safety.
 If the key already exists, an error is returned.
 If the maxWords or maxSizeBytes are exceeded, an error is returned.
@@ -82,14 +43,8 @@ Example usage:
 			log.Fatalf("Error setting FullText cache: %s", err)
 	}
 */
-func (ft *FullText) set(key string, value map[string]interface{}) (*FullText, error) {
-	// Initialize a new full text object
-	var temp *FullText = &FullText{
-		maxWords:     ft.maxWords,
-		maxSizeBytes: ft.maxSizeBytes,
-		wordCache:    ft.wordCache,
-		initialized:  ft.initialized,
-	}
+func (ft *FullText) set(key string, value map[string]interface{}) (map[string][]string, error) {
+	var temp map[string][]string = ft.wordCache
 
 	// Loop through the value
 	for _, _v := range value {
@@ -101,16 +56,16 @@ func (ft *FullText) set(key string, value map[string]interface{}) (*FullText, er
 
 			// Loop through the words
 			for _, word := range strings.Split(v, " ") {
-				if temp.maxWords != -1 {
-					if len(temp.wordCache) > temp.maxWords {
-						return ft, fmt.Errorf("full text cache key limit reached (%d/%d keys). set cancelled. cache reverted", len(temp.wordCache), temp.maxWords)
+				if ft.maxWords > 0 {
+					if len(temp) > ft.maxWords {
+						return ft.wordCache, fmt.Errorf("full text cache key limit reached (%d/%d keys). set cancelled. cache reverted", len(temp), ft.maxWords)
 					}
 				}
-				if temp.maxSizeBytes != -1 {
-					if cacheSize, err := size(temp.wordCache); err != nil {
-						return ft, err
-					} else if cacheSize > temp.maxSizeBytes {
-						return ft, fmt.Errorf("full text cache size limit reached (%d/%d bytes). set cancelled. cache reverted", cacheSize, temp.maxSizeBytes)
+				if ft.maxSizeBytes > 0 {
+					if cacheSize, err := size(temp); err != nil {
+						return ft.wordCache, err
+					} else if cacheSize > ft.maxSizeBytes {
+						return ft.wordCache, fmt.Errorf("full text cache size limit reached (%d/%d bytes). set cancelled. cache reverted", cacheSize, ft.maxSizeBytes)
 					}
 				}
 				switch {
@@ -119,11 +74,11 @@ func (ft *FullText) set(key string, value map[string]interface{}) (*FullText, er
 				case !isAlphaNum(word):
 					word = removeNonAlphaNum(word)
 				}
-				if _, ok := temp.wordCache[word]; !ok {
-					temp.wordCache[word] = []string{key}
+				if _, ok := temp[word]; !ok {
+					temp[word] = []string{key}
 					continue
 				}
-				temp.wordCache[word] = append(temp.wordCache[word], key)
+				temp[word] = append(temp[word], key)
 			}
 		}
 	}

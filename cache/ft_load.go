@@ -15,13 +15,8 @@ Parameters:
 Returns:
 - error: if an error occurs during the loading process, it is returned. Otherwise, returns nil.
 */
-func (ft *FullText) loadCache(data map[string]map[string]interface{}, schema map[string]bool) (*FullText, error) {
-	var temp *FullText = &FullText{
-		wordCache:    make(map[string][]string, ft.maxWords),
-		maxWords:     ft.maxWords,
-		maxSizeBytes: ft.maxSizeBytes,
-		initialized:  ft.initialized,
-	}
+func (ft *FullText) loadCache(data map[string]map[string]interface{}, schema map[string]bool) (map[string][]string, error) {
+	var temp map[string][]string = ft.wordCache
 
 	// Loop through the json data
 	for itemKey, itemValue := range data {
@@ -41,16 +36,16 @@ func (ft *FullText) loadCache(data map[string]map[string]interface{}, schema map
 
 				// Loop through the words
 				for _, word := range strings.Split(v, " ") {
-					if temp.maxWords != -1 {
-						if len(temp.wordCache) > temp.maxWords {
-							return ft, fmt.Errorf("full text cache key limit reached (%d/%d keys). load cancelled", len(temp.wordCache), temp.maxWords)
+					if ft.maxWords > 0 {
+						if len(temp) > ft.maxWords {
+							return ft.wordCache, fmt.Errorf("full text cache key limit reached (%d/%d keys). load cancelled", len(temp), ft.maxWords)
 						}
 					}
-					if temp.maxSizeBytes != -1 {
-						if cacheSize, err := size(temp.wordCache); err != nil {
-							return ft, err
-						} else if cacheSize > temp.maxSizeBytes {
-							return ft, fmt.Errorf("full text cache size limit reached (%d/%d bytes). load cancelled", cacheSize, temp.maxSizeBytes)
+					if ft.maxSizeBytes > 0 {
+						if cacheSize, err := size(temp); err != nil {
+							return ft.wordCache, err
+						} else if cacheSize > ft.maxSizeBytes {
+							return ft.wordCache, fmt.Errorf("full text cache size limit reached (%d/%d bytes). load cancelled", cacheSize, ft.maxSizeBytes)
 						}
 					}
 					switch {
@@ -59,14 +54,14 @@ func (ft *FullText) loadCache(data map[string]map[string]interface{}, schema map
 					case !isAlphaNum(word):
 						word = removeNonAlphaNum(word)
 					}
-					if _, ok := temp.wordCache[word]; !ok {
-						temp.wordCache[word] = []string{itemKey}
+					if _, ok := temp[word]; !ok {
+						temp[word] = []string{itemKey}
 						continue
 					}
-					if containsString(temp.wordCache[word], itemKey) {
+					if containsString(temp[word], itemKey) {
 						continue
 					}
-					temp.wordCache[word] = append(temp.wordCache[word], itemKey)
+					temp[word] = append(temp[word], itemKey)
 				}
 			}
 		}

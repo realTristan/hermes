@@ -204,7 +204,11 @@ func (c *Cache) set(key string, value map[string]interface{}, fullText bool) err
 
 	// Update the value in the FT cache
 	if fullText && c.ft.isInitialized() {
-		c.ft.set(key, value)
+		if new, err := c.ft.set(key, value); err != nil {
+			return err
+		} else {
+			c.ft.wordCache = new
+		}
 	}
 
 	// Update the value in the cache
