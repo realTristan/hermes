@@ -23,7 +23,7 @@ var cache *Hermes.Cache = Hermes.InitCache()
 // Main function
 func main() {
 	// Initialize the FT cache with a json file
-	cache.InitFTWithJson("../../data/data_indices.json", -1, -1, map[string]bool{
+	cache.FTInitWithJson("../../data/data_indices.json", -1, -1, map[string]bool{
 		"id":             false,
 		"components":     false,
 		"units":          false,
@@ -69,7 +69,7 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 	// Search for a word in the cache
 	// Make sure the show which keys you do want to search through,
 	// and which ones you don't
-	var res, _ = cache.SearchWithSpaces(query, limit, strict, map[string]bool{
+	var res, _ = cache.Search(query, limit, strict, map[string]bool{
 		"id":             false,
 		"components":     false,
 		"units":          false,

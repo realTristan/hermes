@@ -21,17 +21,17 @@ The function returns a slice of maps representing the data items that contain th
 Example Usage:
 
 	ft := FullText{}
-	results := ft.SearchWithSpaces("hello world", 10, false, map[string]bool{"title": true, "content": true})
+	results := ft.Search("hello world", 10, false, map[string]bool{"title": true, "content": true})
 	fmt.Println(results)
 */
-func (ft *FullText) SearchWithSpaces(query string, limit int, strict bool, schema map[string]bool) []map[string]string {
+func (ft *FullText) Search(query string, limit int, strict bool, schema map[string]bool) []map[string]string {
 	ft.mutex.RLock()
 	defer ft.mutex.RUnlock()
-	return ft.searchWithSpaces(query, limit, strict, schema)
+	return ft.search(query, limit, strict, schema)
 }
 
 /*
-searchWithSpaces searches for all occurrences of the given query string in the FullText object's data.
+search searches for all occurrences of the given query string in the FullText object's data.
 The search is done by splitting the query into separate words and looking for each of them in the data.
 The search result is limited to the specified number of entries, and can optionally be filtered to only
 include keys that match a given schema.
@@ -53,10 +53,10 @@ Example usage:
 
 	ft := &FullText{data: []map[string]string{{"key1": "value1", "key2": "value2"}}, wordCache: map[string][]int{"value1": {0}}
 	schema := map[string]bool{"key1": true}
-	result := ft.searchWithSpaces("value1", 10, false, schema)
+	result := ft.search("value1", 10, false, schema)
 	fmt.Println(result) // Output: [{key1:value1 key2:value2}]
 */
-func (ft *FullText) searchWithSpaces(query string, limit int, strict bool, schema map[string]bool) []map[string]string {
+func (ft *FullText) search(query string, limit int, strict bool, schema map[string]bool) []map[string]string {
 	var words []string = strings.Split(strings.TrimSpace(query), " ")
 	switch {
 	// If the words array is empty
@@ -64,7 +64,7 @@ func (ft *FullText) searchWithSpaces(query string, limit int, strict bool, schem
 		return []map[string]string{}
 	// Get the search result of the first word
 	case len(words) == 1:
-		return ft.searchOne(words[0], limit, strict)
+		return ft.searchOneWord(words[0], limit, strict)
 	}
 
 	// Check if the query is in the cache
@@ -95,13 +95,13 @@ func (ft *FullText) searchWithSpaces(query string, limit int, strict bool, schem
 }
 
 /*
-SearchInJsonWithKey searches for all occurrences of the given query string in the FullText object's data.
-The search is done by looking for the query as a substring in the JSON value associated with the given key
+SearchValuesWithKey searches for all occurrences of the given query string in the FullText object's data.
+The search is done by looking for the query as a substring in the data value associated with the given key
 in each entry of the data. The search result is limited to the specified number of entries.
 
 Parameters:
-  - query (string): The search query to use. This string will be searched for as a substring in the JSON value associated with the given key.
-  - key (string): The name of the key in the data whose JSON value should be searched.
+  - query (string): The search query to use. This string will be searched for as a substring in the data value associated with the given key.
+  - key (string): The name of the key in the data whose data value should be searched.
   - limit (int): The maximum number of search results to return. If the number of matching results exceeds this limit, the excess results will be ignored.
 
 Returns:
@@ -117,23 +117,22 @@ write lock is released.
 Example usage:
 
 	ft := &FullText{data: []map[string]string{{"key1": `{"name": "John", "age": 30}`, "key2": "value2"}, {"key1": `{"name": "Jane", "age": 25}`, "key2": "value4"}}}
-	result := ft.SearchInJsonWithKey("John", "key1", 10)
+	result := ft.SearchValuesWithKey("John", "key1", 10)
 	fmt.Println(result) // Output: [{key1:{"name": "John", "age": 30}, key2:value2}]
 */
-func (ft *FullText) SearchInJsonWithKey(query string, key string, limit int) []map[string]string {
+func (ft *FullText) SearchValuesWithKey(query string, key string, limit int) []map[string]string {
 	ft.mutex.RLock()
 	defer ft.mutex.RUnlock()
-	return ft.searchInJsonWithKey(query, key, limit)
+	return ft.searchValuesWithKey(query, key, limit)
 }
 
 /*
-searchInJsonWithKey searches for all occurrences of the given query string in the FullText object's data.
-The search is done by looking for the query as a substring in the JSON value associated with the given key
-in each entry of the data. The search result is limited to the specified number of entries.
+searchValuesWithKey searches for all occurrences of the given query string in the FullText object's data.
+The search result is limited to the specified number of entries.
 
 Parameters:
-- query (string): The search query to use. This string will be searched for as a substring in the JSON value associated with the given key.
-- key (string): The name of the key in the data whose JSON value should be searched.
+- query (string): The search query to use. This string will be searched for as a substring in the data value associated with the given key.
+- key (string): The name of the key in the data whose data value should be searched.
 - limit (int): The maximum number of search results to return. If the number of matching results exceeds this limit, the excess results will be ignored.
 
 Returns:
@@ -145,10 +144,10 @@ Note: The search is case-insensitive.
 Example usage:
 
 	ft := &FullText{data: []map[string]string{{"key1": `{"name": "John", "age": 30}`, "key2": "value2"}, {"key1": `{"name": "Jane", "age": 25}`, "key2": "value4"}}}
-	result := ft.searchInJsonWithKey("John", "key1", 10)
+	result := ft.searchInValuesWithKey("John", "key1", 10)
 	fmt.Println(result) // Output: [{key1:{"name": "John", "age": 30}, key2:value2}]
 */
-func (ft *FullText) searchInJsonWithKey(query string, key string, limit int) []map[string]string {
+func (ft *FullText) searchValuesWithKey(query string, key string, limit int) []map[string]string {
 	// Define variables
 	var result []map[string]string = []map[string]string{}
 
@@ -164,12 +163,12 @@ func (ft *FullText) searchInJsonWithKey(query string, key string, limit int) []m
 }
 
 /*
-SearchInJson searches for all occurrences of the given query string in the FullText object's data. The search is
-done by looking for the query as a substring in any JSON value associated with any key in each entry of the data.
-The search result is limited to the specified number of entries.
+SearchValues searches for all occurrences of the given query string in the FullText object's data. The search is
+done by looking for the query as a substring in the full text search cache data. The search result is limited to the
+specified number of entries.
 
 Parameters:
-  - query (string): The search query to use. This string will be searched for as a substring in any JSON value associated with any key in the data.
+  - query (string): The search query to use. This string will be searched for as a substring in the full text search cache data.
   - limit (int): The maximum number of search results to return. If the number of matching results exceeds this limit, the excess results will be ignored.
   - schema (map[string]bool): A dictionary of key-value pairs indicating which keys in the data should be searched.
     Only keys that have a value of true in the schema will be searched. If a key is not present in the schema, it will not be searched.
@@ -184,22 +183,18 @@ Example usage:
 
 	ft := &FullText{data: []map[string]string{{"key1": `{"name": "John", "age": 30}`, "key2": "value2"}, {"key1": `{"name": "Jane", "age": 25}`, "key2": "value4"}}}
 	schema := map[string]bool{"key1": true, "key2": false}
-	result := ft.SearchInJson("John", 10, schema)
+	result := ft.SearchValues("John", 10, schema)
 	fmt.Println(result) // Output: [{key1:{"name": "John", "age": 30}, key2:value2}]
 */
-func (ft *FullText) SearchInJson(query string, limit int, schema map[string]bool) []map[string]string {
+func (ft *FullText) SearchValues(query string, limit int, schema map[string]bool) []map[string]string {
 	ft.mutex.RLock()
 	defer ft.mutex.RUnlock()
-	return ft.searchInJson(query, limit, schema)
+	return ft.searchValues(query, limit, schema)
 }
 
 /*
-searchInJson searches for all occurrences of the given query string in the FullText object's data.
-The search is done by looking for the query as a substring in any JSON value associated with any key
-in each entry of the data. The search result is limited to the specified number of entries.
-
 Parameters:
-  - query (string): The search query to use. This string will be searched for as a substring in any JSON value associated with any key in the data.
+  - query (string): The search query to use. This string will be searched for as a substring in the full text cache data.
   - limit (int): The maximum number of search results to return. If the number of matching results exceeds this limit, the excess results will be ignored.
   - schema (map[string]bool): A dictionary of key-value pairs indicating which keys in the data should be searched.
     Only keys that have a value of true in the schema will be searched. If a key is not present in the schema, it will not be searched.
@@ -214,16 +209,16 @@ Example usage:
 
 	ft := &FullText{data: []map[string]string{{"key1": `{"name": "John", "age": 30}`, "key2": "value2"}, {"key1": `{"name": "Jane", "age": 25}`, "key2": "value4"}}}
 	schema := map[string]bool{"key1": true, "key2": false}
-	result := ft.searchInJson("John", 10, schema)
+	result := ft.searchInValues("John", 10, schema)
 	fmt.Println(result) // Output: [{key1:{"name": "John", "age": 30}, key2:value2}]
 */
-func (ft *FullText) searchInJson(query string, limit int, schema map[string]bool) []map[string]string {
+func (ft *FullText) searchValues(query string, limit int, schema map[string]bool) []map[string]string {
 	// Define variables
 	var result []map[string]string = []map[string]string{}
 
 	// Iterate over the query result
 	for i := 0; i < len(ft.data); i++ {
-		// Iterate over the keys and values for the json data for that index
+		// Iterate over the keys and values for the data
 		for key, value := range ft.data[i] {
 			switch {
 			case !schema[key]:
@@ -239,7 +234,7 @@ func (ft *FullText) searchInJson(query string, limit int, schema map[string]bool
 }
 
 /*
-SearchOne searches for all occurrences of the given query string in the FullText object's data.
+SearchOneWord searches for all occurrences of the given query string in the FullText object's data.
 The search is done by looking for the query as a complete word (case-insensitive) in any value
 associated with any key in each entry of the data. The search result is limited to the specified
 number of entries.
@@ -259,17 +254,17 @@ Note: The search is case-insensitive.
 Example usage:
 
 	ft := &FullText{data: []map[string]string{{"key1": "value1", "key2": "value2"}, {"key1": "hello world", "key2": "value4"}}}
-	result := ft.SearchOne("hello", 10, false)
+	result := ft.SearchOneWord("hello", 10, false)
 	fmt.Println(result) // Output: [{key1:hello world, key2:value4}]
 */
-func (ft *FullText) SearchOne(query string, limit int, strict bool) []map[string]string {
+func (ft *FullText) SearchOneWord(query string, limit int, strict bool) []map[string]string {
 	ft.mutex.RLock()
 	defer ft.mutex.RUnlock()
-	return ft.searchOne(query, limit, strict)
+	return ft.searchOneWord(query, limit, strict)
 }
 
 /*
-searchOne searches for a single query within the data using a full-text search approach.
+searchOneWord searches for a single query within the data using a full-text search approach.
 
 Parameters:
   - query (string): the query to search for
@@ -283,14 +278,8 @@ Note:
   - If the query is empty, the function returns an empty list.
   - If strict is true and the query is not found in the data, an empty list is returned.
   - If strict is false and no matches are found, an empty list is returned.
-
-Example usage:
-
-	ft := NewFullText()
-	results := ft.searchOne("John", 1, false)
-	fmt.Println(results)
 */
-func (ft *FullText) searchOne(query string, limit int, strict bool) []map[string]string {
+func (ft *FullText) searchOneWord(query string, limit int, strict bool) []map[string]string {
 	// If the query is empty
 	if len(query) == 0 {
 		return []map[string]string{}

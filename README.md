@@ -90,7 +90,7 @@ func main() {
 	// Search for a word in the cache
 	var (
 		startTime time.Time = time.Now()
-		result, _ = cache.FT.SearchOne("tristan", 100, false)
+		result, _ = cache.SearchOneWord("tristan", 100, false)
 	)
 
 	// Print result
@@ -171,7 +171,7 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 	// Search for a word in the cache
 	// Make sure the show which keys you do want to search through,
 	// and which ones you don't
-	var res []map[string]string = ft.SearchWithSpaces(query, limit, strict, map[string]bool{
+	var res []map[string]string = ft.Search(query, limit, strict, map[string]bool{
 		"id":             false,
 		"components":     false,
 		"units":          false,

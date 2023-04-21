@@ -26,13 +26,13 @@ func main() {
 	})
 
 	// Search for a word in the cache
-	var result, _ = cache.SearchOne("tristan", 100, false)
+	var result, _ = cache.SearchOneWord("tristan", 100, false)
 	fmt.Println(result)
 
 	// Clean
 	cache.FTClean()
 
 	// Search for a word in the cache
-	result, _ = cache.SearchOne("tristan", 100, false)
+	result, _ = cache.SearchOneWord("tristan", 100, false)
 	fmt.Println(result)
 }

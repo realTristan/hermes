@@ -6,7 +6,7 @@ import (
 	"strings"
 )
 
-/* SearchWithSpaces function with Mutex Locking
+/* Search function with Mutex Locking
  *
  * This function is a method of the FullText struct and allows the user to search for a query string with spaces,
  * while also enforcing mutex locking for concurrency safety. The function returns a slice of maps, where each map
@@ -29,15 +29,15 @@ import (
  *     limit := 10
  *     strict := false
  *     schema := map[string]bool{"title": true, "content": true, "date": false}
- *     result := ft.SearchWithSpaces(query, limit, strict, schema)
+ *     result := ft.Search(query, limit, strict, schema)
  */
-func (c *Cache) SearchWithSpaces(query string, limit int, strict bool, schema map[string]bool) ([]map[string]interface{}, error) {
+func (c *Cache) Search(query string, limit int, strict bool, schema map[string]bool) ([]map[string]interface{}, error) {
 	c.mutex.RLock()
 	defer c.mutex.RUnlock()
 	if !c.ft.isInitialized() {
 		return []map[string]interface{}{}, fmt.Errorf("full text is not initialized")
 	}
-	return c.searchWithSpaces(query, limit, strict, schema)
+	return c.search(query, limit, strict, schema)
 }
 
 /*
@@ -52,7 +52,7 @@ Parameters:
 Returns:
   - []map[string]interface{}: An array of maps containing the search results
 */
-func (c *Cache) searchWithSpaces(query string, limit int, strict bool, schema map[string]bool) ([]map[string]interface{}, error) {
+func (c *Cache) search(query string, limit int, strict bool, schema map[string]bool) ([]map[string]interface{}, error) {
 	// Split the query into separate words
 	var words []string = strings.Split(strings.TrimSpace(query), " ")
 
@@ -63,7 +63,7 @@ func (c *Cache) searchWithSpaces(query string, limit int, strict bool, schema ma
 		return []map[string]interface{}{}, fmt.Errorf("invalid query: %s", query)
 	// Get the search result of the first word
 	case len(words) == 1:
-		return c.searchOne(words[0], limit, strict)
+		return c.searchOneWord(words[0], limit, strict)
 	}
 
 	// Define variables
@@ -96,7 +96,7 @@ func (c *Cache) searchWithSpaces(query string, limit int, strict bool, schema ma
 }
 
 /*
-SearchInDataWithKey - function to search data in FullText struct by a given query and key with Mutex locking.
+SearchValuesWithKey - function to search data in FullText struct by a given query and key with Mutex locking.
 Parameters:
   - query: string, the search query to match against data in the FullText struct.
   - key: string, the key to search data on.
@@ -111,17 +111,17 @@ Example usage:
 
 	Assume we have a FullText struct instance named ft, containing data with columns "id", "name", and "description"
 	We can search for all records containing the word "apple" in the "description" column with a limit of 10 as follows:
-	results := ft.SearchInDataWithKey("apple", "description", 10)
+	results := ft.SearchValuesWithKey("apple", "description", 10)
 */
-func (c *Cache) SearchInDataWithKey(query string, key string, limit int) []map[string]interface{} {
+func (c *Cache) SearchValuesWithKey(query string, key string, limit int) []map[string]interface{} {
 	c.mutex.RLock()
 	defer c.mutex.RUnlock()
-	return c.searchInDataWithKey(query, key, limit)
+	return c.searchValuesWithKey(query, key, limit)
 }
 
 /*
-searchInDataWithKey - function to search data in FullText struct by a given query and key.
-This function is not thread-safe and should only be called internally by SearchInDataWithKey which provides the necessary Mutex locking.
+searchValuesWithKey - function to search data in FullText struct by a given query and key.
+This function is not thread-safe and should only be called internally by SearchValuesWithKey which provides the necessary Mutex locking.
 Parameters:
   - query: string, the search query to match against data in the FullText struct.
   - key: string, the key to search data on.
@@ -135,9 +135,9 @@ Example usage:
 
 	Assume we have a FullText struct instance named ft, containing data with columns "id", "name", and "description"
 	We can search for all records containing the word "apple" in the "description" column with a limit of 10 as follows:
-	results := ft.searchInDataWithKey("apple", "description", 10)
+	results := ft.searchValuesWithKey("apple", "description", 10)
 */
-func (c *Cache) searchInDataWithKey(query string, key string, limit int) []map[string]interface{} {
+func (c *Cache) searchValuesWithKey(query string, key string, limit int) []map[string]interface{} {
 	// Define variables
 	var result []map[string]interface{} = []map[string]interface{}{}
 
@@ -157,7 +157,7 @@ func (c *Cache) searchInDataWithKey(query string, key string, limit int) []map[s
 }
 
 /*
-SearchInData - function to search data in FullText struct by a given query with Mutex locking.
+SearchValues - function to search data in FullText struct by a given query with Mutex locking.
 Parameters:
   - query: string, the search query to match against data in the FullText struct.
   - limit: int, the maximum number of results to be returned.
@@ -173,16 +173,16 @@ Example usage:
 	Assume we have a FullText struct instance named ft, containing data with columns "id", "name", and "description"
 	We can search for all records containing the word "apple" in the "description" and "name" columns with a limit of 10 as follows:
 	schema := map[string]bool{"description": true, "name": true}
-	results := ft.SearchInData("apple", 10, schema)
+	results := ft.SearchValues("apple", 10, schema)
 */
-func (c *Cache) SearchInData(query string, limit int, schema map[string]bool) []map[string]interface{} {
+func (c *Cache) SearchValues(query string, limit int, schema map[string]bool) []map[string]interface{} {
 	c.mutex.RLock()
 	defer c.mutex.RUnlock()
-	return c.searchInData(query, limit, schema)
+	return c.searchValues(query, limit, schema)
 }
 
 /*
-searchInData - function to search data in FullText struct by a given query.
+searchValues - function to search data in FullText struct by a given query.
 Parameters:
   - query: string, the search query to match against data in the FullText struct.
   - limit: int, the maximum number of results to be returned.
@@ -197,9 +197,9 @@ Example usage:
 	Assume we have a FullText struct instance named ft, containing data with columns "id", "name", and "description"
 	We can search for all records containing the word "apple" in the "description" and "name" columns with a limit of 10 as follows:
 	schema := map[string]bool{"description": true, "name": true}
-	results := ft.searchInData("apple", 10, schema)
+	results := ft.searchValues("apple", 10, schema)
 */
-func (c *Cache) searchInData(query string, limit int, schema map[string]bool) []map[string]interface{} {
+func (c *Cache) searchValues(query string, limit int, schema map[string]bool) []map[string]interface{} {
 	// Define variables
 	var result []map[string]interface{} = []map[string]interface{}{}
 
@@ -243,13 +243,13 @@ Example Usage:
 		fmt.Printf("Result: %v\n", result)
 	}
 */
-func (c *Cache) SearchOne(query string, limit int, strict bool) ([]map[string]interface{}, error) {
+func (c *Cache) SearchOneWord(query string, limit int, strict bool) ([]map[string]interface{}, error) {
 	c.mutex.RLock()
 	defer c.mutex.RUnlock()
 	if !c.ft.isInitialized() {
 		return []map[string]interface{}{}, errors.New("full text is not initialized")
 	}
-	return c.searchOne(query, limit, strict)
+	return c.searchOneWord(query, limit, strict)
 }
 
 /*
@@ -268,7 +268,7 @@ Example Usage:
 
 	This is an internal function and is not intended to be called directly by the user.
 */
-func (c *Cache) searchOne(query string, limit int, strict bool) ([]map[string]interface{}, error) {
+func (c *Cache) searchOneWord(query string, limit int, strict bool) ([]map[string]interface{}, error) {
 	// If the query is empty
 	if len(query) == 0 {
 		return []map[string]interface{}{}, fmt.Errorf("query is empty")

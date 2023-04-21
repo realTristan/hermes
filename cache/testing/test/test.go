@@ -57,7 +57,7 @@ func main() {
 
 	// Search for a word in the cache
 	duration("Search", func() {
-		var result, _ = cache.SearchOne("tristan", 100, false)
+		var result, _ = cache.SearchOneWord("tristan", 100, false)
 		fmt.Println(result)
 	})
 
@@ -76,7 +76,7 @@ func main() {
 
 	// Search for a word in the cache
 	duration("Search", func() {
-		var result, _ = cache.SearchOne("tristan", 100, false)
+		var result, _ = cache.SearchOneWord("tristan", 100, false)
 		fmt.Println(result)
 	})
 
