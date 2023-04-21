@@ -65,7 +65,15 @@ func HermesSearch() {
 		var start time.Time = time.Now()
 
 		// Search for a word in the cache
-		cache.SearchOneWord("computer", 100, false)
+		cache.Search("computer science", 100, false, map[string]bool{
+			"id":             false,
+			"components":     false,
+			"units":          false,
+			"pre_requisites": false,
+			"title":          false,
+			"description":    true,
+			"name":           true,
+		})
 
 		// Print the duration
 		average += time.Since(start).Nanoseconds()

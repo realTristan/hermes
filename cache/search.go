@@ -47,6 +47,9 @@ func (c *Cache) Search(query string, limit int, strict bool, schema map[string]b
 		return []map[string]interface{}{}, errors.New("full text is not initialized")
 	}
 
+	// Set the query to lowercase
+	query = strings.ToLower(query)
+
 	// Search for the query
 	return c.search(query, limit, strict, schema)
 }
@@ -93,7 +96,7 @@ func (c *Cache) search(query string, limit int, strict bool, schema map[string]b
 
 			// Check if the value contains the query
 			if v, ok := value.(string); ok {
-				if containsIgnoreCase(v, query) {
+				if strings.Contains(strings.ToLower(v), query) {
 					result = append(result, c.data[keys[i]])
 				}
 			}
@@ -131,6 +134,9 @@ func (c *Cache) SearchValuesWithKey(query string, key string, limit int) ([]map[
 	case limit < 1:
 		return []map[string]interface{}{}, errors.New("invalid limit")
 	}
+
+	// Set the query to lowercase
+	query = strings.ToLower(query)
 
 	// Lock the mutex
 	c.mutex.RLock()
@@ -171,7 +177,7 @@ func (c *Cache) searchValuesWithKey(query string, key string, limit int) []map[s
 
 			// Check if the value contains the query
 			if v, ok := v.(string); ok {
-				if containsIgnoreCase(v, query) {
+				if strings.Contains(strings.ToLower(v), query) {
 					result = append(result, item)
 				}
 			}
@@ -208,6 +214,9 @@ func (c *Cache) SearchValues(query string, limit int, schema map[string]bool) ([
 	case limit < 1:
 		return []map[string]interface{}{}, errors.New("invalid limit")
 	}
+
+	// Set the query to lowercase
+	query = strings.ToLower(query)
 
 	// Lock the mutex
 	c.mutex.RLock()
@@ -252,7 +261,7 @@ func (c *Cache) searchValues(query string, limit int, schema map[string]bool) []
 
 			// Check if the value contains the query
 			if v, ok := value.(string); ok {
-				if containsIgnoreCase(v, query) {
+				if strings.Contains(strings.ToLower(v), query) {
 					result = append(result, item)
 				}
 			}

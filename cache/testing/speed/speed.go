@@ -57,12 +57,22 @@ func HermesSearch() {
 		"title":          true,
 	})
 	var average int64 = 0
+	var total int = 0
 	for i := 0; i < 100; i++ {
 		// Track the start time
 		var start time.Time = time.Now()
 
 		// Search for a word in the cache
-		cache.SearchOneWord("computer", 100, false)
+		var res, _ = cache.Search("computer science", 100, false, map[string]bool{
+			"id":             false,
+			"components":     false,
+			"units":          false,
+			"description":    true,
+			"name":           true,
+			"pre_requisites": true,
+			"title":          true,
+		})
+		total += len(res)
 
 		// Print the duration
 		average += time.Since(start).Nanoseconds()
@@ -70,6 +80,7 @@ func HermesSearch() {
 	var averageNanos float64 = float64(average) / 100
 	var averageMillis float64 = averageNanos / 1000000
 	fmt.Println("Hermes: Average time is: ", averageNanos, "ns or", averageMillis, "ms")
+	fmt.Println("Hermes: Results: ", total)
 }
 
 // Read a json file

@@ -35,6 +35,9 @@ func (ft *FullText) Search(query string, limit int, strict bool, schema map[stri
 		return []map[string]string{}, errors.New("invalid limit")
 	}
 
+	// Convert the query to lowercase
+	query = strings.ToLower(query)
+
 	// Lock the mutex
 	ft.mutex.RLock()
 	defer ft.mutex.RUnlock()
@@ -72,12 +75,7 @@ Example usage:
 func (ft *FullText) search(query string, limit int, strict bool, schema map[string]bool) ([]map[string]string, error) {
 	// Split the query into separate words
 	var words []string = strings.Split(strings.TrimSpace(query), " ")
-	switch {
-	// If the words array is empty
-	case len(words) == 0:
-		return []map[string]string{}, errors.New("invalid query")
-	// Get the search result of the first word
-	case len(words) == 1:
+	if len(words) == 1 {
 		return ft.searchOneWord(words[0], limit, strict), nil
 	}
 
@@ -98,7 +96,7 @@ func (ft *FullText) search(query string, limit int, strict bool, schema map[stri
 			case !schema[key]:
 				continue
 			// Check if the value contains the query
-			case containsIgnoreCase(value, query):
+			case strings.Contains(strings.ToLower(value), query):
 				result = append(result, ft.data[i])
 			}
 		}
@@ -145,6 +143,9 @@ func (ft *FullText) SearchValuesWithKey(query string, key string, limit int) ([]
 		return []map[string]string{}, errors.New("invalid limit")
 	}
 
+	// Set the query to lowercase
+	query = strings.ToLower(query)
+
 	// Lock the mutex
 	ft.mutex.RLock()
 	defer ft.mutex.RUnlock()
@@ -180,7 +181,7 @@ func (ft *FullText) searchValuesWithKey(query string, key string, limit int) []m
 		switch {
 		case len(result) >= limit:
 			return result
-		case containsIgnoreCase(ft.data[i][key], query):
+		case strings.Contains(ft.data[i][key], query):
 			result = append(result, ft.data[i])
 		}
 	}
@@ -222,6 +223,9 @@ func (ft *FullText) SearchValues(query string, limit int, schema map[string]bool
 		return []map[string]string{}, errors.New("invalid limit")
 	}
 
+	// Set the query to lowercase
+	query = strings.ToLower(query)
+
 	// Lock the mutex
 	ft.mutex.RLock()
 	defer ft.mutex.RUnlock()
@@ -256,7 +260,7 @@ func (ft *FullText) searchValues(query string, limit int, schema map[string]bool
 				return result
 			case !schema[key]:
 				continue
-			case containsIgnoreCase(value, query):
+			case strings.Contains(strings.ToLower(value), query):
 				result = append(result, ft.data[i])
 			}
 		}
@@ -298,6 +302,9 @@ func (ft *FullText) SearchOneWord(query string, limit int, strict bool) ([]map[s
 	case limit < 1:
 		return []map[string]string{}, errors.New("invalid limit")
 	}
+
+	// Set the query to lowercase
+	query = strings.ToLower(query)
 
 	// Lock the mutex
 	ft.mutex.RLock()
