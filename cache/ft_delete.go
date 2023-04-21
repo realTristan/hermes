@@ -27,7 +27,7 @@ func (c *Cache) DeleteFT(word string) error {
 	if !c.ft.isInitialized() {
 		return errors.New("full text is not initialized")
 	}
-	c.deleteFT(word)
+	c.ft.delete(word)
 	return nil
 }
 
@@ -41,22 +41,22 @@ The `deleteFT` method removes a key from the FullText index.
 	Example usage:
 	(not meant to be called directly)
 */
-func (c *Cache) deleteFT(key string) {
+func (ft *FullText) delete(key string) {
 	// Remove the key from the ft.wordCache
-	for word, keys := range c.ft.wordCache {
+	for word, keys := range ft.wordCache {
 		for i := 0; i < len(keys); i++ {
 			if key != keys[i] {
 				continue
 			}
 
 			// Remove the key from the ft.wordCache slice
-			c.ft.wordCache[word] = append(c.ft.wordCache[word][:i], c.ft.wordCache[word][i+1:]...)
+			ft.wordCache[word] = append(ft.wordCache[word][:i], ft.wordCache[word][i+1:]...)
 			break
 		}
 
 		// If the ft.wordCache[word] is empty, remove it from the cache
-		if len(c.ft.wordCache[word]) == 0 {
-			delete(c.ft.wordCache, word)
+		if len(ft.wordCache[word]) == 0 {
+			delete(ft.wordCache, word)
 		}
 	}
 }

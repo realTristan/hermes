@@ -198,9 +198,13 @@ Usage:
 	It should not be called directly from outside the package.
 */
 func (c *Cache) set(key string, value map[string]interface{}) error {
+	if _, ok := c.data[key]; ok {
+		return fmt.Errorf("full text cache key already exists (%s). please delete it before setting it another value", key)
+	}
+
 	// Update the value in the FT cache
 	if c.ft.isInitialized() {
-		if err := c.setFT(key, value); err != nil {
+		if err := c.ft.set(key, value); err != nil {
 			return err
 		}
 	}
@@ -311,7 +315,7 @@ pair from the main cache using the built-in delete function.
 func (c *Cache) delete(key string) {
 	// Delete the key from the FT cache
 	if c.ft.isInitialized() {
-		c.deleteFT(key)
+		c.ft.delete(key)
 	}
 
 	// Delete the key from the cache

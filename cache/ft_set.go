@@ -32,7 +32,7 @@ func (c *Cache) SetFT(key string, value map[string]interface{}) error {
 	if !c.ft.isInitialized() {
 		return fmt.Errorf("full text is not initialized")
 	}
-	return c.setFT(key, value)
+	return c.ft.set(key, value)
 }
 
 /*
@@ -73,15 +73,7 @@ Example usage:
 			log.Fatalf("Error setting FullText cache: %s", err)
 	}
 */
-func (c *Cache) setFT(key string, value map[string]interface{}) error {
-	// If the key already exists, return an error
-	if _, ok := c.data[key]; ok {
-		return fmt.Errorf("full text cache key already exists (%s). please delete it before setting it another value", key)
-	}
-
-	// Add the value to the cache
-	c.data[key] = value
-
+func (ft *FullText) set(key string, value map[string]interface{}) error {
 	// Loop through the value
 	for _, _v := range value {
 		if v, ok := _v.(string); ok {
@@ -92,16 +84,16 @@ func (c *Cache) setFT(key string, value map[string]interface{}) error {
 
 			// Loop through the words
 			for _, word := range strings.Split(v, " ") {
-				if c.ft.maxWords != -1 {
-					if len(c.ft.wordCache) > c.ft.maxWords {
-						return fmt.Errorf("full text cache key limit reached (%d/%d keys)", len(c.ft.wordCache), c.ft.maxWords)
+				if ft.maxWords != -1 {
+					if len(ft.wordCache) > ft.maxWords {
+						return fmt.Errorf("full text cache key limit reached (%d/%d keys)", len(ft.wordCache), ft.maxWords)
 					}
 				}
-				if c.ft.maxSizeBytes != -1 {
-					if cacheSize, err := size(c.ft.wordCache); err != nil {
+				if ft.maxSizeBytes != -1 {
+					if cacheSize, err := size(ft.wordCache); err != nil {
 						return err
-					} else if cacheSize > c.ft.maxSizeBytes {
-						return fmt.Errorf("full text cache size limit reached (%d/%d bytes)", cacheSize, c.ft.maxSizeBytes)
+					} else if cacheSize > ft.maxSizeBytes {
+						return fmt.Errorf("full text cache size limit reached (%d/%d bytes)", cacheSize, ft.maxSizeBytes)
 					}
 				}
 				switch {
@@ -110,11 +102,11 @@ func (c *Cache) setFT(key string, value map[string]interface{}) error {
 				case !isAlphaNum(word):
 					word = removeNonAlphaNum(word)
 				}
-				if _, ok := c.ft.wordCache[word]; !ok {
-					c.ft.wordCache[word] = []string{key}
+				if _, ok := ft.wordCache[word]; !ok {
+					ft.wordCache[word] = []string{key}
 					continue
 				}
-				c.ft.wordCache[word] = append(c.ft.wordCache[word], key)
+				ft.wordCache[word] = append(ft.wordCache[word], key)
 			}
 		}
 	}
