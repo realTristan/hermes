@@ -18,8 +18,7 @@ Returns:
 */
 func (ft *FullText) loadCacheData(data map[string]map[string]interface{}, schema map[string]bool) error {
 	// Loop through the json data
-	var i int = 0
-	for _, itemValue := range data {
+	for itemKey, itemValue := range data {
 		// Loop through the map
 		for key, value := range itemValue {
 			// Check if the key is in the schema
@@ -37,12 +36,12 @@ func (ft *FullText) loadCacheData(data map[string]map[string]interface{}, schema
 				// Loop through the words
 				for _, word := range strings.Split(v, " ") {
 					if ft.maxWords != -1 {
-						if len(ft.keys) > ft.maxWords {
-							return fmt.Errorf("full text cache key limit reached (%d/%d keys)", len(ft.keys), ft.maxWords)
+						if len(ft.wordCache) > ft.maxWords {
+							return fmt.Errorf("full text cache key limit reached (%d/%d keys)", len(ft.wordCache), ft.maxWords)
 						}
 					}
-					if ft.maxSizeBytes > 0 {
-						var cacheSize uintptr = unsafe.Sizeof(ft.wordCache)
+					if ft.maxSizeBytes != -1 {
+						var cacheSize int = int(unsafe.Sizeof(ft.wordCache))
 						if cacheSize > ft.maxSizeBytes {
 							return fmt.Errorf("full text cache size limit reached (%d/%d bytes)", cacheSize, ft.maxSizeBytes)
 						}
@@ -54,17 +53,16 @@ func (ft *FullText) loadCacheData(data map[string]map[string]interface{}, schema
 						word = removeNonAlphaNum(word)
 					}
 					if _, ok := ft.wordCache[word]; !ok {
-						ft.wordCache[word] = []int{i}
+						ft.wordCache[word] = []string{itemKey}
 						continue
 					}
-					if containsInt(ft.wordCache[word], i) {
+					if containsString(ft.wordCache[word], itemKey) {
 						continue
 					}
-					ft.wordCache[word] = append(ft.wordCache[word], i)
+					ft.wordCache[word] = append(ft.wordCache[word], itemKey)
 				}
 			}
 		}
-		i++
 	}
 	return nil
 }

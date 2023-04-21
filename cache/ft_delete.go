@@ -42,15 +42,10 @@ The `deleteFT` method removes a key from the FullText index.
 	(not meant to be called directly)
 */
 func (c *Cache) deleteFT(key string) {
-	var indexOfKey int = indexOfString(c.ft.keys, key)
-	if indexOfKey == -1 {
-		return
-	}
-
 	// Remove the key from the ft.wordCache
-	for word, indices := range c.ft.wordCache {
-		for i := 0; i < len(indices); i++ {
-			if indexOfKey != indices[i] {
+	for word, keys := range c.ft.wordCache {
+		for i := 0; i < len(keys); i++ {
+			if key != keys[i] {
 				continue
 			}
 
@@ -64,7 +59,4 @@ func (c *Cache) deleteFT(key string) {
 			delete(c.ft.wordCache, word)
 		}
 	}
-
-	// Remove the key from the ft.keys slice
-	c.ft.keys = append(c.ft.keys[:indexOfKey], c.ft.keys[indexOfKey+1:]...)
 }

@@ -13,19 +13,18 @@ Fields:
 - isInitialized: a boolean flag indicating whether the struct has been initialized
 */
 type FullText struct {
-	wordCache     map[string][]int
-	keys          []string
+	wordCache     map[string][]string
 	maxWords      int
-	maxSizeBytes  uintptr
+	maxSizeBytes  int
 	isInitialized bool
 }
 
-func (c *Cache) FTWordCache() map[string][]int {
+func (c *Cache) FTWordCache() map[string][]string {
 	c.mutex.RLock()
 	defer c.mutex.RUnlock()
 
 	// Copy the wordCache map
-	var copy map[string][]int = make(map[string][]int, len(c.ft.wordCache))
+	var copy map[string][]string = make(map[string][]string, len(c.ft.wordCache))
 	copy = c.ft.wordCache
 	return copy
 }
@@ -34,16 +33,6 @@ func (c *Cache) FTWordCacheSize() uintptr {
 	c.mutex.RLock()
 	defer c.mutex.RUnlock()
 	return unsafe.Sizeof(c.ft.wordCache)
-}
-
-func (c *Cache) FTKeys() []string {
-	c.mutex.RLock()
-	defer c.mutex.RUnlock()
-
-	// Copy the keys array
-	var copy []string = make([]string, len(c.ft.keys))
-	copy = c.ft.keys
-	return copy
 }
 
 func (c *Cache) FTIsInitialized() bool {

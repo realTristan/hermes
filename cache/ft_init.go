@@ -21,7 +21,7 @@ Returns:
 
 	error: An error if the FullText cache is already initialized or an error occurs during initialization.
 */
-func (c *Cache) InitFT(maxWords int, maxSizeBytes uintptr, schema map[string]bool) error {
+func (c *Cache) InitFT(maxWords int, maxSizeBytes int, schema map[string]bool) error {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
 	if c.ft != nil && c.ft.isInitialized {
@@ -51,11 +51,10 @@ The `initFT` method initializes the FullText index for the cache.
 			log.Fatalf("Error initializing FullText index: %v", err)
 	}
 */
-func (c *Cache) initFT(maxWords int, maxSizeBytes uintptr, schema map[string]bool) error {
+func (c *Cache) initFT(maxWords int, maxSizeBytes int, schema map[string]bool) error {
 	// Initialize the FT struct
 	c.ft = &FullText{
-		wordCache:     make(map[string][]int),
-		keys:          []string{},
+		wordCache:     make(map[string][]string, maxWords),
 		maxWords:      maxWords,
 		maxSizeBytes:  maxSizeBytes,
 		isInitialized: false,
@@ -67,13 +66,10 @@ func (c *Cache) initFT(maxWords int, maxSizeBytes uintptr, schema map[string]boo
 		return err
 	}
 
-	// Set the keys array
-	for k := range c.data {
-		c.ft.keys = append(c.ft.keys, k)
-	}
-
 	// Set the FT cache as initialized
 	c.ft.isInitialized = true
+
+	// Return no error
 	return nil
 }
 
@@ -93,7 +89,7 @@ Returns:
 
 	error: An error if the FT cache is already initialized or an error occurs during initialization.
 */
-func (c *Cache) InitFTWithMap(data map[string]map[string]interface{}, maxWords int, maxSizeBytes uintptr, schema map[string]bool) error {
+func (c *Cache) InitFTWithMap(data map[string]map[string]interface{}, maxWords int, maxSizeBytes int, schema map[string]bool) error {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
 	if c.ft != nil && c.ft.isInitialized {
@@ -118,11 +114,10 @@ Returns:
 
 	error: An error if the FT cache is already initialized or an error occurs during initialization.
 */
-func (c *Cache) initFTWithMap(data map[string]map[string]interface{}, maxWords int, maxSizeBytes uintptr, schema map[string]bool) error {
+func (c *Cache) initFTWithMap(data map[string]map[string]interface{}, maxWords int, maxSizeBytes int, schema map[string]bool) error {
 	// Initialize the FT struct
 	c.ft = &FullText{
-		wordCache:     make(map[string][]int),
-		keys:          []string{},
+		wordCache:     make(map[string][]string, maxWords),
 		maxWords:      maxWords,
 		maxSizeBytes:  maxSizeBytes,
 		isInitialized: false,
@@ -144,20 +139,20 @@ func (c *Cache) initFTWithMap(data map[string]map[string]interface{}, maxWords i
 
 	// Set the data
 	c.data = data
-	for k := range data {
-		c.ft.keys = append(c.ft.keys, k)
-	}
 
 	// Set the FT cache as initialized
 	c.ft.isInitialized = true
+
+	// Return no error
 	return nil
 }
 
 /*
 This function is used to initialize the FT cache with a JSON file with Mutex Locking. It takes the file path,
 the maximum number of words, the maximum size in bytes, and a schema map as arguments. It locks the cache's mutex
-to prevent concurrent access while calling the initFTJson method.
-
+to prevent concurrent access while calling the initFTJson method. If the cache's FT field is not nil,
+it locks the FT's mutex as well to prevent concurrent access while initializing the FT cache. Once the
+initFTJson method returns, it unlocks both mutexes.
 @Parameters:
 
 	file (string): The path to the JSON file.
@@ -177,7 +172,7 @@ Example usage:
 
 Note that this function is a wrapper around the initFTJson method that adds mutex locking to prevent concurrent access.
 */
-func (c *Cache) InitFTWithJson(file string, maxWords int, maxSizeBytes uintptr, schema map[string]bool) error {
+func (c *Cache) InitFTWithJson(file string, maxWords int, maxSizeBytes int, schema map[string]bool) error {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
 	if c.ft != nil && c.ft.isInitialized {
@@ -187,10 +182,12 @@ func (c *Cache) InitFTWithJson(file string, maxWords int, maxSizeBytes uintptr, 
 }
 
 /*
-This function is used to initialize the FT cache with a JSON file. It takes the file path, the maximum number of words,
-the maximum size in bytes, and a schema map as arguments. It locks the cache's mutex to prevent concurrent access while calling
-the initFTJson method.
-
+This function is used to initialize the FT cache with a JSON file. It takes the file path,
+the maximum number of words, the maximum size in bytes, and a schema map as arguments. If the FT cache is already initialized,
+it returns an error indicating that the FT cache has already been initialized. Otherwise, it initializes the FT cache by creating a
+new instance of the FullText struct and setting its fields accordingly. It then reads the JSON file and assigns its contents to the
+data field of the FT cache. It checks if there are any keys in the JSON file that are already in the regular cache and returns an
+error if any are found. It then loads the cache data using the loadCacheData method of the FullText struct and sets the isInitialized field to true.
 @Parameters:
 
 	file (string): The path to the JSON file.
@@ -201,8 +198,17 @@ the initFTJson method.
 @Returns:
 
 	error: An error indicating if there was a problem initializing the FT cache with the JSON file.
+
+Example usage:
+
+	err := c.initFTJson("data.json", 10000, 1048576, map[string]bool{"title": true, "description": true})
+	// Initializes the FT cache with the data in "data.json" with a maximum of 10000 words and a maximum size of 1MB,
+	// caching only the "title" and "description" keys from the JSON file.
+
+Note that this function does not use mutex locking to prevent concurrent access, as it is intended to
+be used within the context of the Cache struct, which already has its own mutex locking.
 */
-func (c *Cache) initFTWithJson(file string, maxWords int, maxSizeBytes uintptr, schema map[string]bool) error {
+func (c *Cache) initFTWithJson(file string, maxWords int, maxSizeBytes int, schema map[string]bool) error {
 	if data, err := readJson(file); err != nil {
 		return err
 	} else {

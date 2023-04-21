@@ -33,6 +33,5 @@ The `clean` method removes all data from the FullText index.
 	(not meant to be called directly)
 */
 func (ft *FullText) clean() {
-	ft.wordCache = map[string][]int{}
-	ft.keys = []string{}
+	ft.wordCache = map[string][]string{}
 }

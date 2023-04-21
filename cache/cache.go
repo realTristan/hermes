@@ -73,10 +73,8 @@ func (c *Cache) info() {
 	fmt.Println("\nCache FullText Info:")
 	fmt.Println("-----------")
 	fmt.Println("Number of words:", len(c.ft.wordCache))
-	fmt.Println("Number of keys:", len(c.ft.keys))
-	fmt.Println("Is initialized:", c.ft.isInitialized)
+	fmt.Println("Initialized:", c.ft.isInitialized)
 	fmt.Println("Word cache:", c.ft.wordCache)
-	fmt.Println("Keys:", c.ft.keys)
 }
 
 /*

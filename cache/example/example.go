@@ -23,7 +23,7 @@ var cache *Hermes.Cache = Hermes.InitCache()
 // Main function
 func main() {
 	// Initialize the FT cache with a json file
-	cache.InitFTWithJson("../../data/data_hash.json", -1, -1, map[string]bool{
+	cache.InitFTWithJson("../../data/data_indices.json", -1, -1, map[string]bool{
 		"id":             false,
 		"components":     false,
 		"units":          false,

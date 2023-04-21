@@ -197,6 +197,30 @@ func indexOfString(array []string, value string) int {
 }
 
 /*
+containsString function checks if a string array contains a string.
+
+Parameters:
+
+	array ([]string): The string array to search.
+	value (string): The string to search for.
+
+Returns:
+
+	A boolean value indicating whether the string array contains the string or not. If the string array contains the string,
+	this function returns true. If not, it returns false.
+
+Example Usage:
+
+	array := []string{"apple", "banana", "orange"}
+	value := "banana"
+	result := containsString(array, value)
+	fmt.Println(result) // Output: true
+*/
+func containsString(array []string, value string) bool {
+	return indexOfString(array, value) != -1
+}
+
+/*
 Checks whether a given integer is already present in the specified integer array.
 
 Parameters:

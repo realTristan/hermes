@@ -75,9 +75,9 @@ func (c *Cache) searchWithSpaces(query string, limit int, strict bool, schema ma
 	}
 
 	// Loop through the indices
-	var indices []int = c.ft.wordCache[words[0]]
-	for i := 0; i < len(indices); i++ {
-		for key, value := range c.data[c.ft.keys[indices[i]]] {
+	var keys []string = c.ft.wordCache[words[0]]
+	for i := 0; i < len(keys); i++ {
+		for key, value := range c.data[keys[i]] {
 			if !schema[key] {
 				continue
 			}
@@ -85,7 +85,7 @@ func (c *Cache) searchWithSpaces(query string, limit int, strict bool, schema ma
 			// Check if the value contains the query
 			if v, ok := value.(string); ok {
 				if containsIgnoreCase(v, query) {
-					result = append(result, c.data[c.ft.keys[indices[i]]])
+					result = append(result, c.data[keys[i]])
 				}
 			}
 		}
@@ -97,7 +97,6 @@ func (c *Cache) searchWithSpaces(query string, limit int, strict bool, schema ma
 
 /*
 SearchInDataWithKey - function to search data in FullText struct by a given query and key with Mutex locking.
-
 Parameters:
   - query: string, the search query to match against data in the FullText struct.
   - key: string, the key to search data on.
@@ -108,7 +107,6 @@ Returns:
     The keys of the map correspond to the column names of the data.
 
 Mutex locking is used to ensure that concurrent access to the FullText struct is safe.
-
 Example usage:
 
 	Assume we have a FullText struct instance named ft, containing data with columns "id", "name", and "description"
@@ -124,7 +122,6 @@ func (c *Cache) SearchInDataWithKey(query string, key string, limit int) []map[s
 /*
 searchInDataWithKey - function to search data in FullText struct by a given query and key.
 This function is not thread-safe and should only be called internally by SearchInDataWithKey which provides the necessary Mutex locking.
-
 Parameters:
   - query: string, the search query to match against data in the FullText struct.
   - key: string, the key to search data on.
@@ -161,7 +158,6 @@ func (c *Cache) searchInDataWithKey(query string, key string, limit int) []map[s
 
 /*
 SearchInData - function to search data in FullText struct by a given query with Mutex locking.
-
 Parameters:
   - query: string, the search query to match against data in the FullText struct.
   - limit: int, the maximum number of results to be returned.
@@ -172,7 +168,6 @@ Returns:
     The keys of the map correspond to the column names of the data that were searched and returned in the result.
 
 Mutex locking is used to ensure that concurrent access to the FullText struct is safe.
-
 Example usage:
 
 	Assume we have a FullText struct instance named ft, containing data with columns "id", "name", and "description"
@@ -188,7 +183,6 @@ func (c *Cache) SearchInData(query string, limit int, schema map[string]bool) []
 
 /*
 searchInData - function to search data in FullText struct by a given query.
-
 Parameters:
   - query: string, the search query to match against data in the FullText struct.
   - limit: int, the maximum number of results to be returned.
@@ -232,7 +226,6 @@ func (c *Cache) searchInData(query string, limit int, schema map[string]bool) []
 
 /*
 SearchOne function searches for a query string within the FullText object and returns the results in a list of maps. This function uses mutex locking to ensure thread-safety.
-
 @Parameters:
 
 	query (string): The query string to search for.
@@ -261,7 +254,6 @@ func (c *Cache) SearchOne(query string, limit int, strict bool) ([]map[string]in
 
 /*
 searchOne function is an internal function used by the FullText object to search for a single word. This function returns the results in a list of maps.
-
 Parameters:
 
 	query (string): The query string to search for.
@@ -298,7 +290,7 @@ func (c *Cache) searchOne(query string, limit int, strict bool) ([]map[string]in
 
 		// Loop through the indices
 		for i := 0; i < len(c.ft.wordCache[query]); i++ {
-			result = append(result, c.data[c.ft.keys[c.ft.wordCache[query][i]]])
+			result = append(result, c.data[c.ft.wordCache[query][i]])
 		}
 
 		// Return the result
@@ -306,7 +298,7 @@ func (c *Cache) searchOne(query string, limit int, strict bool) ([]map[string]in
 	}
 
 	// Define a map to store the indices that have already been added
-	var alreadyAdded map[int]int = map[int]int{}
+	var alreadyAdded map[string]int = map[string]int{}
 
 	// Loop through the cache keys
 	for k, v := range c.ft.wordCache {
@@ -324,7 +316,7 @@ func (c *Cache) searchOne(query string, limit int, strict bool) ([]map[string]in
 			}
 
 			// Else, append the index to the result
-			result = append(result, c.data[c.ft.keys[v[j]]])
+			result = append(result, c.data[v[j]])
 			alreadyAdded[v[j]] = -1
 		}
 	}
