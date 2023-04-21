@@ -1,8 +1,6 @@
 package cache
 
-import (
-	"fmt"
-)
+import "fmt"
 
 /*
 Initialize the FT cache with Mutex Locking.
