@@ -1,6 +1,9 @@
 package cache
 
-import "fmt"
+import (
+	"errors"
+	"fmt"
+)
 
 /*
 Initialize the FT cache with Mutex Locking.
@@ -23,7 +26,7 @@ func (c *Cache) FTInit(maxWords int, maxSizeBytes int, schema map[string]bool) e
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
 	if c.ft.isInitialized() {
-		return fmt.Errorf("full text cache already initialized")
+		return errors.New("full text cache already initialized")
 	}
 	return c.ftInit(maxWords, maxSizeBytes, schema)
 }
@@ -90,7 +93,7 @@ func (c *Cache) FTInitWithMap(data map[string]map[string]interface{}, maxWords i
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
 	if c.ft.isInitialized() {
-		return fmt.Errorf("full text cache already initialized")
+		return errors.New("full text cache already initialized")
 	}
 	return c.ftInitWithMap(data, maxWords, maxSizeBytes, schema)
 }
@@ -170,7 +173,7 @@ func (c *Cache) FTInitWithJson(file string, maxWords int, maxSizeBytes int, sche
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
 	if c.ft.isInitialized() {
-		return fmt.Errorf("full text cache already initialized")
+		return errors.New("full text cache already initialized")
 	}
 	return c.ftInitWithJson(file, maxWords, maxSizeBytes, schema)
 }

@@ -1,6 +1,6 @@
 package cache
 
-import "fmt"
+import "errors"
 
 /*
 ResetFT initializes a new FullText cache with the given maximum number of words,
@@ -34,7 +34,7 @@ func (c *Cache) FTReset(maxWords int, maxSizeBytes int, schema map[string]bool) 
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
 	if c.ft == nil {
-		return fmt.Errorf("full text is not initialized")
+		return errors.New("full text is not initialized")
 	}
 	return c.ftInit(maxWords, maxSizeBytes, schema)
 }
@@ -58,7 +58,7 @@ func (c *Cache) FTResetWithMap(data map[string]map[string]interface{}, maxWords 
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
 	if c.ft == nil {
-		return fmt.Errorf("full text is not initialized")
+		return errors.New("full text is not initialized")
 	}
 	return c.ftInitWithMap(data, maxWords, maxSizeBytes, schema)
 }
@@ -82,7 +82,7 @@ func (c *Cache) FTResetWithJson(file string, maxWords int, maxSizeBytes int, sch
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
 	if c.ft == nil {
-		return fmt.Errorf("full text is not initialized")
+		return errors.New("full text is not initialized")
 	}
 	return c.ftInitWithJson(file, maxWords, maxSizeBytes, schema)
 }

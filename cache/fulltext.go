@@ -1,6 +1,6 @@
 package cache
 
-import "fmt"
+import "errors"
 
 /*
 FullText represents a data structure for storing and searching full-text documents.
@@ -33,35 +33,61 @@ func (ft *FullText) isInitialized() bool {
 func (c *Cache) FTSetMaxBytes(maxBytes int) error {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
+
+	// Check if the cache is initialized
 	if !c.ft.isInitialized() {
-		return fmt.Errorf("full text cache not initialized")
+		return errors.New("full text cache not initialized")
 	}
+
+	// Set the maxSizeBytes field
 	c.ft.maxSizeBytes = maxBytes
+
+	// Return no error
 	return nil
 }
 
 func (c *Cache) FTSetMaxWords(maxWords int) error {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
+
+	// Check if the cache is initialized
 	if !c.ft.isInitialized() {
-		return fmt.Errorf("full text cache not initialized")
+		return errors.New("full text cache not initialized")
 	}
+
+	// Set the maxWords field
 	c.ft.maxWords = maxWords
+
+	// Return no error
 	return nil
 }
 
-func (c *Cache) FTWordCache() map[string][]string {
+func (c *Cache) FTWordCache() (map[string][]string, error) {
 	c.mutex.RLock()
 	defer c.mutex.RUnlock()
+
+	// Check if the cache is initialized
+	if !c.ft.isInitialized() {
+		return nil, errors.New("full text cache not initialized")
+	}
 
 	// Copy the wordCache map
 	var copy map[string][]string = make(map[string][]string, len(c.ft.wordCache))
 	copy = c.ft.wordCache
-	return copy
+
+	// Return the copy
+	return copy, nil
 }
 
 func (c *Cache) FTWordCacheSize() (int, error) {
 	c.mutex.RLock()
 	defer c.mutex.RUnlock()
+
+	// Check if the cache is initialized
+	if !c.ft.isInitialized() {
+		return -1, errors.New("full text cache not initialized")
+	}
+
+	// Return the size of the wordCache map
 	return size(c.ft.wordCache)
 }

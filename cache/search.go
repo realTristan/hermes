@@ -2,7 +2,6 @@ package cache
 
 import (
 	"errors"
-	"fmt"
 	"strings"
 )
 
@@ -32,11 +31,23 @@ import (
  *     result := ft.Search(query, limit, strict, schema)
  */
 func (c *Cache) Search(query string, limit int, strict bool, schema map[string]bool) ([]map[string]interface{}, error) {
+	switch {
+	case len(query) == 0:
+		return []map[string]interface{}{}, errors.New("invalid query")
+	case limit < 1:
+		return []map[string]interface{}{}, errors.New("invalid limit")
+	}
+
+	// Lock the mutex
 	c.mutex.RLock()
 	defer c.mutex.RUnlock()
+
+	// Check if the FT index is initialized
 	if !c.ft.isInitialized() {
-		return []map[string]interface{}{}, fmt.Errorf("full text is not initialized")
+		return []map[string]interface{}{}, errors.New("full text is not initialized")
 	}
+
+	// Search for the query
 	return c.search(query, limit, strict, schema)
 }
 
@@ -55,15 +66,13 @@ Returns:
 func (c *Cache) search(query string, limit int, strict bool, schema map[string]bool) ([]map[string]interface{}, error) {
 	// Split the query into separate words
 	var words []string = strings.Split(strings.TrimSpace(query), " ")
-
-	// Check words validity
 	switch {
 	// If the words array is empty
 	case len(words) == 0:
-		return []map[string]interface{}{}, fmt.Errorf("invalid query: %s", query)
+		return []map[string]interface{}{}, errors.New("invalid query")
 	// Get the search result of the first word
 	case len(words) == 1:
-		return c.searchOneWord(words[0], limit, strict)
+		return c.searchOneWord(words[0], limit, strict), nil
 	}
 
 	// Define variables
@@ -71,7 +80,7 @@ func (c *Cache) search(query string, limit int, strict bool, schema map[string]b
 
 	// Check if the query is in the cache
 	if _, ok := c.ft.wordCache[words[0]]; !ok {
-		return []map[string]interface{}{}, fmt.Errorf("invalid query: %s", query)
+		return []map[string]interface{}{}, errors.New("invalid query: " + query)
 	}
 
 	// Loop through the indices
@@ -113,10 +122,22 @@ Example usage:
 	We can search for all records containing the word "apple" in the "description" column with a limit of 10 as follows:
 	results := ft.SearchValuesWithKey("apple", "description", 10)
 */
-func (c *Cache) SearchValuesWithKey(query string, key string, limit int) []map[string]interface{} {
+func (c *Cache) SearchValuesWithKey(query string, key string, limit int) ([]map[string]interface{}, error) {
+	switch {
+	case len(key) == 0:
+		return []map[string]interface{}{}, errors.New("invalid key")
+	case len(query) == 0:
+		return []map[string]interface{}{}, errors.New("invalid query")
+	case limit < 1:
+		return []map[string]interface{}{}, errors.New("invalid limit")
+	}
+
+	// Lock the mutex
 	c.mutex.RLock()
 	defer c.mutex.RUnlock()
-	return c.searchValuesWithKey(query, key, limit)
+
+	// Search the data
+	return c.searchValuesWithKey(query, key, limit), nil
 }
 
 /*
@@ -144,6 +165,11 @@ func (c *Cache) searchValuesWithKey(query string, key string, limit int) []map[s
 	// Iterate over the query result
 	for _, item := range c.data {
 		for _, v := range item {
+			if len(result) >= limit {
+				return result
+			}
+
+			// Check if the value contains the query
 			if v, ok := v.(string); ok {
 				if containsIgnoreCase(v, query) {
 					result = append(result, item)
@@ -175,10 +201,20 @@ Example usage:
 	schema := map[string]bool{"description": true, "name": true}
 	results := ft.SearchValues("apple", 10, schema)
 */
-func (c *Cache) SearchValues(query string, limit int, schema map[string]bool) []map[string]interface{} {
+func (c *Cache) SearchValues(query string, limit int, schema map[string]bool) ([]map[string]interface{}, error) {
+	switch {
+	case len(query) == 0:
+		return []map[string]interface{}{}, errors.New("invalid query")
+	case limit < 1:
+		return []map[string]interface{}{}, errors.New("invalid limit")
+	}
+
+	// Lock the mutex
 	c.mutex.RLock()
 	defer c.mutex.RUnlock()
-	return c.searchValues(query, limit, schema)
+
+	// Search the data
+	return c.searchValues(query, limit, schema), nil
 }
 
 /*
@@ -207,7 +243,10 @@ func (c *Cache) searchValues(query string, limit int, schema map[string]bool) []
 	for _, item := range c.data {
 		// Iterate over the keys and values for the data for that index
 		for key, value := range item {
-			if !schema[key] {
+			switch {
+			case len(result) >= limit:
+				return result
+			case !schema[key]:
 				continue
 			}
 
@@ -244,12 +283,24 @@ Example Usage:
 	}
 */
 func (c *Cache) SearchOneWord(query string, limit int, strict bool) ([]map[string]interface{}, error) {
+	switch {
+	case len(query) == 0:
+		return []map[string]interface{}{}, errors.New("invalid query")
+	case limit < 1:
+		return []map[string]interface{}{}, errors.New("invalid limit")
+	}
+
+	// Lock the mutex
 	c.mutex.RLock()
 	defer c.mutex.RUnlock()
+
+	// Check if the full text is initialized
 	if !c.ft.isInitialized() {
 		return []map[string]interface{}{}, errors.New("full text is not initialized")
 	}
-	return c.searchOneWord(query, limit, strict)
+
+	// Search the data
+	return c.searchOneWord(query, limit, strict), nil
 }
 
 /*
@@ -268,12 +319,7 @@ Example Usage:
 
 	This is an internal function and is not intended to be called directly by the user.
 */
-func (c *Cache) searchOneWord(query string, limit int, strict bool) ([]map[string]interface{}, error) {
-	// If the query is empty
-	if len(query) == 0 {
-		return []map[string]interface{}{}, fmt.Errorf("query is empty")
-	}
-
+func (c *Cache) searchOneWord(query string, limit int, strict bool) []map[string]interface{} {
 	// Set the query to lowercase
 	query = strings.ToLower(query)
 
@@ -285,16 +331,19 @@ func (c *Cache) searchOneWord(query string, limit int, strict bool) ([]map[strin
 	if strict {
 		// Check if the query is in the cache
 		if _, ok := c.ft.wordCache[query]; !ok {
-			return result, nil
+			return result
 		}
 
 		// Loop through the indices
 		for i := 0; i < len(c.ft.wordCache[query]); i++ {
+			if len(result) >= limit {
+				return result
+			}
 			result = append(result, c.data[c.ft.wordCache[query][i]])
 		}
 
 		// Return the result
-		return result, nil
+		return result
 	}
 
 	// Define a map to store the indices that have already been added
@@ -304,7 +353,7 @@ func (c *Cache) searchOneWord(query string, limit int, strict bool) ([]map[strin
 	for k, v := range c.ft.wordCache {
 		switch {
 		case len(result) >= limit:
-			return result, nil
+			return result
 		case !contains(k, query):
 			continue
 		}
@@ -322,5 +371,5 @@ func (c *Cache) searchOneWord(query string, limit int, strict bool) ([]map[strin
 	}
 
 	// Return the result
-	return result, nil
+	return result
 }

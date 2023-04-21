@@ -1,6 +1,9 @@
 package hermes
 
-import "strings"
+import (
+	"errors"
+	"strings"
+)
 
 /*
 SearchWithSpaces is a method of the FullText struct that performs a full text search using the specified query
@@ -24,9 +27,19 @@ Example Usage:
 	results := ft.Search("hello world", 10, false, map[string]bool{"title": true, "content": true})
 	fmt.Println(results)
 */
-func (ft *FullText) Search(query string, limit int, strict bool, schema map[string]bool) []map[string]string {
+func (ft *FullText) Search(query string, limit int, strict bool, schema map[string]bool) ([]map[string]string, error) {
+	switch {
+	case len(query) == 0:
+		return []map[string]string{}, errors.New("invalid query")
+	case limit < 1:
+		return []map[string]string{}, errors.New("invalid limit")
+	}
+
+	// Lock the mutex
 	ft.mutex.RLock()
 	defer ft.mutex.RUnlock()
+
+	// Perform the search
 	return ft.search(query, limit, strict, schema)
 }
 
@@ -56,20 +69,21 @@ Example usage:
 	result := ft.search("value1", 10, false, schema)
 	fmt.Println(result) // Output: [{key1:value1 key2:value2}]
 */
-func (ft *FullText) search(query string, limit int, strict bool, schema map[string]bool) []map[string]string {
+func (ft *FullText) search(query string, limit int, strict bool, schema map[string]bool) ([]map[string]string, error) {
+	// Split the query into separate words
 	var words []string = strings.Split(strings.TrimSpace(query), " ")
 	switch {
 	// If the words array is empty
 	case len(words) == 0:
-		return []map[string]string{}
+		return []map[string]string{}, errors.New("invalid query")
 	// Get the search result of the first word
 	case len(words) == 1:
-		return ft.searchOneWord(words[0], limit, strict)
+		return ft.searchOneWord(words[0], limit, strict), nil
 	}
 
 	// Check if the query is in the cache
 	if _, ok := ft.wordCache[words[0]]; !ok {
-		return []map[string]string{}
+		return []map[string]string{}, errors.New("invalid query")
 	}
 
 	// Define variables
@@ -91,7 +105,7 @@ func (ft *FullText) search(query string, limit int, strict bool, schema map[stri
 	}
 
 	// Return the result
-	return result
+	return result, nil
 }
 
 /*
@@ -107,6 +121,7 @@ Parameters:
 Returns:
   - []map[string]string: An array of maps representing the search results. Each map contains key-value pairs from the entry
     in the data that matched the search query. If no results are found, an empty array is returned.
+  - error: An error object. If the key is not found in the data, an error will be returned.
 
 Note: The search is case-insensitive.
 
@@ -117,13 +132,25 @@ write lock is released.
 Example usage:
 
 	ft := &FullText{data: []map[string]string{{"key1": `{"name": "John", "age": 30}`, "key2": "value2"}, {"key1": `{"name": "Jane", "age": 25}`, "key2": "value4"}}}
-	result := ft.SearchValuesWithKey("John", "key1", 10)
+	result, err := ft.SearchValuesWithKey("John", "key1", 10)
 	fmt.Println(result) // Output: [{key1:{"name": "John", "age": 30}, key2:value2}]
 */
-func (ft *FullText) SearchValuesWithKey(query string, key string, limit int) []map[string]string {
+func (ft *FullText) SearchValuesWithKey(query string, key string, limit int) ([]map[string]string, error) {
+	switch {
+	case len(key) == 0:
+		return []map[string]string{}, errors.New("invalid key")
+	case len(query) == 0:
+		return []map[string]string{}, errors.New("invalid query")
+	case limit < 1:
+		return []map[string]string{}, errors.New("invalid limit")
+	}
+
+	// Lock the mutex
 	ft.mutex.RLock()
 	defer ft.mutex.RUnlock()
-	return ft.searchValuesWithKey(query, key, limit)
+
+	// Search for the query
+	return ft.searchValuesWithKey(query, key, limit), nil
 }
 
 /*
@@ -136,16 +163,13 @@ Parameters:
 - limit (int): The maximum number of search results to return. If the number of matching results exceeds this limit, the excess results will be ignored.
 
 Returns:
+
   - []map[string]string: An array of maps representing the search results. Each map contains key-value pairs
     from the entry in the data that matched the search query. If no results are found, an empty array is returned.
 
+  - error: An error object. If no error occurs, this will be nil.
+
 Note: The search is case-insensitive.
-
-Example usage:
-
-	ft := &FullText{data: []map[string]string{{"key1": `{"name": "John", "age": 30}`, "key2": "value2"}, {"key1": `{"name": "Jane", "age": 25}`, "key2": "value4"}}}
-	result := ft.searchInValuesWithKey("John", "key1", 10)
-	fmt.Println(result) // Output: [{key1:{"name": "John", "age": 30}, key2:value2}]
 */
 func (ft *FullText) searchValuesWithKey(query string, key string, limit int) []map[string]string {
 	// Define variables
@@ -153,7 +177,10 @@ func (ft *FullText) searchValuesWithKey(query string, key string, limit int) []m
 
 	// Iterate over the query result
 	for i := 0; i < len(ft.data); i++ {
-		if containsIgnoreCase(ft.data[i][key], query) {
+		switch {
+		case len(result) >= limit:
+			return result
+		case containsIgnoreCase(ft.data[i][key], query):
 			result = append(result, ft.data[i])
 		}
 	}
@@ -176,6 +203,7 @@ Parameters:
 Returns:
   - []map[string]string: An array of maps representing the search results. Each map contains key-value pairs from the entry in
     the data that matched the search query. If no results are found, an empty array is returned.
+  - error: An error object. If no error occurs, this will be nil.
 
 Note: The search is case-insensitive.
 
@@ -186,10 +214,20 @@ Example usage:
 	result := ft.SearchValues("John", 10, schema)
 	fmt.Println(result) // Output: [{key1:{"name": "John", "age": 30}, key2:value2}]
 */
-func (ft *FullText) SearchValues(query string, limit int, schema map[string]bool) []map[string]string {
+func (ft *FullText) SearchValues(query string, limit int, schema map[string]bool) ([]map[string]string, error) {
+	switch {
+	case len(query) == 0:
+		return []map[string]string{}, errors.New("invalid query")
+	case limit < 1:
+		return []map[string]string{}, errors.New("invalid limit")
+	}
+
+	// Lock the mutex
 	ft.mutex.RLock()
 	defer ft.mutex.RUnlock()
-	return ft.searchValues(query, limit, schema)
+
+	// Search the data
+	return ft.searchValues(query, limit, schema), nil
 }
 
 /*
@@ -204,13 +242,6 @@ Returns:
     from the entry in the data that matched the search query. If no results are found, an empty array is returned.
 
 Note: The search is case-insensitive.
-
-Example usage:
-
-	ft := &FullText{data: []map[string]string{{"key1": `{"name": "John", "age": 30}`, "key2": "value2"}, {"key1": `{"name": "Jane", "age": 25}`, "key2": "value4"}}}
-	schema := map[string]bool{"key1": true, "key2": false}
-	result := ft.searchInValues("John", 10, schema)
-	fmt.Println(result) // Output: [{key1:{"name": "John", "age": 30}, key2:value2}]
 */
 func (ft *FullText) searchValues(query string, limit int, schema map[string]bool) []map[string]string {
 	// Define variables
@@ -221,6 +252,8 @@ func (ft *FullText) searchValues(query string, limit int, schema map[string]bool
 		// Iterate over the keys and values for the data
 		for key, value := range ft.data[i] {
 			switch {
+			case len(result) >= limit:
+				return result
 			case !schema[key]:
 				continue
 			case containsIgnoreCase(value, query):
@@ -248,6 +281,7 @@ Parameters:
 Returns:
   - []map[string]string: An array of maps representing the search results. Each map contains key-value pairs
     from the entry in the data that matched the search query. If no results are found, an empty array is returned.
+  - error: An error object. If no error occurs, this will be nil.
 
 Note: The search is case-insensitive.
 
@@ -257,10 +291,20 @@ Example usage:
 	result := ft.SearchOneWord("hello", 10, false)
 	fmt.Println(result) // Output: [{key1:hello world, key2:value4}]
 */
-func (ft *FullText) SearchOneWord(query string, limit int, strict bool) []map[string]string {
+func (ft *FullText) SearchOneWord(query string, limit int, strict bool) ([]map[string]string, error) {
+	switch {
+	case len(query) == 0:
+		return []map[string]string{}, errors.New("invalid query")
+	case limit < 1:
+		return []map[string]string{}, errors.New("invalid limit")
+	}
+
+	// Lock the mutex
 	ft.mutex.RLock()
 	defer ft.mutex.RUnlock()
-	return ft.searchOneWord(query, limit, strict)
+
+	// Search the data
+	return ft.searchOneWord(query, limit, strict), nil
 }
 
 /*
@@ -280,11 +324,6 @@ Note:
   - If strict is false and no matches are found, an empty list is returned.
 */
 func (ft *FullText) searchOneWord(query string, limit int, strict bool) []map[string]string {
-	// If the query is empty
-	if len(query) == 0 {
-		return []map[string]string{}
-	}
-
 	// Define the result variable
 	var result []map[string]string = []map[string]string{}
 
@@ -299,6 +338,9 @@ func (ft *FullText) searchOneWord(query string, limit int, strict bool) []map[st
 		// Loop through the indices
 		var indices []int = ft.wordCache[query]
 		for i := 0; i < len(indices); i++ {
+			if len(result) >= limit {
+				return result
+			}
 			result = append(result, ft.data[indices[i]])
 		}
 
@@ -324,8 +366,6 @@ func (ft *FullText) searchOneWord(query string, limit int, strict bool) []map[st
 			if alreadyChecked[index] {
 				continue
 			}
-
-			// Append the index to the result
 			result = append(result, ft.data[index])
 			alreadyChecked[index] = true
 		}

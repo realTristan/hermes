@@ -1,6 +1,7 @@
 package cache
 
 import (
+	"errors"
 	"fmt"
 	"sync"
 )
@@ -85,27 +86,29 @@ The `info` method prints diagnostic information about the cache and its FullText
 	Example usage:
 	(not meant to be called directly)
 */
-func (c *Cache) info() {
+func (c *Cache) info() error {
 	fmt.Println("Cache Info:")
 	fmt.Println("-----------")
 	fmt.Println("Number of keys:", len(c.data))
 	fmt.Println("Data:", c.data)
 
+	// Check if the cache full text has been initialized
 	if c.ft == nil {
-		return
+		return errors.New("full text is not initialized")
 	}
 
-	fmt.Println("\nCache FullText Info:")
+	// Print full text info
+	fmt.Println("\nCache Full Text Info:")
 	fmt.Println("-----------")
-	var wordCacheSize, err = size(c.ft.wordCache)
-	if err != nil {
-		fmt.Println("Error:", err)
-		return
+	if wordCacheSize, err := size(c.ft.wordCache); err != nil {
+		return err
+	} else {
+		fmt.Println("Number of words:", len(c.ft.wordCache))
+		fmt.Println("Initialized:", c.ft.initialized)
+		fmt.Println("Word cache:", c.ft.wordCache)
+		fmt.Println("Word cache size:", wordCacheSize)
 	}
-	fmt.Println("Number of words:", len(c.FTWordCache()))
-	fmt.Println("Initialized:", c.ft.isInitialized())
-	fmt.Println("Word cache:", c.FTWordCache())
-	fmt.Println("Word cache size:", wordCacheSize)
+	return nil
 }
 
 /*
