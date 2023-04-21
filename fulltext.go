@@ -59,13 +59,13 @@ fmt.Println("FullText object successfully initialized:", ft)
 func InitWithMap(data []map[string]string, schema map[string]bool) (*FullText, error) {
 	var ft *FullText = &FullText{
 		mutex:     &sync.RWMutex{},
-		wordCache: map[string][]int{},
+		wordCache: make(map[string][]int),
 		words:     []string{},
 		data:      []map[string]string{},
 	}
 
 	// Load the cache data
-	if err := ft.loadCacheData(data, schema); err != nil {
+	if err := ft.insertIntoWordCache(data, schema); err != nil {
 		return nil, err
 	}
 
@@ -113,26 +113,8 @@ It takes in two parameters:
     indicating whether the field should be included in the cache
 
 It returns an error, if any.
-
-Example Usage:
-schema := map[string]bool{"name": true, "description": true}
-
-	data := []map[string]string{
-		{"name": "apple", "description": "a round fruit"},
-		{"name": "orange", "description": "a citrus fruit"},
-	}
-
-	ft := FullText{}
-	err := ft.loadCacheData(data, schema)
-
-	if err != nil {
-		fmt.Println("Error loading data into wordCache:", err)
-		return
-	}
-
-	fmt.Println("Data successfully loaded into wordCache")
 */
-func (ft *FullText) loadCacheData(data []map[string]string, schema map[string]bool) error {
+func (ft *FullText) insertIntoWordCache(data []map[string]string, schema map[string]bool) error {
 	// Loop through the data
 	for i, item := range data {
 		// Loop through the map
