@@ -1,0 +1,95 @@
+package cache
+
+import (
+	"strings"
+	"sync"
+)
+
+type WGOR struct {
+	data         []map[string]interface{}
+	alreadyAdded map[string]int
+	mutex        *sync.Mutex
+}
+
+func InitWGOR() *WGOR {
+	return &WGOR{
+		data:         []map[string]interface{}{},
+		alreadyAdded: map[string]int{},
+		mutex:        &sync.Mutex{},
+	}
+}
+
+func (ft *FullText) WordCache() map[string][]string {
+	var copy map[string][]string = ft.wordCache
+	return copy
+}
+
+func (ft *FullText) KeysFromWordCache(word string) []string {
+	var copy []string = ft.wordCache[word]
+	return copy
+}
+
+// WGOR = With Go Routines
+func (c *Cache) WGOR_SearchOneWord_Example() []map[string]interface{} {
+	// Define variables
+	var (
+		limit     int            = 100
+		query     string         = "computer"
+		wgor      *WGOR          = InitWGOR()
+		waitGroup sync.WaitGroup = sync.WaitGroup{}
+	)
+
+	// Iterate over the word cache
+	for key, keys := range c.ft.WordCache() {
+		// Add to the wait group
+		waitGroup.Add(1)
+
+		// Run the go routine
+		go func(key string, keys []string) {
+			defer waitGroup.Done()
+
+			// Mutex locking
+			wgor.mutex.Lock()
+			defer wgor.mutex.Unlock()
+
+			// Initial validity checks
+			switch {
+			case len(wgor.data) >= limit:
+				return
+			case !strings.Contains(key, query):
+				return
+			}
+
+			// Convert the keys to data
+			for _, key := range keys {
+				go c.WGOR_KeyToData(key, wgor)
+			}
+		}(key, keys)
+	}
+
+	// Wait for the wait group to finish
+	waitGroup.Wait()
+
+	// Return the data
+	return wgor.data
+}
+
+// WGOR = With Go Routines
+func (c *Cache) WGOR_KeyToData(key string, wgor *WGOR) {
+	// Cache Mutex locking
+	c.mutex.RLock()
+	defer c.mutex.RUnlock()
+
+	// WGOR Mutex locking
+	wgor.mutex.Lock()
+	defer wgor.mutex.Unlock()
+
+	// Check if the key has already been added
+	if _, ok := wgor.alreadyAdded[key]; ok {
+		return
+	}
+
+	// Add the data to WGOR
+	wgor.data = append(wgor.data, c.data[key])
+	wgor.alreadyAdded[key] = 0
+}
