@@ -375,7 +375,7 @@ func (c *Cache) searchOneWord(query string, limit int, strict bool) []map[string
 
 			// Else, append the index to the result
 			result = append(result, c.data[v[j]])
-			alreadyAdded[v[j]] = -1
+			alreadyAdded[v[j]] = 0
 		}
 	}
 
