@@ -36,6 +36,49 @@ Dataset Map Size: ≈ 2.3MB
 ?q=computer&limit=100&strict=true: 40.84µs
 ```
 
+# Example of Base Full-Text-Search (/)
+```go
+package main
+
+import (
+	"fmt"
+	"time"
+
+	Hermes "github.com/realTristan/Hermes"
+)
+
+// Main function
+func main() {
+	// Create a schema. These are the fields that will be searched.
+	var schema = map[string]bool{
+		"id":             false,
+		"components":     false,
+		"units":          false,
+		"description":    true,
+		"name":           true,
+		"pre_requisites": true,
+		"title":          true,
+	}
+
+	// Define variables
+	var (
+		// Initialize the full text
+		ft, _ = Hermes.InitWithJson("../../data/data_array.json", schema)
+
+		// Track the start time
+		start time.Time = time.Now()
+
+		// Search for a word in the cache
+		// @params: query, limit, strict
+		res, _ = ft.Search("computer", 100, false, schema)
+	)
+
+	// Print the duration
+	fmt.Printf("\nFound %v results in %v", len(res), time.Since(start))
+}
+```
+
+
 # Example of Cache Full-Text-Search (/cache)
 ```go
 package main
@@ -96,97 +139,6 @@ func main() {
 	// Print result
 	fmt.Printf("Found %d results in %s\n", len(result), time.Since(startTime))
 	fmt.Println(result)
-}
-```
-
-# Example of Base Full-Text-Search (/)
-```go
-// /////////////////////////////////////////////////////////////////////////////
-//
-// Run Command: go run .
-//
-// Host URL: http://localhost:8000/courses?q=computer&limit=100&strict=false
-//
-// /////////////////////////////////////////////////////////////////////////////
-package main
-
-import (
-	"encoding/json"
-	"fmt"
-	"net/http"
-	"strconv"
-	"time"
-
-	Hermes "github.com/realTristan/Hermes"
-)
-
-// Global full text variable
-var ft *Hermes.FullText
-
-// Main function
-func main() {
-	ft, _ = Hermes.InitJson("../data/data_array.json", map[string]bool{
-		"id":             false,
-		"components":     false,
-		"units":          false,
-		"description":    true,
-		"name":           true,
-		"pre_requisites": true,
-		"title":          true,
-	})
-
-	// Print host
-	fmt.Println(" >> Listening on: http://localhost:8000/")
-
-	// Listen and serve on port 8000
-	http.HandleFunc("/courses", Handler)
-	http.ListenAndServe(":8000", nil)
-}
-
-// Handle the incoming http request
-func Handler(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Access-Control-Allow-Origin", "*")
-
-	// Get the query parameter
-	var query string = "CS"
-	if _query := r.URL.Query().Get("q"); _query != "" {
-		query = _query
-	}
-
-	// Get the limit parameter
-	var limit int = 100
-	if _limit := r.URL.Query().Get("limit"); _limit != "" {
-		limit, _ = strconv.Atoi(_limit)
-	}
-
-	// Get the strict parameter
-	var strict bool = false
-	if _strict := r.URL.Query().Get("strict"); _strict != "" {
-		strict, _ = strconv.ParseBool(_strict)
-	}
-
-	// Track the start time
-	var start time.Time = time.Now()
-
-	// Search for a word in the cache
-	// Make sure the show which keys you do want to search through,
-	// and which ones you don't
-	var res []map[string]string = ft.Search(query, limit, strict, map[string]bool{
-		"id":             false,
-		"components":     false,
-		"units":          false,
-		"description":    true,
-		"name":           true,
-		"pre_requisites": true,
-		"title":          true,
-	})
-
-	// Print the duration
-	fmt.Printf("\nFound %v results in %v", len(res), time.Since(start))
-
-	// Write the courses to the json response
-	var response, _ = json.Marshal(res)
-	w.Write(response)
 }
 ```
 

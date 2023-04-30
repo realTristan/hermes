@@ -65,7 +65,7 @@ func HermesSearch() {
 		var start time.Time = time.Now()
 
 		// Search for a word in the cache
-		cache.Search("computer science", 100, false, map[string]bool{
+		cache.Search("computer", 100, false, map[string]bool{
 			"id":             false,
 			"components":     false,
 			"units":          false,
