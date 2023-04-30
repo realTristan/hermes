@@ -4,6 +4,8 @@ import (
 	"errors"
 	"fmt"
 	"sync"
+
+	Utils "github.com/realTristan/Hermes/utils"
 )
 
 /*
@@ -97,7 +99,7 @@ func (c *Cache) info() (string, error) {
 
 	// Append the full text info to the cache info string
 	s += "\nCache Full Text Info:\n-----------\n"
-	if wordCacheSize, err := size(c.ft.wordCache); err != nil {
+	if wordCacheSize, err := Utils.Size(c.ft.wordCache); err != nil {
 		return "", err
 	} else {
 		s += fmt.Sprintf("Number of keys: %d\n", len(c.ft.wordCache))

@@ -81,7 +81,7 @@ func HermesSearch() {
 
 	var averageNanos float32 = float32(average) / 100
 	var averageMillis float32 = averageNanos / 1000000
-	fmt.Println("\nHermes: Average time is: ", averageNanos, "ns or", averageMillis, "ms\n")
+	fmt.Println("\nHermes: Average time is: ", averageNanos, "ns or", averageMillis, "ms")
 }
 
 // Read a json file

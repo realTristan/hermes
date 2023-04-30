@@ -1,6 +1,10 @@
 package cache
 
-import "errors"
+import (
+	"errors"
+
+	Utils "github.com/realTristan/Hermes/utils"
+)
 
 /*
 FullText represents a data structure for storing and searching full-text documents.
@@ -89,5 +93,5 @@ func (c *Cache) FTWordCacheSize() (int, error) {
 	}
 
 	// Return the size of the wordCache map
-	return size(c.ft.wordCache)
+	return Utils.Size(c.ft.wordCache)
 }

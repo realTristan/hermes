@@ -3,6 +3,8 @@ package hermes
 import (
 	"strings"
 	"sync"
+
+	Utils "github.com/realTristan/Hermes/utils"
 )
 
 /*
@@ -98,7 +100,7 @@ fmt.Println("FullText object successfully initialized:", ft)
 */
 func InitWithJson(file string, schema map[string]bool) (*FullText, error) {
 	// Read the json data
-	if data, err := readJson(file); err != nil {
+	if data, err := Utils.ReadSliceJson(file); err != nil {
 		return nil, err
 	} else {
 		return InitWithMap(data, schema)
@@ -125,7 +127,7 @@ func (ft *FullText) insertIntoWordCache(data []map[string]string, schema map[str
 
 			// Clean the value
 			value = strings.TrimSpace(value)
-			value = removeDoubleSpaces(value)
+			value = Utils.RemoveDoubleSpaces(value)
 			value = strings.ToLower(value)
 
 			// Loop through the words
@@ -133,15 +135,15 @@ func (ft *FullText) insertIntoWordCache(data []map[string]string, schema map[str
 				switch {
 				case len(word) <= 1:
 					continue
-				case !isAlphaNum(word):
-					word = removeNonAlphaNum(word)
+				case !Utils.IsAlphaNum(word):
+					word = Utils.RemoveNonAlphaNum(word)
 				}
 				if _, ok := ft.wordCache[word]; !ok {
 					ft.wordCache[word] = []int{i}
 					ft.words = append(ft.words, word)
 					continue
 				}
-				if containsInt(ft.wordCache[word], i) {
+				if Utils.ContainsInt(ft.wordCache[word], i) {
 					continue
 				}
 				ft.wordCache[word] = append(ft.wordCache[word], i)

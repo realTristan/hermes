@@ -3,6 +3,8 @@ package cache
 import (
 	"fmt"
 	"strings"
+
+	Utils "github.com/realTristan/Hermes/utils"
 )
 
 /*
@@ -32,7 +34,7 @@ func (ft *FullText) insertIntoWordCache(data map[string]map[string]interface{}, 
 			if v, ok := value.(string); ok {
 				// Clean the value
 				v = strings.TrimSpace(v)
-				v = removeDoubleSpaces(v)
+				v = Utils.RemoveDoubleSpaces(v)
 				v = strings.ToLower(v)
 
 				// Loop through the words
@@ -43,7 +45,7 @@ func (ft *FullText) insertIntoWordCache(data map[string]map[string]interface{}, 
 						}
 					}
 					if ft.maxSizeBytes > 0 {
-						if cacheSize, err := size(temp); err != nil {
+						if cacheSize, err := Utils.Size(temp); err != nil {
 							return err
 						} else if cacheSize > ft.maxSizeBytes {
 							return fmt.Errorf("full text cache size limit reached (%d/%d bytes). load cancelled", cacheSize, ft.maxSizeBytes)
@@ -52,14 +54,14 @@ func (ft *FullText) insertIntoWordCache(data map[string]map[string]interface{}, 
 					switch {
 					case len(word) <= 1:
 						continue
-					case !isAlphaNum(word):
-						word = removeNonAlphaNum(word)
+					case !Utils.IsAlphaNum(word):
+						word = Utils.RemoveNonAlphaNum(word)
 					}
 					if _, ok := temp[word]; !ok {
 						temp[word] = []string{itemKey}
 						continue
 					}
-					if containsString(temp[word], itemKey) {
+					if Utils.ContainsString(temp[word], itemKey) {
 						continue
 					}
 					temp[word] = append(temp[word], itemKey)

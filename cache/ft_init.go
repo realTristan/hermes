@@ -3,6 +3,8 @@ package cache
 import (
 	"errors"
 	"fmt"
+
+	Utils "github.com/realTristan/Hermes/utils"
 )
 
 /*
@@ -218,7 +220,7 @@ Note that this function does not use mutex locking to prevent concurrent access,
 be used within the context of the Cache struct, which already has its own mutex locking.
 */
 func (c *Cache) ftInitWithJson(file string, maxWords int, maxSizeBytes int, schema map[string]bool) error {
-	if data, err := readJson(file); err != nil {
+	if data, err := Utils.ReadMapJson(file); err != nil {
 		return err
 	} else {
 		return c.ftInitWithMap(data, maxWords, maxSizeBytes, schema)

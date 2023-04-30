@@ -3,6 +3,8 @@ package hermes
 import (
 	"errors"
 	"strings"
+
+	Utils "github.com/realTristan/Hermes/utils"
 )
 
 /*
@@ -363,7 +365,7 @@ func (ft *FullText) searchOneWord(query string, limit int, strict bool) []map[st
 		switch {
 		case len(result) >= limit:
 			return result
-		case !contains(ft.words[i], query):
+		case !Utils.Contains(ft.words[i], query):
 			continue
 		}
 

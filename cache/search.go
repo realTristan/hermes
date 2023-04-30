@@ -3,6 +3,8 @@ package cache
 import (
 	"errors"
 	"strings"
+
+	Utils "github.com/realTristan/Hermes/utils"
 )
 
 /* Search function with Mutex Locking
@@ -363,7 +365,7 @@ func (c *Cache) searchOneWord(query string, limit int, strict bool) []map[string
 		switch {
 		case len(result) >= limit:
 			return result
-		case !contains(k, query):
+		case !Utils.Contains(k, query):
 			continue
 		}
 
