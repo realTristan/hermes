@@ -1,4 +1,4 @@
-package hermes
+package cache
 
 import (
 	"errors"
@@ -7,99 +7,119 @@ import (
 	Utils "github.com/realTristan/Hermes/utils"
 )
 
-/*
-SearchWithSpaces is a method of the FullText struct that performs a full text search using the specified query
-string, with spaces between words, and returns a slice of maps representing the data items that contain the
-query words. The search is case-insensitive and non-strict by default, which means that the query words can
-match any part of a field value. If the 'strict' parameter is set to true, the query words must match the entire
-field value.
-
-The function takes the following parameters:
-  - query (string): the query string to search for
-  - limit (int): the maximum number of results to return
-  - strict (bool): a flag indicating whether the search should be strict or non-strict
-  - schema (map[string]bool): a map representing the fields to search, where the keys are the names of the fields and the
-    values are boolean flags indicating whether the field should be searched
-
-The function returns a slice of maps representing the data items that contain the query words, where the keys are the names of the fields and the values are the field values.
-
-Example Usage:
-
-	ft := FullText{}
-	results := ft.Search("hello world", 10, false, map[string]bool{"title": true, "content": true})
-	fmt.Println(results)
-*/
-func (ft *FullText) Search(query string, limit int, strict bool, schema map[string]bool) ([]map[string]string, error) {
+/* Search function with Mutex Locking
+ *
+ * This function is a method of the FullText struct and allows the user to search for a query string with spaces,
+ * while also enforcing mutex locking for concurrency safety. The function returns a slice of maps, where each map
+ * represents a document that matches the search query.
+ *
+ * Parameters:
+ * - query (string): the search query string with spaces
+ * - limit (int): the maximum number of documents to return
+ * - strict (bool): a boolean flag indicating whether the search should be performed strictly (i.e., exact match) or not
+ * - schema (map[string]bool): a dictionary mapping field names to boolean values that indicate whether each field
+ *   should be included in the search (true) or not (false)
+ *
+ * Returns:
+ * - result ([]map[string]interface{}): a slice of maps, where each map represents a document that matches the search query
+ *
+ * Example usage:
+ *
+ *     ft := &FullText{...}
+ *     query := "open source programming"
+ *     limit := 10
+ *     strict := false
+ *     schema := map[string]bool{"title": true, "content": true, "date": false}
+ *     result := ft.Search(query, limit, strict, schema)
+ */
+func (c *Cache) Search(query string, limit int, strict bool, schema map[string]bool) ([]map[string]interface{}, error) {
 	switch {
 	case len(query) == 0:
-		return []map[string]string{}, errors.New("invalid query")
+		return []map[string]interface{}{}, errors.New("invalid query")
 	case limit < 1:
-		return []map[string]string{}, errors.New("invalid limit")
+		return []map[string]interface{}{}, errors.New("invalid limit")
 	}
 
-	// Convert the query to lowercase
+	// Lock the mutex
+	c.mutex.RLock()
+	defer c.mutex.RUnlock()
+
+	// Check if the FT index is initialized
+	if c.ft == nil {
+		return []map[string]interface{}{}, errors.New("full text is not initialized")
+	}
+
+	// Set the query to lowercase
 	query = strings.ToLower(query)
 
-	// Lock the mutex
-	ft.mutex.RLock()
-	defer ft.mutex.RUnlock()
-
-	// Perform the search
-	return ft.search(query, limit, strict, schema)
+	// Search for the query
+	return c.search(query, limit, strict, schema)
 }
 
 /*
-search searches for all occurrences of the given query string in the FullText object's data.
-The search is done by splitting the query into separate words and looking for each of them in the data.
-The search result is limited to the specified number of entries, and can optionally be filtered to only
-include keys that match a given schema.
-
+This function searches for a query by splitting the query into separate words and returning the search results.
 Parameters:
-  - query (string): The search query to use. This string will be split into separate words and each word will be searched for in the data.
-  - limit (int): The maximum number of search results to return. If the number of matching results exceeds this limit, the excess results will be ignored.
-  - strict (bool): If set to true, only exact matches of the query will be returned. If false, any entry that contains the query as a substring will be returned.
-  - schema (map[string]bool): A map of keys to boolean values. If a key is present in this map and its value is true,
-    then only entries that have that key will be included in the search result. If a key is not present in the map, or its value is false, then that key will be ignored.
+  - c (c *Cache): A pointer to the Cache struct
+  - query (string): The search query
+  - limit (int): The limit of search results to return
+  - strict (bool): A boolean to indicate whether the search should be strict or not
+  - schema (map[string]bool): A map containing the schema to search for
 
 Returns:
-  - []map[string]string: An array of maps representing the search results. Each map contains key-value pairs that match the search query and the specified schema.
-    If no results are found, an empty array is returned.
-
-Note: The search is case-insensitive.
-
-Example usage:
-
-	ft := &FullText{data: []map[string]string{{"key1": "value1", "key2": "value2"}}, wordCache: map[string][]int{"value1": {0}}
-	schema := map[string]bool{"key1": true}
-	result := ft.search("value1", 10, false, schema)
-	fmt.Println(result) // Output: [{key1:value1 key2:value2}]
+  - []map[string]interface{}: An array of maps containing the search results
 */
-func (ft *FullText) search(query string, limit int, strict bool, schema map[string]bool) ([]map[string]string, error) {
+func (c *Cache) search(query string, limit int, strict bool, schema map[string]bool) ([]map[string]interface{}, error) {
 	// Split the query into separate words
 	var words []string = strings.Split(strings.TrimSpace(query), " ")
-	if len(words) == 1 {
-		return ft.searchOneWord(words[0], limit, strict), nil
-	}
-
-	// Check if the query is in the cache
-	if _, ok := ft.wordCache[words[0]]; !ok {
-		return []map[string]string{}, errors.New("invalid query")
+	switch {
+	// If the words array is empty
+	case len(words) == 0:
+		return []map[string]interface{}{}, errors.New("invalid query")
+	// Get the search result of the first word
+	case len(words) == 1:
+		return c.searchOneWord(words[0], limit, strict), nil
 	}
 
 	// Define variables
-	var result []map[string]string = []map[string]string{}
+	var result []map[string]interface{} = []map[string]interface{}{}
+
+	// Variables for storing the smallest words array
+	var (
+		smallest      int = 0
+		smallestIndex int = 0
+	)
+
+	// Check if the query is in the cache
+	if v, ok := c.ft.wordCache[words[0]]; !ok {
+		return []map[string]interface{}{}, errors.New("invalid query")
+	} else {
+		smallest = len(v)
+	}
+
+	// Find the smallest words array
+	// Don't include the first or last words from the query
+	for i := 1; i < len(words)-1; i++ {
+		if v, ok := c.ft.wordCache[words[i]]; ok {
+			if len(v) < smallest {
+				smallest = len(v)
+				smallestIndex = i
+			}
+		}
+	}
 
 	// Loop through the indices
-	var indices []int = ft.wordCache[words[0]]
-	for i := 0; i < len(indices); i++ {
-		for key, value := range ft.data[indices[i]] {
-			switch {
-			// Check if the key is in the schema
-			case !schema[key]:
+	var keys []string = c.ft.wordCache[words[smallestIndex]]
+	for i := 0; i < len(keys); i++ {
+		for key, value := range c.data[keys[i]] {
+			if !schema[key] {
 				continue
+			}
+
 			// Check if the value contains the query
-			case strings.Contains(strings.ToLower(value), query):
-				result = append(result, ft.data[i])
+			if v, ok := value.(string); ok {
+				if strings.Contains(strings.ToLower(v), query) {
+					result = append(result, c.data[keys[i]])
+				}
 			}
 		}
 	}
@@ -109,82 +129,79 @@ func (ft *FullText) search(query string, limit int, strict bool, schema map[stri
 }
 
 /*
-SearchValuesWithKey searches for all occurrences of the given query string in the FullText object's data.
-The search is done by looking for the query as a substring in the data value associated with the given key
-in each entry of the data. The search result is limited to the specified number of entries.
-
+SearchValuesWithKey - function to search data in FullText struct by a given query and key with Mutex locking.
 Parameters:
-  - query (string): The search query to use. This string will be searched for as a substring in the data value associated with the given key.
-  - key (string): The name of the key in the data whose data value should be searched.
-  - limit (int): The maximum number of search results to return. If the number of matching results exceeds this limit, the excess results will be ignored.
+  - query: string, the search query to match against data in the FullText struct.
+  - key: string, the key to search data on.
+  - limit: int, the maximum number of results to be returned.
 
 Returns:
-  - []map[string]string: An array of maps representing the search results. Each map contains key-value pairs from the entry
-    in the data that matched the search query. If no results are found, an empty array is returned.
-  - error: An error object. If the key is not found in the data, an error will be returned.
+  - []map[string]interface{}, a slice of maps where each map represents a data record that matches the given query and key.
+    The keys of the map correspond to the column names of the data.
 
-Note: The search is case-insensitive.
-
-This function uses a read lock to prevent concurrent access to the FullText object's data.
-If a write lock is already held by another goroutine, this function will block until the
-write lock is released.
-
+Mutex locking is used to ensure that concurrent access to the FullText struct is safe.
 Example usage:
 
-	ft := &FullText{data: []map[string]string{{"key1": `{"name": "John", "age": 30}`, "key2": "value2"}, {"key1": `{"name": "Jane", "age": 25}`, "key2": "value4"}}}
-	result, err := ft.SearchValuesWithKey("John", "key1", 10)
-	fmt.Println(result) // Output: [{key1:{"name": "John", "age": 30}, key2:value2}]
+	Assume we have a FullText struct instance named ft, containing data with columns "id", "name", and "description"
+	We can search for all records containing the word "apple" in the "description" column with a limit of 10 as follows:
+	results := ft.SearchValuesWithKey("apple", "description", 10)
 */
-func (ft *FullText) SearchValuesWithKey(query string, key string, limit int) ([]map[string]string, error) {
+func (c *Cache) SearchValuesWithKey(query string, key string, limit int) ([]map[string]interface{}, error) {
 	switch {
 	case len(key) == 0:
-		return []map[string]string{}, errors.New("invalid key")
+		return []map[string]interface{}{}, errors.New("invalid key")
 	case len(query) == 0:
-		return []map[string]string{}, errors.New("invalid query")
+		return []map[string]interface{}{}, errors.New("invalid query")
 	case limit < 1:
-		return []map[string]string{}, errors.New("invalid limit")
+		return []map[string]interface{}{}, errors.New("invalid limit")
 	}
 
 	// Set the query to lowercase
 	query = strings.ToLower(query)
 
 	// Lock the mutex
-	ft.mutex.RLock()
-	defer ft.mutex.RUnlock()
+	c.mutex.RLock()
+	defer c.mutex.RUnlock()
 
-	// Search for the query
-	return ft.searchValuesWithKey(query, key, limit), nil
+	// Search the data
+	return c.searchValuesWithKey(query, key, limit), nil
 }
 
 /*
-searchValuesWithKey searches for all occurrences of the given query string in the FullText object's data.
-The search result is limited to the specified number of entries.
-
+searchValuesWithKey - function to search data in FullText struct by a given query and key.
+This function is not thread-safe and should only be called internally by SearchValuesWithKey which provides the necessary Mutex locking.
 Parameters:
-- query (string): The search query to use. This string will be searched for as a substring in the data value associated with the given key.
-- key (string): The name of the key in the data whose data value should be searched.
-- limit (int): The maximum number of search results to return. If the number of matching results exceeds this limit, the excess results will be ignored.
+  - query: string, the search query to match against data in the FullText struct.
+  - key: string, the key to search data on.
+  - limit: int, the maximum number of results to be returned.
 
 Returns:
+  - []map[string]interface{}, a slice of maps where each map represents a data record that matches the given query and key.
+    The keys of the map correspond to the column names of the data.
 
-  - []map[string]string: An array of maps representing the search results. Each map contains key-value pairs
-    from the entry in the data that matched the search query. If no results are found, an empty array is returned.
+Example usage:
 
-  - error: An error object. If no error occurs, this will be nil.
-
-Note: The search is case-insensitive.
+	Assume we have a FullText struct instance named ft, containing data with columns "id", "name", and "description"
+	We can search for all records containing the word "apple" in the "description" column with a limit of 10 as follows:
+	results := ft.searchValuesWithKey("apple", "description", 10)
 */
-func (ft *FullText) searchValuesWithKey(query string, key string, limit int) []map[string]string {
+func (c *Cache) searchValuesWithKey(query string, key string, limit int) []map[string]interface{} {
 	// Define variables
-	var result []map[string]string = []map[string]string{}
+	var result []map[string]interface{} = []map[string]interface{}{}
 
 	// Iterate over the query result
-	for i := 0; i < len(ft.data); i++ {
-		switch {
-		case len(result) >= limit:
-			return result
-		case strings.Contains(ft.data[i][key], query):
-			result = append(result, ft.data[i])
+	for _, item := range c.data {
+		for _, v := range item {
+			if len(result) >= limit {
+				return result
+			}
+
+			// Check if the value contains the query
+			if v, ok := v.(string); ok {
+				if strings.Contains(strings.ToLower(v), query) {
+					result = append(result, item)
+				}
+			}
 		}
 	}
 
@@ -193,77 +210,81 @@ func (ft *FullText) searchValuesWithKey(query string, key string, limit int) []m
 }
 
 /*
-SearchValues searches for all occurrences of the given query string in the FullText object's data. The search is
-done by looking for the query as a substring in the full text search cache data. The search result is limited to the
-specified number of entries.
-
+SearchValues - function to search data in FullText struct by a given query with Mutex locking.
 Parameters:
-  - query (string): The search query to use. This string will be searched for as a substring in the full text search cache data.
-  - limit (int): The maximum number of search results to return. If the number of matching results exceeds this limit, the excess results will be ignored.
-  - schema (map[string]bool): A dictionary of key-value pairs indicating which keys in the data should be searched.
-    Only keys that have a value of true in the schema will be searched. If a key is not present in the schema, it will not be searched.
+  - query: string, the search query to match against data in the FullText struct.
+  - limit: int, the maximum number of results to be returned.
+  - schema: map[string]bool, a map of column names in the FullText struct's data that should be searched. The boolean value indicates whether the column should be searched or not.
 
 Returns:
-  - []map[string]string: An array of maps representing the search results. Each map contains key-value pairs from the entry in
-    the data that matched the search query. If no results are found, an empty array is returned.
-  - error: An error object. If no error occurs, this will be nil.
+  - []map[string]interface{}, a slice of maps where each map represents a data record that matches the given query.
+    The keys of the map correspond to the column names of the data that were searched and returned in the result.
 
-Note: The search is case-insensitive.
-
+Mutex locking is used to ensure that concurrent access to the FullText struct is safe.
 Example usage:
 
-	ft := &FullText{data: []map[string]string{{"key1": `{"name": "John", "age": 30}`, "key2": "value2"}, {"key1": `{"name": "Jane", "age": 25}`, "key2": "value4"}}}
-	schema := map[string]bool{"key1": true, "key2": false}
-	result := ft.SearchValues("John", 10, schema)
-	fmt.Println(result) // Output: [{key1:{"name": "John", "age": 30}, key2:value2}]
+	Assume we have a FullText struct instance named ft, containing data with columns "id", "name", and "description"
+	We can search for all records containing the word "apple" in the "description" and "name" columns with a limit of 10 as follows:
+	schema := map[string]bool{"description": true, "name": true}
+	results := ft.SearchValues("apple", 10, schema)
 */
-func (ft *FullText) SearchValues(query string, limit int, schema map[string]bool) ([]map[string]string, error) {
+func (c *Cache) SearchValues(query string, limit int, schema map[string]bool) ([]map[string]interface{}, error) {
 	switch {
 	case len(query) == 0:
-		return []map[string]string{}, errors.New("invalid query")
+		return []map[string]interface{}{}, errors.New("invalid query")
 	case limit < 1:
-		return []map[string]string{}, errors.New("invalid limit")
+		return []map[string]interface{}{}, errors.New("invalid limit")
 	}
 
 	// Set the query to lowercase
 	query = strings.ToLower(query)
 
 	// Lock the mutex
-	ft.mutex.RLock()
-	defer ft.mutex.RUnlock()
+	c.mutex.RLock()
+	defer c.mutex.RUnlock()
 
 	// Search the data
-	return ft.searchValues(query, limit, schema), nil
+	return c.searchValues(query, limit, schema), nil
 }
 
 /*
+searchValues - function to search data in FullText struct by a given query.
 Parameters:
-  - query (string): The search query to use. This string will be searched for as a substring in the full text cache data.
-  - limit (int): The maximum number of search results to return. If the number of matching results exceeds this limit, the excess results will be ignored.
-  - schema (map[string]bool): A dictionary of key-value pairs indicating which keys in the data should be searched.
-    Only keys that have a value of true in the schema will be searched. If a key is not present in the schema, it will not be searched.
+  - query: string, the search query to match against data in the FullText struct.
+  - limit: int, the maximum number of results to be returned.
+  - schema: map[string]bool, a map of column names in the FullText struct's data that should be searched. The boolean value indicates whether the column should be searched or not.
 
 Returns:
-  - []map[string]string: An array of maps representing the search results. Each map contains key-value pairs
-    from the entry in the data that matched the search query. If no results are found, an empty array is returned.
+  - []map[string]interface{}, a slice of maps where each map represents a data record that matches the given query.
+    The keys of the map correspond to the column names of the data that were searched and returned in the result.
 
-Note: The search is case-insensitive.
+Example usage:
+
+	Assume we have a FullText struct instance named ft, containing data with columns "id", "name", and "description"
+	We can search for all records containing the word "apple" in the "description" and "name" columns with a limit of 10 as follows:
+	schema := map[string]bool{"description": true, "name": true}
+	results := ft.searchValues("apple", 10, schema)
 */
-func (ft *FullText) searchValues(query string, limit int, schema map[string]bool) []map[string]string {
+func (c *Cache) searchValues(query string, limit int, schema map[string]bool) []map[string]interface{} {
 	// Define variables
-	var result []map[string]string = []map[string]string{}
+	var result []map[string]interface{} = []map[string]interface{}{}
 
 	// Iterate over the query result
-	for i := 0; i < len(ft.data); i++ {
-		// Iterate over the keys and values for the data
-		for key, value := range ft.data[i] {
+	for _, item := range c.data {
+		// Iterate over the keys and values for the data for that index
+		for key, value := range item {
 			switch {
 			case len(result) >= limit:
 				return result
 			case !schema[key]:
 				continue
-			case strings.Contains(strings.ToLower(value), query):
-				result = append(result, ft.data[i])
+			}
+
+			// Check if the value contains the query
+			if v, ok := value.(string); ok {
+				if strings.Contains(strings.ToLower(v), query) {
+					result = append(result, item)
+				}
 			}
 		}
 	}
@@ -273,110 +294,109 @@ func (ft *FullText) searchValues(query string, limit int, schema map[string]bool
 }
 
 /*
-SearchOneWord searches for all occurrences of the given query string in the FullText object's data.
-The search is done by looking for the query as a complete word (case-insensitive) in any value
-associated with any key in each entry of the data. The search result is limited to the specified
-number of entries.
+SearchOne function searches for a query string within the FullText object and returns the results in a list of maps. This function uses mutex locking to ensure thread-safety.
+@Parameters:
 
-Parameters:
-  - query (string): The search query to use. This string will be searched for as a complete word (case-insensitive) in any value associated with any key in the data.
-  - limit (int): The maximum number of search results to return. If the number of matching results exceeds this limit, the excess results will be ignored.
-  - strict (bool): If true, the search will only return exact matches for the query string. If false, the search will
-    also return entries where the query appears as a substring in any value.
+	query (string): The query string to search for.
+	limit (int): The maximum number of results to return. If set to 0, there is no limit to the number of results returned.
+	strict (bool): Determines whether the search should be strict or not. If set to true, only exact matches will be returned.
 
-Returns:
-  - []map[string]string: An array of maps representing the search results. Each map contains key-value pairs
-    from the entry in the data that matched the search query. If no results are found, an empty array is returned.
-  - error: An error object. If no error occurs, this will be nil.
+@Returns:
 
-Note: The search is case-insensitive.
+	A list of maps, where each map represents a result. Each map contains key-value pairs, where the key is a field name and the value is the corresponding field value.
 
-Example usage:
+Example Usage:
 
-	ft := &FullText{data: []map[string]string{{"key1": "value1", "key2": "value2"}, {"key1": "hello world", "key2": "value4"}}}
-	result := ft.SearchOneWord("hello", 10, false)
-	fmt.Println(result) // Output: [{key1:hello world, key2:value4}]
+	results := ft.SearchOne("example", 0, false)
+	for _, result := range results {
+		fmt.Printf("Result: %v\n", result)
+	}
 */
-func (ft *FullText) SearchOneWord(query string, limit int, strict bool) ([]map[string]string, error) {
+func (c *Cache) SearchOneWord(query string, limit int, strict bool) ([]map[string]interface{}, error) {
 	switch {
 	case len(query) == 0:
-		return []map[string]string{}, errors.New("invalid query")
+		return []map[string]interface{}{}, errors.New("invalid query")
 	case limit < 1:
-		return []map[string]string{}, errors.New("invalid limit")
+		return []map[string]interface{}{}, errors.New("invalid limit")
 	}
 
-	// Set the query to lowercase
-	query = strings.ToLower(query)
-
 	// Lock the mutex
-	ft.mutex.RLock()
-	defer ft.mutex.RUnlock()
+	c.mutex.RLock()
+	defer c.mutex.RUnlock()
+
+	// Check if the full text is initialized
+	if c.ft == nil {
+		return []map[string]interface{}{}, errors.New("full text is not initialized")
+	}
 
 	// Search the data
-	return ft.searchOneWord(query, limit, strict), nil
+	return c.searchOneWord(query, limit, strict), nil
 }
 
 /*
-searchOneWord searches for a single query within the data using a full-text search approach.
-
+searchOne function is an internal function used by the FullText object to search for a single word. This function returns the results in a list of maps.
 Parameters:
-  - query (string): the query to search for
-  - limit (int): the maximum number of search results to return
-  - strict (bool): if true, only exact matches will be returned. If false, partial matches will also be returned.
+
+	query (string): The query string to search for.
+	limit (int): The maximum number of results to return. If set to 0, there is no limit to the number of results returned.
+	strict (bool): Determines whether the search should be strict or not. If set to true, only exact matches will be returned.
 
 Returns:
-  - []map[string]string: a list of maps, where each map is a row from the data that matches the query.
 
-Note:
-  - If the query is empty, the function returns an empty list.
-  - If strict is true and the query is not found in the data, an empty list is returned.
-  - If strict is false and no matches are found, an empty list is returned.
+	A list of maps, where each map represents a result. Each map contains key-value pairs, where the key is a field name and the value is the corresponding field value.
+
+Example Usage:
+
+	This is an internal function and is not intended to be called directly by the user.
 */
-func (ft *FullText) searchOneWord(query string, limit int, strict bool) []map[string]string {
-	// Define the result variable
-	var result []map[string]string = []map[string]string{}
+func (c *Cache) searchOneWord(query string, limit int, strict bool) []map[string]interface{} {
+	// Set the query to lowercase
+	query = strings.ToLower(query)
+
+	// Define variables
+	var result []map[string]interface{} = []map[string]interface{}{}
 
 	// If the user wants a strict search, just return the result
 	// straight from the cache
 	if strict {
 		// Check if the query is in the cache
-		if _, ok := ft.wordCache[query]; !ok {
+		if _, ok := c.ft.wordCache[query]; !ok {
 			return result
 		}
 
 		// Loop through the indices
-		var indices []int = ft.wordCache[query]
-		for i := 0; i < len(indices); i++ {
+		for i := 0; i < len(c.ft.wordCache[query]); i++ {
 			if len(result) >= limit {
 				return result
 			}
-			result = append(result, ft.data[indices[i]])
+			result = append(result, c.data[c.ft.wordCache[query][i]])
 		}
 
 		// Return the result
 		return result
 	}
 
-	// true for already checked
-	var alreadyAdded map[int]int = map[int]int{}
+	// Define a map to store the indices that have already been added
+	var alreadyAdded map[string]int = map[string]int{}
 
 	// Loop through the cache keys
-	for i := 0; i < len(ft.words); i++ {
+	for k, v := range c.ft.wordCache {
 		switch {
 		case len(result) >= limit:
 			return result
-		case !Utils.Contains(ft.words[i], query):
+		case !Utils.Contains(k, query):
 			continue
 		}
 
 		// Loop through the cache indices
-		for j := 0; j < len(ft.wordCache[ft.words[i]]); j++ {
-			var index int = ft.wordCache[ft.words[i]][j]
-			if _, ok := alreadyAdded[index]; ok {
+		for j := 0; j < len(v); j++ {
+			if _, ok := alreadyAdded[v[j]]; ok {
 				continue
 			}
-			result = append(result, ft.data[index])
-			alreadyAdded[index] = 0
+
+			// Else, append the index to the result
+			result = append(result, c.data[v[j]])
+			alreadyAdded[v[j]] = 0
 		}
 	}
 

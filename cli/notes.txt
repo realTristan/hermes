@@ -1,0 +1,9 @@
+if there's a config.json file in the current directory, 
+use that to startup the localhost
+
+{
+    "port": "8000"
+}
+
+hermes serve -port {8000} -json {data.json}
+

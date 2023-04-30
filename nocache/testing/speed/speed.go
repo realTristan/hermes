@@ -7,7 +7,7 @@ import (
 	"strings"
 	"time"
 
-	Hermes "github.com/realTristan/Hermes"
+	Hermes "github.com/realTristan/Hermes/nocache"
 )
 
 // Results: Hermes is about 40x faster than a basic search
@@ -19,16 +19,18 @@ func main() {
 // Basic Search
 func BasicSearch() {
 	// read the json data
-	if data, err := readJson("../../data/data_indices.json"); err != nil {
+	if data, err := readJson("../../../data/data_array.json"); err != nil {
 		panic(err)
 	} else {
 		var average int64 = 0
 		for i := 0; i < 100; i++ {
 			var startTime = time.Now()
-			// print the data
+			// Iterate over the data array
 			for _, val := range data {
+				// Iterate over the map
 				for k, v := range val {
-					if strings.Contains(strings.ToLower(v.(string)), strings.ToLower("computer")) {
+					// Check if the value contains the search term
+					if strings.Contains(strings.ToLower(v), strings.ToLower("computer")) {
 						var _ = k
 					}
 				}
@@ -37,55 +39,54 @@ func BasicSearch() {
 		}
 		var averageNanos float64 = float64(average) / 100
 		var averageMillis float64 = averageNanos / 1000000
-		fmt.Println("Basic: Average time is: ", averageNanos, "ns or", averageMillis, "ms")
+		fmt.Println("\nBasic: Average time is: ", averageNanos, "ns or", averageMillis, "ms")
 	}
 }
 
 // Hermes Search
 func HermesSearch() {
 	// Initialize the cache
-	var cache *Hermes.Cache = Hermes.InitCache()
-
-	// Initialize the FT cache with a json file
-	cache.FTInitWithJson("../../data/data_indices.json", -1, -1, map[string]bool{
+	var cache, err = Hermes.InitWithJson("../../../data/data_array.json", map[string]bool{
 		"id":             false,
 		"components":     false,
 		"units":          false,
+		"pre_requisites": false,
+		"title":          false,
 		"description":    true,
 		"name":           true,
-		"pre_requisites": true,
-		"title":          true,
 	})
+	if err != nil {
+		panic(err)
+	}
+
 	var average int64 = 0
-	var total int = 0
 	for i := 0; i < 100; i++ {
 		// Track the start time
 		var start time.Time = time.Now()
 
 		// Search for a word in the cache
-		var res, _ = cache.Search("computer science", 100, false, map[string]bool{
+		cache.Search("computer", 100, false, map[string]bool{
 			"id":             false,
 			"components":     false,
 			"units":          false,
+			"pre_requisites": false,
+			"title":          false,
 			"description":    true,
 			"name":           true,
-			"pre_requisites": true,
-			"title":          true,
 		})
-		total += len(res)
 
 		// Print the duration
 		average += time.Since(start).Nanoseconds()
 	}
-	var averageNanos float64 = float64(average) / 100
-	var averageMillis float64 = averageNanos / 1000000
-	fmt.Println("Hermes: Average time is: ", averageNanos, "ns or", averageMillis, "ms")
-	fmt.Println("Hermes: Results: ", total)
+
+	var averageNanos float32 = float32(average) / 100
+	var averageMillis float32 = averageNanos / 1000000
+	fmt.Println("\nHermes: Average time is: ", averageNanos, "ns or", averageMillis, "ms")
 }
 
 // Read a json file
-func readJson(file string) (map[string]map[string]interface{}, error) {
-	var v map[string]map[string]interface{} = map[string]map[string]interface{}{}
+func readJson(file string) ([]map[string]string, error) {
+	var v []map[string]string = []map[string]string{}
 
 	// Read the json data
 	if data, err := os.ReadFile(file); err != nil {
