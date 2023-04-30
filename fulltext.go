@@ -13,17 +13,6 @@ FullText is a struct that represents a full text search cache. It has the follow
 - wordCache (map[string][]int): a map where the keys are words and the values are arrays of integers representing the indices of the data items that contain the word
 - words ([]string): a slice of strings representing all the unique words in the cache
 - data ([]map[string]string): a slice of maps representing the data items in the cache, where the keys are the names of the fields and the values are the field values
-
-Example Usage:
-
-	ft := FullText{
-		mutex:     &sync.RWMutex{},
-		wordCache: map[string][]int{},
-		words:     []string{},
-		data:      []map[string]string{},
-	}
-
-fmt.Println(ft)
 */
 type FullText struct {
 	mutex     *sync.RWMutex
@@ -48,8 +37,8 @@ Example Usage:
 		{"id": "2", "name": "Jane Smith", "description": "Data analyst"},
 	}
 
-schema := map[string]bool{"name": true, "description": true}
-ft, err := InitWithMap(data, schema)
+	schema := map[string]bool{"name": true, "description": true}
+	ft, err := InitWithMap(data, schema)
 
 	if err != nil {
 		fmt.Println("Error initializing FullText object:", err)
@@ -88,8 +77,9 @@ It takes in two parameters:
 It returns a pointer to the initialized FullText object and an error, if any.
 
 Example Usage:
-schema := map[string]bool{"name": true, "description": true}
-ft, err := InitJson("data.json", schema)
+
+	schema := map[string]bool{"name": true, "description": true}
+	ft, err := InitJson("data.json", schema)
 
 	if err != nil {
 		fmt.Println("Error initializing FullText object:", err)

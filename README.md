@@ -6,7 +6,7 @@
 go get github.com/realTristan/Hermes
 ```
 
-## Benchmarks /
+## Benchmarks Base
 If you want to use only the full-text-search features, then just import hermes and load it using a .json file. (as shown in /example). Note: For small to medium-sized datasets (like the ones I used in /data), Hermes works great. Although, as the words in the dataset increases, the full-text-search cache will take up significantly more memory. I recommended setting a cache limit and/or a cache keys limit.
 ```
 Dataset Array Entries: 4,115
@@ -20,9 +20,8 @@ Dataset Map Size: ≈ 2.3MB
 ?q=computer&limit=100&strict=true: 12.102µs
 ```
 
-
-## Benchmarks /cache
-The full-text-search from /cache is significantly slower than the base FTS. Why? Because the FTS in /cache requires more memory, keys, and utilizes a map, instead of a slice to store data. If you want to use a cache along with the full text-search algorithm, then import the files from /cache. To setup a cache, check out /cache/example or /cache/testing. 
+## Benchmarks Cache
+The full-text-search from /cache is significantly slower than the base FTS. Why? Because the FTS in /cache requires more memory, keys, and utilizes a map instead of a slice to store data. If you want to use a cache along with the full text-search algorithm, import the files from /cache. To setup a cache, check out /cache/example or /cache/testing. 
 
 ```
 Dataset Map Entries: 4,115
@@ -36,7 +35,7 @@ Dataset Map Size: ≈ 2.3MB
 ?q=computer&limit=100&strict=true: 40.84µs
 ```
 
-# Example of Base Full-Text-Search (/)
+# Example of Base Full-Text-Search
 ```go
 package main
 
@@ -78,8 +77,7 @@ func main() {
 }
 ```
 
-
-# Example of Cache Full-Text-Search (/cache)
+# Example of Cache Full-Text-Search
 ```go
 package main
 
