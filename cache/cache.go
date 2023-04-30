@@ -68,10 +68,10 @@ Info prints diagnostic information about the cache to standard output.
 	}
 	c.Info()  // prints diagnostic information about the cache to standard output
 */
-func (c *Cache) Info() {
+func (c *Cache) Info() (string, error) {
 	c.mutex.RLock()
 	defer c.mutex.RUnlock()
-	c.info()
+	return c.info()
 }
 
 /*
@@ -86,29 +86,26 @@ The `info` method prints diagnostic information about the cache and its FullText
 	Example usage:
 	(not meant to be called directly)
 */
-func (c *Cache) info() error {
-	fmt.Println("Cache Info:")
-	fmt.Println("-----------")
-	fmt.Println("Number of keys:", len(c.data))
-	fmt.Println("Data:", c.data)
+func (c *Cache) info() (string, error) {
+	// The initial cache info string
+	var s string = fmt.Sprintf("Cache Info:\n-----------\nNumber of keys: %d\nData: %v\n", len(c.data), c.data)
 
 	// Check if the cache full text has been initialized
 	if c.ft == nil {
-		return errors.New("full text is not initialized")
+		return "", errors.New("full text is not initialized")
 	}
 
-	// Print full text info
-	fmt.Println("\nCache Full Text Info:")
-	fmt.Println("-----------")
+	// Append the full text info to the cache info string
+	s += "\nCache Full Text Info:\n-----------\n"
 	if wordCacheSize, err := size(c.ft.wordCache); err != nil {
-		return err
+		return "", err
 	} else {
-		fmt.Println("Number of words:", len(c.ft.wordCache))
-		fmt.Println("Initialized:", c.ft.initialized)
-		fmt.Println("Word cache:", c.ft.wordCache)
-		fmt.Println("Word cache size:", wordCacheSize)
+		s += fmt.Sprintf("Number of keys: %d\n", len(c.ft.wordCache))
+		s += fmt.Sprintf("Initialized: %v\n", c.ft.initialized)
+		s += fmt.Sprintf("Word cache: %v\n", c.ft.wordCache)
+		s += fmt.Sprintf("Word cache size: %d\n", wordCacheSize)
 	}
-	return nil
+	return s, nil
 }
 
 /*

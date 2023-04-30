@@ -25,9 +25,13 @@ Returns:
 func (c *Cache) FTInit(maxWords int, maxSizeBytes int, schema map[string]bool) error {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
+
+	// Verify that the ft cache has already been initialized
 	if c.ft.isInitialized() {
 		return errors.New("full text cache already initialized")
 	}
+
+	// Initialize the FT cache
 	return c.ftInit(maxWords, maxSizeBytes, schema)
 }
 
@@ -92,9 +96,13 @@ Returns:
 func (c *Cache) FTInitWithMap(data map[string]map[string]interface{}, maxWords int, maxSizeBytes int, schema map[string]bool) error {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
+
+	// Verify that the cache is already initialized
 	if c.ft.isInitialized() {
 		return errors.New("full text cache already initialized")
 	}
+
+	// Initialize the FT cache
 	return c.ftInitWithMap(data, maxWords, maxSizeBytes, schema)
 }
 
@@ -172,9 +180,13 @@ Note that this function is a wrapper around the initFTJson method that adds mute
 func (c *Cache) FTInitWithJson(file string, maxWords int, maxSizeBytes int, schema map[string]bool) error {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
+
+	// Verify that the ft cache is initialized
 	if c.ft.isInitialized() {
 		return errors.New("full text cache already initialized")
 	}
+
+	// Initialize the FT cache
 	return c.ftInitWithJson(file, maxWords, maxSizeBytes, schema)
 }
 
