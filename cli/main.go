@@ -9,9 +9,9 @@ import (
 
 	"github.com/gorilla/mux"
 	Hermes "github.com/realTristan/Hermes"
+	Utils "github.com/realTristan/Hermes/cli/utils"
 	"github.com/realTristan/Hermes/server/listener"
 	"github.com/realTristan/Hermes/server/routes"
-	Utils "github.com/realTristan/Hermes/server/utils"
 )
 
 // Main function
@@ -46,9 +46,7 @@ func main() {
 
 		// Print the serving port
 		var port int = l.Addr().(*net.TCPAddr).Port
-		if err := Utils.PrintLogoWithPort(port); err != nil {
-			panic(err)
-		}
+		Utils.PrintLogoWithPort(port)
 
 		// Serve the listener
 		if err := http.Serve(l, nil); err != nil {
