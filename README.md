@@ -125,11 +125,6 @@ func main() {
 	// Get the user_id value
 	var user = cache.Get("user_id")
 
-	// Check if the user is expired
-	if user["expiration"].(time.Time).Before(time.Now()) {
-		fmt.Println("Expired")
-	}
-
 	// Search for a word in the cache
 	var (
 		startTime time.Time = time.Now()
