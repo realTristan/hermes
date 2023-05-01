@@ -8,13 +8,13 @@ Go: go get github.com/realTristan/Hermes
 
 ## CLI
 ```
-hermes serve
+hermes serve -p 8000
 ```
 ```
-MacOS:
+Install MacOS:
   $ curl "https://github.com/realTristan/Hermes/raw/master/cli/hermes" -o /usr/local/bin/hermes
   
-Windows:
+Install Windows:
   $ mkdir C:\hermes
   $ curl "https://github.com/realTristan/Hermes/raw/master/cli/hermes.exe" -o C:\hermes\hermes.exe
   > Add "C:\hermes" to Environment Variables
