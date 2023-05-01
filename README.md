@@ -6,7 +6,10 @@
 Go: go get github.com/realTristan/Hermes
 ```
 
-## CLI Install
+## CLI
+```
+hermes serve
+```
 ```
 MacOS:
   $ curl "https://github.com/realTristan/Hermes/raw/master/cli/hermes" -o /usr/local/bin/hermes
@@ -17,10 +20,8 @@ Windows:
   > Add "C:\hermes" to Environment Variables
 ```
 
-## CLI Usage
-```
-hermes serve
-```
+
+# API
 
 # Example of NoCache Full-Text-Search
 If you want to use only the full-text-search features, then just import hermes and load it using a .json file. (as shown in /example). Note: For small to medium-sized datasets (like the ones I used in /data), Hermes works great. Although, as the words in the dataset increases, the full-text-search cache will take up significantly more memory. I recommended setting a cache limit and/or a cache keys limit.
