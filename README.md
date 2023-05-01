@@ -6,9 +6,10 @@
 Go: go get github.com/realTristan/Hermes
 ```
 
-## CLI Usage
+## CLI
 ```
-hermes serve (optional -port {8080})
+Install: 
+Usage: hermes serve
 ```
 
 # Example of NoCache Full-Text-Search
