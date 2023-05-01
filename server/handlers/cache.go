@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strconv"
 
 	Hermes "github.com/realTristan/Hermes"
 	Utils "github.com/realTristan/Hermes/server/utils"
@@ -20,7 +21,7 @@ func Clean(c *Hermes.Cache) http.HandlerFunc {
 // Delete a key from the cache
 func Delete(c *Hermes.Cache) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		var key string = "from url params"
+		var key string = r.URL.Query().Get("key")
 		c.Delete(key)
 		w.Write(Utils.Success())
 	}
@@ -29,7 +30,7 @@ func Delete(c *Hermes.Cache) http.HandlerFunc {
 // Get a key from the cache
 func Get(c *Hermes.Cache) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		var key string = "from url params"
+		var key string = r.URL.Query().Get("key")
 		if data, err := json.Marshal(c.Get(key)); err != nil {
 			w.Write(Utils.Error(err))
 		} else {
@@ -48,10 +49,22 @@ func GetAll(c *Hermes.Cache) http.HandlerFunc {
 func Set(c *Hermes.Cache) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var (
-			key      string                 = ""
-			value    map[string]interface{} = nil
-			fullText bool                   = true
+			key        string = r.URL.Query().Get("key")
+			value, err        = Utils.Decode(r.URL.Query().Get("value"))
 		)
+		if err != nil {
+			w.Write(Utils.Error(err))
+			return
+		}
+
+		// Get whether or not to store the full text
+		fullText, err := strconv.ParseBool(r.URL.Query().Get("fulltext"))
+		if err != nil {
+			w.Write(Utils.Error(err))
+			return
+		}
+
+		// Set the value in the cache
 		if err := c.Set(key, value, fullText); err != nil {
 			w.Write(Utils.Error(err))
 			return
