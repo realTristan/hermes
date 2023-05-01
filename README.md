@@ -14,7 +14,7 @@ MacOS:
 Windows:
   $ mkdir C:\hermes
   $ curl "https://github.com/realTristan/Hermes/raw/master/cli/hermes.exe" -o C:\hermes\hermes.exe
-  > Add "C:\lat.cli" to Environment Variables
+  > Add "C:\hermes" to Environment Variables
 ```
 
 ## CLI Usage
