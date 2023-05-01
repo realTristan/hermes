@@ -6,10 +6,20 @@
 Go: go get github.com/realTristan/Hermes
 ```
 
-## CLI
+## CLI Install
 ```
-Install: 
-Usage: hermes serve
+MacOS:
+  $ curl "https://github.com/realTristan/Hermes/raw/master/cli/hermes" -o /usr/local/bin/hermes
+  
+Windows:
+  $ mkdir C:\hermes
+  $ curl "https://github.com/realTristan/Hermes/raw/master/cli/hermes.exe" -o C:\hermes\hermes.exe
+  > Add "C:\lat.cli" to Environment Variables
+```
+
+## CLI Usage
+```
+hermes serve
 ```
 
 # Example of NoCache Full-Text-Search
