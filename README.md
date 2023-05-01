@@ -1,9 +1,14 @@
 # Hermes ![Stars](https://img.shields.io/github/stars/realTristan/Hermes?color=brightgreen) ![Watchers](https://img.shields.io/github/watchers/realTristan/Hermes?label=Watchers)
 ![banner](https://user-images.githubusercontent.com/75189508/230987049-665418b1-3576-49b7-861e-29036859ad8a.png)
 
-## Install
+## Install Package
 ```
-go get github.com/realTristan/Hermes
+Go: go get github.com/realTristan/Hermes
+```
+
+## CLI Usage
+```
+hermes serve (optional -port {8080})
 ```
 
 # Example of NoCache Full-Text-Search
