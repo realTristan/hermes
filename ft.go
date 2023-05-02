@@ -23,12 +23,14 @@ type FullText struct {
 	maxSizeBytes int
 }
 
+// Get whether the full text cache is initialized
 func (c *Cache) FTIsInitialized() bool {
 	c.mutex.RLock()
 	defer c.mutex.RUnlock()
 	return c.ft != nil
 }
 
+// Set the max size in bytes of the full text cache
 func (c *Cache) FTSetMaxBytes(maxBytes int) error {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
@@ -38,6 +40,13 @@ func (c *Cache) FTSetMaxBytes(maxBytes int) error {
 		return errors.New("full text cache not initialized")
 	}
 
+	// Check if the current size of the word cache is greater than the new max size
+	if i, err := Utils.Size(c.ft.wordCache); err != nil {
+		return err
+	} else if i > maxBytes {
+		return errors.New("the current size of the word cache is greater than the new max size")
+	}
+
 	// Set the maxSizeBytes field
 	c.ft.maxSizeBytes = maxBytes
 
@@ -45,6 +54,7 @@ func (c *Cache) FTSetMaxBytes(maxBytes int) error {
 	return nil
 }
 
+// Set the max number of words in the full text cache
 func (c *Cache) FTSetMaxWords(maxWords int) error {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
@@ -54,6 +64,11 @@ func (c *Cache) FTSetMaxWords(maxWords int) error {
 		return errors.New("full text cache not initialized")
 	}
 
+	// Check if the current size of the word cache is greater than the new max size
+	if len(c.ft.wordCache) > maxWords {
+		return errors.New("the current size of the word cache is greater than the new max size")
+	}
+
 	// Set the maxWords field
 	c.ft.maxWords = maxWords
 
@@ -61,6 +76,7 @@ func (c *Cache) FTSetMaxWords(maxWords int) error {
 	return nil
 }
 
+// Get the full text word cache
 func (c *Cache) FTWordCache() (map[string][]string, error) {
 	c.mutex.RLock()
 	defer c.mutex.RUnlock()
@@ -78,6 +94,7 @@ func (c *Cache) FTWordCache() (map[string][]string, error) {
 	return copy, nil
 }
 
+// Get the word cache size in bytes
 func (c *Cache) FTWordCacheSize() (int, error) {
 	c.mutex.RLock()
 	defer c.mutex.RUnlock()
@@ -89,4 +106,18 @@ func (c *Cache) FTWordCacheSize() (int, error) {
 
 	// Return the size of the wordCache map
 	return Utils.Size(c.ft.wordCache)
+}
+
+// Get the word cache length
+func (c *Cache) FTWordCacheLength() (int, error) {
+	c.mutex.RLock()
+	defer c.mutex.RUnlock()
+
+	// Check if the cache is initialized
+	if c.ft == nil {
+		return -1, errors.New("full text cache not initialized")
+	}
+
+	// Return the size of the wordCache map
+	return len(c.ft.wordCache), nil
 }

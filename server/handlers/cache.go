@@ -58,14 +58,14 @@ func Set(c *Hermes.Cache) http.HandlerFunc {
 		}
 
 		// Get whether or not to store the full text
-		fullText, err := strconv.ParseBool(r.URL.Query().Get("fulltext"))
+		ft, err := strconv.ParseBool(r.URL.Query().Get("ft"))
 		if err != nil {
 			w.Write(Utils.Error(err))
 			return
 		}
 
 		// Set the value in the cache
-		if err := c.Set(key, value, fullText); err != nil {
+		if err := c.Set(key, value, ft); err != nil {
 			w.Write(Utils.Error(err))
 			return
 		}

@@ -28,7 +28,7 @@ func set() {
 	}
 
 	// send the request
-	resp, err := http.Post("http://localhost:52412/set?key=test&fulltext=true&value="+value, "application/json", nil)
+	resp, err := http.Post("http://localhost:52412/set?key=test&ft=true&value="+value, "application/json", nil)
 	if err != nil {
 		panic(err)
 	}
