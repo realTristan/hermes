@@ -7,16 +7,9 @@ import (
 	Utils "github.com/realTristan/Hermes/utils"
 )
 
-/*
-insertIntoWordCache() loops through a map of data and extracts relevant information to populate the wordCache map in the FullText struct.
-
-Parameters:
-- data (map[string]map[string]interface{}): a map of data to be loaded into the cache
-- schema (map[string]bool): a map representing the schema of the data; only keys in this map will be loaded into the cache
-
-Returns:
-- error: if an error occurs during the loading process, it is returned. Otherwise, returns nil.
-*/
+// Insert a value in the full-text cache for the specified key.
+// This function is not thread-safe, and should only be called from
+// an exported function.
 func (ft *FullText) insertIntoWordCache(data map[string]map[string]interface{}, schema map[string]bool) error {
 	// Create a copy of the existing word cache
 	var temp map[string][]string = ft.wordCache

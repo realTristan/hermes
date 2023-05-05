@@ -7,15 +7,11 @@ import (
 )
 
 /*
-FullText represents a data structure for storing and searching full-text documents.
-It uses a map to cache word positions for each word in the text. The maximum number of words that
-can be cached and the maximum size of the text can be set when initializing the struct.
-
 Fields:
-- wordCache: a map of words to an array of positions where the word appears in the text
-- maxWords: the maximum number of words to cache
-- maxSizeBytes: the maximum size of the text to cache in bytes
-- initialized: a boolean flag indicating whether the struct has been initialized
+  - wordCache: a map of words to an array of positions where the word appears in the text
+  - maxWords: the maximum number of words to cache
+  - maxSizeBytes: the maximum size of the text to cache in bytes
+  - initialized: a boolean flag indicating whether the struct has been initialized
 */
 type FullText struct {
 	wordCache    map[string][]string
@@ -24,6 +20,7 @@ type FullText struct {
 }
 
 // Get whether the full text cache is initialized
+// This method is thread-safe.
 func (c *Cache) FTIsInitialized() bool {
 	c.mutex.RLock()
 	defer c.mutex.RUnlock()
@@ -31,6 +28,7 @@ func (c *Cache) FTIsInitialized() bool {
 }
 
 // Set the max size in bytes of the full text cache
+// This method is thread-safe.
 func (c *Cache) FTSetMaxBytes(maxBytes int) error {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
@@ -55,6 +53,7 @@ func (c *Cache) FTSetMaxBytes(maxBytes int) error {
 }
 
 // Set the max number of words in the full text cache
+// This method is thread-safe.
 func (c *Cache) FTSetMaxWords(maxWords int) error {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
@@ -77,6 +76,7 @@ func (c *Cache) FTSetMaxWords(maxWords int) error {
 }
 
 // Get the full text word cache
+// This method is thread-safe.
 func (c *Cache) FTWordCache() (map[string][]string, error) {
 	c.mutex.RLock()
 	defer c.mutex.RUnlock()
@@ -95,6 +95,7 @@ func (c *Cache) FTWordCache() (map[string][]string, error) {
 }
 
 // Get the word cache size in bytes
+// This method is thread-safe.
 func (c *Cache) FTWordCacheSize() (int, error) {
 	c.mutex.RLock()
 	defer c.mutex.RUnlock()
@@ -109,6 +110,7 @@ func (c *Cache) FTWordCacheSize() (int, error) {
 }
 
 // Get the word cache length
+// This method is thread-safe.
 func (c *Cache) FTWordCacheLength() (int, error) {
 	c.mutex.RLock()
 	defer c.mutex.RUnlock()

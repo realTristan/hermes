@@ -7,44 +7,40 @@ import (
 	Utils "github.com/realTristan/Hermes/utils"
 )
 
-/*
-The Set function adds a key-value pair to the FullText cache. The cache is locked with a mutex to ensure thread-safety.
-If the key already exists, an error is returned.
-If the maxWords or maxSizeBytes are exceeded, an error is returned.
-The value is cleaned and tokenized before being added to the cache.
-@Parameters:
+// Set a value in the cache for the specified key.
+// This function is thread-safe.
+func (c *Cache) Set(key string, value map[string]interface{}, fullText bool) error {
+	c.mutex.Lock()
+	defer c.mutex.Unlock()
+	return c.set(key, value, fullText)
+}
 
-	key (string): The key to be added to the cache
-	value (map[string]interface{}): The value to be added to the cache
-
-@Returns:
-
-	error: If an error occurs, it is returned. If the operation was successful, nil is returned.
-
-Example usage:
-
-	cache := InitCache()
-	schema := map[string]bool{
-		"content": true,
-		"title":   true,
+// Set a value in the cache for the specified key.
+// This function is not thread-safe, and should only be called from
+// an exported function.
+// If fullText is true, set the value in the full-text cache as well.
+func (c *Cache) set(key string, value map[string]interface{}, fullText bool) error {
+	if _, ok := c.data[key]; ok {
+		return fmt.Errorf("full text cache key already exists (%s). please delete it before setting it another value", key)
 	}
-	maxWords := 1000
-	maxSizeBytes := 1024 * 1024 // 1MB
-	// Add data to cache
-	err := cache.ResetFT(maxWords, maxSizeBytes, schema)
-	if err != nil {
-			log.Fatalf("Error resetting FullText cache: %s", err)
+
+	// Update the value in the FT cache
+	if fullText && c.ft != nil {
+		if err := c.ft.set(key, value); err != nil {
+			return err
+		}
 	}
-	// Set a key-value pair in the cache
-	data := map[string]interface{}{
-			"content": "This is some example content",
-			"title":   "Example",
-	}
-	err = cache.ft.Set("example_key", data)
-	if err != nil {
-			log.Fatalf("Error setting FullText cache: %s", err)
-	}
-*/
+
+	// Update the value in the cache
+	c.data[key] = value
+
+	// Return nil for no error
+	return nil
+}
+
+// Set a value in the full-text cache for the specified key.
+// This function is not thread-safe, and should only be called from
+// an exported function.
 func (ft *FullText) set(key string, value map[string]interface{}) error {
 	var temp map[string][]string = ft.wordCache
 

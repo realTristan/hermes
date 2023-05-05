@@ -7,31 +7,32 @@ import (
 	Utils "github.com/realTristan/Hermes/utils"
 )
 
-/* Search function with Mutex Locking
- *
- * This function is a method of the FullText struct and allows the user to search for a query string with spaces,
- * while also enforcing mutex locking for concurrency safety. The function returns a slice of maps, where each map
- * represents a document that matches the search query.
- *
- * Parameters:
- * - query (string): the search query string with spaces
- * - limit (int): the maximum number of documents to return
- * - strict (bool): a boolean flag indicating whether the search should be performed strictly (i.e., exact match) or not
- * - schema (map[string]bool): a dictionary mapping field names to boolean values that indicate whether each field
- *   should be included in the search (true) or not (false)
- *
- * Returns:
- * - result ([]map[string]interface{}): a slice of maps, where each map represents a document that matches the search query
- *
- * Example usage:
- *
- *     ft := &FullText{...}
- *     query := "open source programming"
- *     limit := 10
- *     strict := false
- *     schema := map[string]bool{"title": true, "content": true, "date": false}
- *     result := ft.Search(query, limit, strict, schema)
- */
+/*
+Search function with Mutex Locking
+
+This function is a method of the FullText struct and allows the user to search for a query string with spaces,
+while also enforcing mutex locking for concurrency safety. The function returns a slice of maps, where each map
+represents a document that matches the search query.
+
+Parameters:
+  - query (string): the search query string with spaces
+  - limit (int): the maximum number of documents to return
+  - strict (bool): a boolean flag indicating whether the search should be performed strictly (i.e., exact match) or not
+  - schema (map[string]bool): a dictionary mapping field names to boolean values that indicate whether each field
+    should be included in the search (true) or not (false)
+
+Returns:
+- result ([]map[string]interface{}): a slice of maps, where each map represents a document that matches the search query
+
+Example usage:
+
+	ft := &FullText{...}
+	query := "open source programming"
+	limit := 10
+	strict := false
+	schema := map[string]bool{"title": true, "content": true, "date": false}
+	result := ft.Search(query, limit, strict, schema)
+*/
 func (c *Cache) Search(query string, limit int, strict bool, schema map[string]bool) ([]map[string]interface{}, error) {
 	switch {
 	case len(query) == 0:
@@ -140,6 +141,7 @@ Returns:
     The keys of the map correspond to the column names of the data.
 
 Mutex locking is used to ensure that concurrent access to the FullText struct is safe.
+
 Example usage:
 
 	Assume we have a FullText struct instance named ft, containing data with columns "id", "name", and "description"
