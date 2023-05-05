@@ -10,7 +10,7 @@ import (
 // Insert a value in the full-text cache for the specified key.
 // This function is not thread-safe, and should only be called from
 // an exported function.
-func (ft *FullText) insertIntoWordCache(data map[string]map[string]interface{}, schema map[string]bool) error {
+func (ft *FullText) insert(data map[string]map[string]interface{}, schema map[string]bool) error {
 	// Create a copy of the existing word cache
 	var (
 		tempWordCache map[string][]int = ft.wordCache

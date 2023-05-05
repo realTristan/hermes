@@ -62,7 +62,7 @@ func (c *Cache) ftInit(maxWords int, maxSizeBytes int, schema map[string]bool) e
 	}
 
 	// Load the cache data
-	if err := ft.insertIntoWordCache(c.data, schema); err != nil {
+	if err := ft.insert(c.data, schema); err != nil {
 		return err
 	}
 
@@ -127,7 +127,7 @@ func (c *Cache) ftInitWithMap(data map[string]map[string]interface{}, maxWords i
 	}
 
 	// Load the cache data
-	if err := ft.insertIntoWordCache(data, schema); err != nil {
+	if err := ft.insert(data, schema); err != nil {
 		return err
 	}
 
