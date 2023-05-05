@@ -12,7 +12,17 @@ import (
 // an exported function.
 func (ft *FullText) insertIntoWordCache(data map[string]map[string]interface{}, schema map[string]bool) error {
 	// Create a copy of the existing word cache
-	var temp map[string][]string = ft.wordCache
+	var (
+		tempWordCache map[string][]int = ft.wordCache
+		tempIndices   map[int]string   = ft.indicesCache
+		tempCacheSize int              = ft.cacheSize
+		tempKeys      map[string]int   = make(map[string]int)
+	)
+
+	// Loop through the json data
+	for k, v := range tempIndices {
+		tempKeys[v] = k
+	}
 
 	// Loop through the json data
 	for itemKey, itemValue := range data {
@@ -33,12 +43,12 @@ func (ft *FullText) insertIntoWordCache(data map[string]map[string]interface{}, 
 				// Loop through the words
 				for _, word := range strings.Split(v, " ") {
 					if ft.maxWords > 0 {
-						if len(temp) > ft.maxWords {
-							return fmt.Errorf("full text cache key limit reached (%d/%d keys). load cancelled", len(temp), ft.maxWords)
+						if len(tempWordCache) > ft.maxWords {
+							return fmt.Errorf("full text cache key limit reached (%d/%d keys). load cancelled", len(tempWordCache), ft.maxWords)
 						}
 					}
 					if ft.maxSizeBytes > 0 {
-						if cacheSize, err := Utils.Size(temp); err != nil {
+						if cacheSize, err := Utils.Size(tempWordCache); err != nil {
 							return err
 						} else if cacheSize > ft.maxSizeBytes {
 							return fmt.Errorf("full text cache size limit reached (%d/%d bytes). load cancelled", cacheSize, ft.maxSizeBytes)
@@ -50,21 +60,29 @@ func (ft *FullText) insertIntoWordCache(data map[string]map[string]interface{}, 
 					case !Utils.IsAlphaNum(word):
 						word = Utils.RemoveNonAlphaNum(word)
 					}
-					if _, ok := temp[word]; !ok {
-						temp[word] = []string{itemKey}
+					if _, ok := tempWordCache[word]; !ok {
+						tempWordCache[word] = []int{tempCacheSize}
 						continue
 					}
-					if Utils.ContainsString(temp[word], itemKey) {
-						continue
+					if v, ok := tempKeys[itemKey]; !ok {
+						tempIndices[tempCacheSize] = itemKey
+						tempKeys[itemKey] = tempCacheSize
+						tempCacheSize++
+					} else {
+						if Utils.ContainsInt(tempWordCache[word], v) {
+							continue
+						}
+						tempWordCache[word] = append(tempWordCache[word], v)
 					}
-					temp[word] = append(temp[word], itemKey)
 				}
 			}
 		}
 	}
 
 	// Set the word cache to the temp map
-	ft.wordCache = temp
+	ft.wordCache = tempWordCache
+	ft.indicesCache = tempIndices
+	ft.cacheSize = tempCacheSize
 
 	// Return nil for no errors
 	return nil

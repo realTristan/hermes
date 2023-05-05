@@ -14,7 +14,9 @@ Fields:
   - initialized: a boolean flag indicating whether the struct has been initialized
 */
 type FullText struct {
-	wordCache    map[string][]string
+	indicesCache map[int]string
+	wordCache    map[string][]int
+	cacheSize    int
 	maxWords     int
 	maxSizeBytes int
 }
@@ -77,7 +79,7 @@ func (c *Cache) FTSetMaxWords(maxWords int) error {
 
 // Get the full text word cache
 // This method is thread-safe.
-func (c *Cache) FTWordCache() (map[string][]string, error) {
+func (c *Cache) FTWordCache() (map[string][]int, error) {
 	c.mutex.RLock()
 	defer c.mutex.RUnlock()
 
@@ -87,7 +89,7 @@ func (c *Cache) FTWordCache() (map[string][]string, error) {
 	}
 
 	// Copy the wordCache map
-	var copy map[string][]string = make(map[string][]string, len(c.ft.wordCache))
+	var copy map[string][]int = make(map[string][]int, len(c.ft.wordCache))
 	copy = c.ft.wordCache
 
 	// Return the copy

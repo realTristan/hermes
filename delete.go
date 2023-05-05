@@ -30,7 +30,7 @@ func (ft *FullText) delete(key string) {
 	// Remove the key from the ft.wordCache
 	for word, keys := range ft.wordCache {
 		for i := 0; i < len(keys); i++ {
-			if key != keys[i] {
+			if key != ft.indicesCache[keys[i]] {
 				continue
 			}
 

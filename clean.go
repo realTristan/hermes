@@ -44,5 +44,6 @@ func (c *Cache) FTClean() error {
 // This function is not thread-safe, and should only be called from
 // an exported function.
 func (ft *FullText) clean() {
-	ft.wordCache = make(map[string][]string, ft.maxWords)
+	ft.wordCache = make(map[string][]int, ft.maxWords)
+	ft.indicesCache = make(map[int]string)
 }

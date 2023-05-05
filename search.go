@@ -109,9 +109,9 @@ func (c *Cache) search(query string, limit int, strict bool, schema map[string]b
 	}
 
 	// Loop through the indices
-	var keys []string = c.ft.wordCache[words[smallestIndex]]
+	var keys []int = c.ft.wordCache[words[smallestIndex]]
 	for i := 0; i < len(keys); i++ {
-		for key, value := range c.data[keys[i]] {
+		for key, value := range c.data[c.ft.indicesCache[keys[i]]] {
 			if !schema[key] {
 				continue
 			}
@@ -119,7 +119,7 @@ func (c *Cache) search(query string, limit int, strict bool, schema map[string]b
 			// Check if the value contains the query
 			if v, ok := value.(string); ok {
 				if strings.Contains(strings.ToLower(v), query) {
-					result = append(result, c.data[keys[i]])
+					result = append(result, c.data[c.ft.indicesCache[keys[i]]])
 				}
 			}
 		}
@@ -371,7 +371,11 @@ func (c *Cache) searchOneWord(query string, limit int, strict bool) []map[string
 			if len(result) >= limit {
 				return result
 			}
-			result = append(result, c.data[c.ft.wordCache[query][i]])
+			var (
+				index int    = c.ft.wordCache[query][i]
+				key   string = c.ft.indicesCache[index]
+			)
+			result = append(result, c.data[key])
 		}
 
 		// Return the result
@@ -379,7 +383,7 @@ func (c *Cache) searchOneWord(query string, limit int, strict bool) []map[string
 	}
 
 	// Define a map to store the indices that have already been added
-	var alreadyAdded map[string]int = map[string]int{}
+	var alreadyAdded map[int]int = map[int]int{}
 
 	// Loop through the cache keys
 	for k, v := range c.ft.wordCache {
@@ -397,7 +401,7 @@ func (c *Cache) searchOneWord(query string, limit int, strict bool) []map[string
 			}
 
 			// Else, append the index to the result
-			result = append(result, c.data[v[j]])
+			result = append(result, c.data[c.ft.indicesCache[v[j]]])
 			alreadyAdded[v[j]] = 0
 		}
 	}
