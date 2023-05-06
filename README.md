@@ -182,7 +182,7 @@ About
 ➤ Get data from the cache using a key.
 
 URL Parameters
-➤ None
+➤ key: string
 ```
 
 [GET /keys](https://github.com/realTristan/Hermes/blob/master/server/handlers/keys.go)
