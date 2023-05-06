@@ -15,5 +15,5 @@ func set() {
 	})
 
 	// print cache info
-	fmt.Println(cache.Info())
+	fmt.Println(cache.InfoForTesting())
 }

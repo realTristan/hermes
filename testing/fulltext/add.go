@@ -21,7 +21,7 @@ func add() {
 	}
 
 	// print cache info
-	cache.Info()
+	cache.InfoForTesting()
 
 	// Set data
 	cache.Set("user_id1", data, false)
@@ -33,5 +33,5 @@ func add() {
 	cache.FTAdd("user_id2")
 
 	// print cache info
-	fmt.Println(cache.Info())
+	fmt.Println(cache.InfoForTesting())
 }
