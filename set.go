@@ -70,11 +70,11 @@ func (ft *FullText) set(key string, value map[string]interface{}) error {
 						return fmt.Errorf("full text cache key limit reached (%d/%d keys). set cancelled. cache reverted", len(tempWordCache), ft.maxWords)
 					}
 				}
-				if ft.maxSizeBytes > 0 {
+				if ft.maxBytes > 0 {
 					if cacheSize, err := Utils.Size(tempWordCache); err != nil {
 						return err
-					} else if cacheSize > ft.maxSizeBytes {
-						return fmt.Errorf("full text cache size limit reached (%d/%d bytes). set cancelled. cache reverted", cacheSize, ft.maxSizeBytes)
+					} else if cacheSize > ft.maxBytes {
+						return fmt.Errorf("full text cache size limit reached (%d/%d bytes). set cancelled. cache reverted", cacheSize, ft.maxBytes)
 					}
 				}
 				switch {

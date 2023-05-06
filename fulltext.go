@@ -10,7 +10,7 @@ import (
 Fields:
   - wordCache: a map of words to an array of positions where the word appears in the text
   - maxWords: the maximum number of words to cache
-  - maxSizeBytes: the maximum size of the text to cache in bytes
+  - maxBytes: the maximum size of the text to cache in bytes
   - initialized: a boolean flag indicating whether the struct has been initialized
 */
 type FullText struct {
@@ -18,7 +18,7 @@ type FullText struct {
 	wordCache    map[string][]int
 	cacheSize    int
 	maxWords     int
-	maxSizeBytes int
+	maxBytes     int
 }
 
 // Get whether the full text cache is initialized
@@ -47,8 +47,8 @@ func (c *Cache) FTSetMaxBytes(maxBytes int) error {
 		return errors.New("the current size of the word cache is greater than the new max size")
 	}
 
-	// Set the maxSizeBytes field
-	c.ft.maxSizeBytes = maxBytes
+	// Set the maxBytes field
+	c.ft.maxBytes = maxBytes
 
 	// Return no error
 	return nil

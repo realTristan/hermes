@@ -23,12 +23,12 @@ func InitCache() *Cache {
 //
 // Parameters:
 // - maxWords: the maximum number of words to store in the full-text index.
-// - maxSizeBytes: the maximum size, in bytes, of the full-text index.
+// - maxBytes: the maximum size, in bytes, of the full-text index.
 // - schema: a map of field names to boolean values indicating whether the field should be indexed in the full-text index.
 //
 // Returns:
 // - error: If the full text is already initialized.
-func (c *Cache) FTInit(maxWords int, maxSizeBytes int, schema map[string]bool) error {
+func (c *Cache) FTInit(maxWords int, maxBytes int, schema map[string]bool) error {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
 
@@ -38,7 +38,7 @@ func (c *Cache) FTInit(maxWords int, maxSizeBytes int, schema map[string]bool) e
 	}
 
 	// Initialize the FT cache
-	return c.ftInit(maxWords, maxSizeBytes, schema)
+	return c.ftInit(maxWords, maxBytes, schema)
 }
 
 // Initialize the full-text index for the cache.
@@ -46,19 +46,19 @@ func (c *Cache) FTInit(maxWords int, maxSizeBytes int, schema map[string]bool) e
 //
 // Parameters:
 // - maxWords: the maximum number of words to store in the full-text index.
-// - maxSizeBytes: the maximum size, in bytes, of the full-text index.
+// - maxBytes: the maximum size, in bytes, of the full-text index.
 // - schema: a map of field names to boolean values indicating whether the field should be indexed in the full-text index.
 //
 // Returns:
 // - error: From word cache insertion.
-func (c *Cache) ftInit(maxWords int, maxSizeBytes int, schema map[string]bool) error {
+func (c *Cache) ftInit(maxWords int, maxBytes int, schema map[string]bool) error {
 	// Initialize the FT struct
 	var ft *FullText = &FullText{
 		wordCache:    make(map[string][]int, maxWords),
 		indicesCache: make(map[int]string),
 		cacheSize:    0,
 		maxWords:     maxWords,
-		maxSizeBytes: maxSizeBytes,
+		maxBytes:     maxBytes,
 	}
 
 	// Load the cache data
@@ -80,12 +80,12 @@ func (c *Cache) ftInit(maxWords int, maxSizeBytes int, schema map[string]bool) e
 // Parameters:
 // - data: the data to initialize the full-text index with.
 // - maxWords: the maximum number of words to store in the full-text index.
-// - maxSizeBytes: the maximum size, in bytes, of the full-text index.
+// - maxBytes: the maximum size, in bytes, of the full-text index.
 // - schema: a map of field names to boolean values indicating whether the field should be indexed in the full-text index.
 //
 // Returns:
 // - error: If the full text is already initialized.
-func (c *Cache) FTInitWithMap(data map[string]map[string]interface{}, maxWords int, maxSizeBytes int, schema map[string]bool) error {
+func (c *Cache) FTInitWithMap(data map[string]map[string]interface{}, maxWords int, maxBytes int, schema map[string]bool) error {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
 
@@ -95,7 +95,7 @@ func (c *Cache) FTInitWithMap(data map[string]map[string]interface{}, maxWords i
 	}
 
 	// Initialize the FT cache
-	return c.ftInitWithMap(data, maxWords, maxSizeBytes, schema)
+	return c.ftInitWithMap(data, maxWords, maxBytes, schema)
 }
 
 // Initialize the full-text index for the cache with a map.
@@ -104,18 +104,18 @@ func (c *Cache) FTInitWithMap(data map[string]map[string]interface{}, maxWords i
 // Parameters:
 // - data: the data to initialize the full-text index with.
 // - maxWords: the maximum number of words to store in the full-text index.
-// - maxSizeBytes: the maximum size, in bytes, of the full-text index.
+// - maxBytes: the maximum size, in bytes, of the full-text index.
 // - schema: a map of field names to boolean values indicating whether the field should be indexed in the full-text index.
 //
 // Returns:
 // - error: From word cache insertion or if a key from the data already exists in the cache
-func (c *Cache) ftInitWithMap(data map[string]map[string]interface{}, maxWords int, maxSizeBytes int, schema map[string]bool) error {
+func (c *Cache) ftInitWithMap(data map[string]map[string]interface{}, maxWords int, maxBytes int, schema map[string]bool) error {
 	// Initialize the FT struct
 	var ft *FullText = &FullText{
 		wordCache:    make(map[string][]int, maxWords),
 		indicesCache: make(map[int]string),
 		maxWords:     maxWords,
-		maxSizeBytes: maxSizeBytes,
+		maxBytes:     maxBytes,
 	}
 
 	// Iterate over the cache keys and add them to the data
@@ -146,12 +146,12 @@ func (c *Cache) ftInitWithMap(data map[string]map[string]interface{}, maxWords i
 // Parameters:
 // - file: the path to the JSON file to initialize the full-text index with.
 // - maxWords: the maximum number of words to store in the full-text index.
-// - maxSizeBytes: the maximum size, in bytes, of the full-text index.
+// - maxBytes: the maximum size, in bytes, of the full-text index.
 // - schema: a map of field names to boolean values indicating whether the field should be indexed in the full-text index.
 //
 // Returns:
 // - error: If the full text is already initialized.
-func (c *Cache) FTInitWithJson(file string, maxWords int, maxSizeBytes int, schema map[string]bool) error {
+func (c *Cache) FTInitWithJson(file string, maxWords int, maxBytes int, schema map[string]bool) error {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
 
@@ -161,7 +161,7 @@ func (c *Cache) FTInitWithJson(file string, maxWords int, maxSizeBytes int, sche
 	}
 
 	// Initialize the FT cache
-	return c.ftInitWithJson(file, maxWords, maxSizeBytes, schema)
+	return c.ftInitWithJson(file, maxWords, maxBytes, schema)
 }
 
 // Initialize the full-text index for the cache with a JSON file.
@@ -170,15 +170,15 @@ func (c *Cache) FTInitWithJson(file string, maxWords int, maxSizeBytes int, sche
 // Parameters:
 // - file: the path to the JSON file to initialize the full-text index with.
 // - maxWords: the maximum number of words to store in the full-text index.
-// - maxSizeBytes: the maximum size, in bytes, of the full-text index.
+// - maxBytes: the maximum size, in bytes, of the full-text index.
 // - schema: a map of field names to boolean values indicating whether the field should be indexed in the full-text index.
 //
 // Returns:
 // - error: Json file read error, or init with map error.
-func (c *Cache) ftInitWithJson(file string, maxWords int, maxSizeBytes int, schema map[string]bool) error {
+func (c *Cache) ftInitWithJson(file string, maxWords int, maxBytes int, schema map[string]bool) error {
 	if data, err := Utils.ReadMapJson(file); err != nil {
 		return err
 	} else {
-		return c.ftInitWithMap(data, maxWords, maxSizeBytes, schema)
+		return c.ftInitWithMap(data, maxWords, maxBytes, schema)
 	}
 }

@@ -25,7 +25,7 @@ func FTSetMaxBytes(c *Hermes.Cache) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		// Get the value from the query
 		var value string
-		if value = r.URL.Query().Get("value"); len(value) == 0 {
+		if value = r.URL.Query().Get("maxbytes"); len(value) == 0 {
 			w.Write(Utils.Error(errors.New("invalid value")))
 			return
 		}
@@ -50,7 +50,7 @@ func FTSetMaxWords(c *Hermes.Cache) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		// Get the value from the query
 		var value string
-		if value = r.URL.Query().Get("value"); len(value) == 0 {
+		if value = r.URL.Query().Get("maxwords"); len(value) == 0 {
 			w.Write(Utils.Error(errors.New("invalid value")))
 			return
 		}

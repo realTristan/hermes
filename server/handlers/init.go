@@ -14,13 +14,13 @@ import (
 func FTInit(c *Hermes.Cache) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var (
-			maxWords     int
-			maxSizeBytes int
-			schema       map[string]bool
+			maxWords int
+			maxBytes int
+			schema   map[string]bool
 		)
 
 		// Convert the max words to an integer
-		if maxWordsStr := r.URL.Query().Get("maxWords"); len(maxWordsStr) == 0 {
+		if maxWordsStr := r.URL.Query().Get("maxwords"); len(maxWordsStr) == 0 {
 			w.Write(Utils.Error(errors.New("invalid maxWords")))
 			return
 		} else {
@@ -33,15 +33,15 @@ func FTInit(c *Hermes.Cache) http.HandlerFunc {
 		}
 
 		// Convert the max size bytes to an integer
-		if maxSizeBytesStr := r.URL.Query().Get("maxSizeBytes"); len(maxSizeBytesStr) == 0 {
-			w.Write(Utils.Error(errors.New("invalid maxSizeBytes")))
+		if maxBytesStr := r.URL.Query().Get("maxbytes"); len(maxBytesStr) == 0 {
+			w.Write(Utils.Error(errors.New("invalid maxBytes")))
 			return
 		} else {
-			if maxSizeBytesInt, err := strconv.Atoi(maxSizeBytesStr); err != nil {
+			if maxBytesInt, err := strconv.Atoi(maxBytesStr); err != nil {
 				w.Write(Utils.Error(err))
 				return
 			} else {
-				maxSizeBytes = maxSizeBytesInt
+				maxBytes = maxBytesInt
 			}
 		}
 
@@ -57,7 +57,7 @@ func FTInit(c *Hermes.Cache) http.HandlerFunc {
 		}
 
 		// Initialize the full text cache
-		if err := c.FTInit(maxWords, maxSizeBytes, schema); err != nil {
+		if err := c.FTInit(maxWords, maxBytes, schema); err != nil {
 			w.Write(Utils.Error(err))
 			return
 		}
@@ -70,14 +70,14 @@ func FTInit(c *Hermes.Cache) http.HandlerFunc {
 func FTInitJson(c *Hermes.Cache) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var (
-			maxWords     int
-			maxSizeBytes int
-			schema       map[string]bool
-			json         map[string]map[string]interface{}
+			maxWords int
+			maxBytes int
+			schema   map[string]bool
+			json     map[string]map[string]interface{}
 		)
 
 		// Convert the max words to an integer
-		if maxWordsStr := r.URL.Query().Get("maxWords"); len(maxWordsStr) == 0 {
+		if maxWordsStr := r.URL.Query().Get("maxwords"); len(maxWordsStr) == 0 {
 			w.Write(Utils.Error(errors.New("invalid max words")))
 			return
 		} else {
@@ -90,15 +90,15 @@ func FTInitJson(c *Hermes.Cache) http.HandlerFunc {
 		}
 
 		// Convert the max size bytes to an integer
-		if maxSizeBytesStr := r.URL.Query().Get("maxSizeBytes"); len(maxSizeBytesStr) == 0 {
+		if maxBytesStr := r.URL.Query().Get("maxbytes"); len(maxBytesStr) == 0 {
 			w.Write(Utils.Error(errors.New("invalid max size bytes")))
 			return
 		} else {
-			if maxSizeBytesInt, err := strconv.Atoi(maxSizeBytesStr); err != nil {
+			if maxBytesInt, err := strconv.Atoi(maxBytesStr); err != nil {
 				w.Write(Utils.Error(err))
 				return
 			} else {
-				maxSizeBytes = maxSizeBytesInt
+				maxBytes = maxBytesInt
 			}
 		}
 
@@ -125,7 +125,7 @@ func FTInitJson(c *Hermes.Cache) http.HandlerFunc {
 		}
 
 		// Initialize the full text cache
-		if err := c.FTInitWithMap(json, maxWords, maxSizeBytes, schema); err != nil {
+		if err := c.FTInitWithMap(json, maxWords, maxBytes, schema); err != nil {
 			w.Write(Utils.Error(err))
 			return
 		}

@@ -47,11 +47,11 @@ func (ft *FullText) insert(data map[string]map[string]interface{}, schema map[st
 							return fmt.Errorf("full text cache key limit reached (%d/%d keys). load cancelled", len(tempWordCache), ft.maxWords)
 						}
 					}
-					if ft.maxSizeBytes > 0 {
+					if ft.maxBytes > 0 {
 						if cacheSize, err := Utils.Size(tempWordCache); err != nil {
 							return err
-						} else if cacheSize > ft.maxSizeBytes {
-							return fmt.Errorf("full text cache size limit reached (%d/%d bytes). load cancelled", cacheSize, ft.maxSizeBytes)
+						} else if cacheSize > ft.maxBytes {
+							return fmt.Errorf("full text cache size limit reached (%d/%d bytes). load cancelled", cacheSize, ft.maxBytes)
 						}
 					}
 					switch {
