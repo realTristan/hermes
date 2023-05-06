@@ -11,6 +11,7 @@ import (
 )
 
 // Search for something in the cache
+// This is a handler function that returns a http.HandlerFunc
 func Search(c *Hermes.Cache) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var (
@@ -77,6 +78,7 @@ func Search(c *Hermes.Cache) http.HandlerFunc {
 }
 
 // Search for one word
+// This is a handler function that returns a http.HandlerFunc
 func SearchOneWord(c *Hermes.Cache) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var (
@@ -131,6 +133,7 @@ func SearchOneWord(c *Hermes.Cache) http.HandlerFunc {
 }
 
 // Search in values
+// This is a handler function that returns a http.HandlerFunc
 func SearchValues(c *Hermes.Cache) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var (
@@ -183,6 +186,7 @@ func SearchValues(c *Hermes.Cache) http.HandlerFunc {
 }
 
 // Search for values
+// This is a handler function that returns a http.HandlerFunc
 func SearchValuesWithKey(c *Hermes.Cache) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var (

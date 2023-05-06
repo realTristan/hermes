@@ -23,18 +23,16 @@ Install Windows:
 
 # API
 ## Cache
-```
-GET /values
-GET /length
-POST /clean
-POST /set
-DELETE /delete
-GET /get
-GET /get/all
-GET /keys
-GET /info
-GET /exists
-```
+
+[GET /values](https://github.com/realTristan/Hermes/blob/master/server/handlers/values.go)
+[GET /length](https://github.com/realTristan/Hermes/blob/master/server/handlers/length.go)
+[POST /clean](https://github.com/realTristan/Hermes/blob/master/server/handlers/clean.go)
+[POST /set](https://github.com/realTristan/Hermes/blob/master/server/handlers/set.go)
+[DELETE /delete](https://github.com/realTristan/Hermes/blob/master/server/handlers/delete.go)
+[GET /get](https://github.com/realTristan/Hermes/blob/master/server/handlers/get.go)
+[GET /keys](https://github.com/realTristan/Hermes/blob/master/server/handlers/keys.go)
+[GET /info](https://github.com/realTristan/Hermes/blob/master/server/handlers/info.go)
+[GET /exists](https://github.com/realTristan/Hermes/blob/master/server/handlers/exists.go)
 
 ## Full Text Search
 ```
