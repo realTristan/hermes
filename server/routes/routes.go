@@ -22,6 +22,7 @@ func Set(cache *Hermes.Cache, router *mux.Router) {
 
 	// Full text cache handlers
 	router.HandleFunc("/ft/init", handlers.FTInit(cache)).Methods("POST")
+	router.HandleFunc("/ft/init/json", handlers.FTInitJson(cache)).Methods("POST")
 	router.HandleFunc("/ft/clean", handlers.FTClean(cache)).Methods("POST")
 	router.HandleFunc("/ft/search", handlers.Search(cache)).Methods("GET")
 	router.HandleFunc("/ft/searchoneword", handlers.SearchOneWord(cache)).Methods("GET")

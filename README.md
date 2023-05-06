@@ -22,7 +22,35 @@ Install Windows:
 
 
 # API
+## Cache
+```
+GET /values
+GET /length
+POST /clean
+POST /set
+DELETE /delete
+GET /get
+GET /get/all
+GET /keys
+GET /info
+GET /exists
+```
 
+## Full Text Search
+```
+POST /ft/init
+POST /ft/clean
+GET /ft/search
+GET /ft/searchoneword
+GET /ft/searchvalues
+GET /ft/searchvalueswithkey
+POST /ft/maxbytes
+POST /ft/maxwords
+GET /ft/wordcache
+GET /ft/wordcachesize
+GET /ft/isinitialized
+POST /ft/add
+```
 # Example of NoCache Full-Text-Search
 If you want to use only the full-text-search features, then just import hermes and load it using a .json file. (as shown in /example). Note: For small to medium-sized datasets (like the ones I used in /data), Hermes works great. Although, as the words in the dataset increases, the full-text-search cache will take up significantly more memory. I recommended setting a cache limit and/or a cache keys limit.
 ```
