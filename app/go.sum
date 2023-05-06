@@ -1,0 +1,4 @@
+github.com/gorilla/mux v1.8.0 h1:i40aqfkR1h2SlN9hojwV5ZA91wcXFOvkdNIeFDP5koI=
+github.com/gorilla/mux v1.8.0/go.mod h1:DVbg23sWSpFRCP0SfiEN6jmj59UnW/n46BH5rLB71So=
+github.com/realTristan/Hermes v1.5.4 h1:7/W3UHxAso/uuP1iRi/8KFpTIxhsEsmXLwHLXLHOXwY=
+github.com/realTristan/Hermes v1.5.4/go.mod h1:MNzezGrW/zSfeTe2ZbkQTgQdg5cA5E6f7JP/cGikA1g=

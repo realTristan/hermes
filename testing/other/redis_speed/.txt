@@ -1,0 +1,6 @@
+
+Code can be found here:
+https://github.com/Simpson-Computer-Technologies-Research/RediSearch
+
+Redisearch Speed: 40-60ms
+Hermes Speed: 0.3-0.6ms
