@@ -55,16 +55,23 @@ func (ft *FullText) set(key string, value map[string]interface{}) error {
 		tempKeys[v] = k
 	}
 
-	// Loop through the value
-	for _, _v := range value {
-		if v, ok := _v.(string); ok {
-			// Clean the value
-			v = strings.TrimSpace(v)
-			v = Utils.RemoveDoubleSpaces(v)
-			v = strings.ToLower(v)
+	// Check if the key is in the temp keys map. If not, add it.
+	if _, ok := tempKeys[key]; !ok {
+		tempIndices[tempCurrentIndex] = key
+		tempKeys[key] = tempCurrentIndex
+		tempCurrentIndex++
+	}
+
+	// Loop through the provided value
+	for _, v := range value {
+		if strv, ok := v.(string); ok {
+			// Clean the string value
+			strv = strings.TrimSpace(strv)
+			strv = Utils.RemoveDoubleSpaces(strv)
+			strv = strings.ToLower(strv)
 
 			// Loop through the words
-			for _, word := range strings.Split(v, " ") {
+			for _, word := range strings.Split(strv, " ") {
 				if ft.maxWords > 0 {
 					if len(tempCache) > ft.maxWords {
 						return fmt.Errorf("full-text cache key limit reached (%d/%d keys). set cancelled. cache reverted", len(tempCache), ft.maxWords)
@@ -87,16 +94,10 @@ func (ft *FullText) set(key string, value map[string]interface{}) error {
 					tempCache[word] = []int{tempCurrentIndex}
 					continue
 				}
-				if v, ok := tempKeys[key]; !ok {
-					tempIndices[tempCurrentIndex] = key
-					tempKeys[key] = tempCurrentIndex
-					tempCurrentIndex++
-				} else {
-					if Utils.ContainsInt(tempCache[word], v) {
-						continue
-					}
-					tempCache[word] = append(tempCache[word], v)
+				if Utils.ContainsInt(tempCache[word], tempKeys[key]) {
+					continue
 				}
+				tempCache[word] = append(tempCache[word], tempKeys[key])
 			}
 		}
 	}
