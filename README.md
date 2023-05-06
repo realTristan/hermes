@@ -300,7 +300,6 @@ About
 
 URL Parameters
 ➤ q: string
-➤ strict: bool
 ➤ limit: int
 ➤ key: string
 ```
