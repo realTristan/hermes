@@ -26,18 +26,40 @@ Install Windows:
 
 [GET /values](https://github.com/realTristan/Hermes/blob/master/server/handlers/values.go)
 ```
-@ About
+About
 ➤ Get data from the cache using a key.
 
-@Parameters:
-- key: string
+URL Parameters
+➤ key: string
 ```
 
 [GET /length](https://github.com/realTristan/Hermes/blob/master/server/handlers/length.go)
+```
+About
+➤ Get the amount of keys stored in the cache.
+
+URL Parameters
+➤ None
+```
 
 [POST /clean](https://github.com/realTristan/Hermes/blob/master/server/handlers/clean.go)
+```
+About
+➤ Clean all the data in the cache, and full-text cache.
+
+URL Parameters
+➤ None
+```
 
 [POST /set](https://github.com/realTristan/Hermes/blob/master/server/handlers/set.go)
+```
+About
+➤ Get data from the cache using a key.
+
+URL Parameters
+➤ key: string
+➤ value: string [base64(map[string]map[string]interface{})]
+```
 
 [DELETE /delete](https://github.com/realTristan/Hermes/blob/master/server/handlers/delete.go)
 
