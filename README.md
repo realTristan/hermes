@@ -1,12 +1,12 @@
 # Hermes ![Stars](https://img.shields.io/github/stars/realTristan/Hermes?color=brightgreen) ![Watchers](https://img.shields.io/github/watchers/realTristan/Hermes?label=Watchers)
 ![banner](https://user-images.githubusercontent.com/75189508/230987049-665418b1-3576-49b7-861e-29036859ad8a.png)
 
-## Install Package
+# Import
 ```
 Go: go get github.com/realTristan/Hermes
 ```
 
-## CLI
+# CLI
 ```
 hermes serve -p 8000
 ```
@@ -32,6 +32,7 @@ About
 URL Parameters
 ➤ key: string
 ➤ value: base64(map[string]map[string]interface{})
+➤ ft: bool
 ```
 
 [DELETE /delete](https://github.com/realTristan/Hermes/blob/master/server/handlers/delete.go)
@@ -175,7 +176,7 @@ URL Parameters
 [POST /ft/maxbytes](https://github.com/realTristan/Hermes/blob/master/server/handlers/fulltext.go)
 ```
 About
-➤ Set the maximum full-text cache size in bytes
+➤ Set the maximum full-text cache size in bytes.
 
 URL Parameters
 ➤ maxbytes: int
@@ -184,25 +185,25 @@ URL Parameters
 [POST /ft/maxwords](https://github.com/realTristan/Hermes/blob/master/server/handlers/fulltext.go)
 ```
 About
-➤ 
+➤ Set the maximum full-text cache words allowed to be stored.
+
+URL Parameters
+➤ maxwords: int
+```
+
+[GET /ft/cache](https://github.com/realTristan/Hermes/blob/master/server/handlers/fulltext.go)
+```
+About
+➤ Get the current full-text word cache. Can be used for testing.
 
 URL Parameters
 ➤ None
 ```
 
-[GET /ft/wordcache](https://github.com/realTristan/Hermes/blob/master/server/handlers/fulltext.go)
+[GET /ft/cachesize](https://github.com/realTristan/Hermes/blob/master/server/handlers/fulltext.go)
 ```
 About
-➤ 
-
-URL Parameters
-➤ None
-```
-
-[GET /ft/wordcachesize](https://github.com/realTristan/Hermes/blob/master/server/handlers/fulltext.go)
-```
-About
-➤ 
+➤ Get the current full-text cache size.
 
 URL Parameters
 ➤ None
@@ -211,7 +212,7 @@ URL Parameters
 [GET /ft/isinitialized](https://github.com/realTristan/Hermes/blob/master/server/handlers/fulltext.go)
 ```
 About
-➤ 
+➤ Get whether the full-text cache has been initialized.
 
 URL Parameters
 ➤ None
@@ -220,10 +221,10 @@ URL Parameters
 [POST /ft/add](https://github.com/realTristan/Hermes/blob/master/server/handlers/add.go)
 ```
 About
-➤ 
+➤ Add value data to the full-text cache. Key must already exist in the cache.
 
 URL Parameters
-➤ None
+➤ key: string
 ```
 
 # Example of NoCache Full-Text-Search
