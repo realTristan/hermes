@@ -25,6 +25,9 @@ Install Windows:
 ## Cache
 
 [GET /values](https://github.com/realTristan/Hermes/blob/master/server/handlers/values.go)
+```
+Get data from the cache using a key.
+```
 
 [GET /length](https://github.com/realTristan/Hermes/blob/master/server/handlers/length.go)
 
