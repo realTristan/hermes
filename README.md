@@ -16,7 +16,7 @@ Dataset Total Words: 208,092
 
 Dataset Map Size: ≈ 2.3MB
 
-?q=computer&limit=100&strict=false: 52.5µs
+?q=computer&limit=100&strict=false: 23.5µs
 
 ?q=computer&limit=100&strict=true: 12.102µs
 ```
