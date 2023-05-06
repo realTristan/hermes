@@ -25,30 +25,49 @@ Install Windows:
 ## Cache
 
 [GET /values](https://github.com/realTristan/Hermes/blob/master/server/handlers/values.go)
+
 [GET /length](https://github.com/realTristan/Hermes/blob/master/server/handlers/length.go)
+
 [POST /clean](https://github.com/realTristan/Hermes/blob/master/server/handlers/clean.go)
+
 [POST /set](https://github.com/realTristan/Hermes/blob/master/server/handlers/set.go)
+
 [DELETE /delete](https://github.com/realTristan/Hermes/blob/master/server/handlers/delete.go)
+
 [GET /get](https://github.com/realTristan/Hermes/blob/master/server/handlers/get.go)
+
 [GET /keys](https://github.com/realTristan/Hermes/blob/master/server/handlers/keys.go)
+
 [GET /info](https://github.com/realTristan/Hermes/blob/master/server/handlers/info.go)
+
 [GET /exists](https://github.com/realTristan/Hermes/blob/master/server/handlers/exists.go)
 
 ## Full Text Search
-```
-POST /ft/init
-POST /ft/clean
-GET /ft/search
-GET /ft/searchoneword
-GET /ft/searchvalues
-GET /ft/searchvalueswithkey
-POST /ft/maxbytes
-POST /ft/maxwords
-GET /ft/wordcache
-GET /ft/wordcachesize
-GET /ft/isinitialized
-POST /ft/add
-```
+
+[POST /ft/init](https://github.com/realTristan/Hermes/blob/master/server/handlers/init.go)
+
+[POST /ft/clean](https://github.com/realTristan/Hermes/blob/master/server/handlers/clean.go)
+
+[GET /ft/search](https://github.com/realTristan/Hermes/blob/master/server/handlers/search.go)
+
+[GET /ft/searchoneword](https://github.com/realTristan/Hermes/blob/master/server/handlers/search.go)
+
+[GET /ft/searchvalues](https://github.com/realTristan/Hermes/blob/master/server/handlers/search.go)
+
+[GET /ft/searchvalueswithkey](https://github.com/realTristan/Hermes/blob/master/server/handlers/search.go)
+
+[POST /ft/maxbytes](https://github.com/realTristan/Hermes/blob/master/server/handlers/fulltext.go)
+
+[POST /ft/maxwords](https://github.com/realTristan/Hermes/blob/master/server/handlers/fulltext.go)
+
+[GET /ft/wordcache](https://github.com/realTristan/Hermes/blob/master/server/handlers/fulltext.go)
+
+[GET /ft/wordcachesize](https://github.com/realTristan/Hermes/blob/master/server/handlers/fulltext.go)
+
+[GET /ft/isinitialized](https://github.com/realTristan/Hermes/blob/master/server/handlers/fulltext.go)
+
+[POST /ft/add](https://github.com/realTristan/Hermes/blob/master/server/handlers/add.go)
+
 # Example of NoCache Full-Text-Search
 If you want to use only the full-text-search features, then just import hermes and load it using a .json file. (as shown in /example). Note: For small to medium-sized datasets (like the ones I used in /data), Hermes works great. Although, as the words in the dataset increases, the full-text-search cache will take up significantly more memory. I recommended setting a cache limit and/or a cache keys limit.
 ```
