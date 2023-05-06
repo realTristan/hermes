@@ -21,32 +21,8 @@ type FullText struct {
 	data      []map[string]string
 }
 
-/*
-InitWithMap initializes a FullText object by loading data into the wordCache field, based on the specified schema.
-It takes in two parameters:
-  - data ([]map[string]string): a slice of maps representing the data to be loaded into the wordCache field
-  - schema (map[string]bool): a map representing the schema for the data, where the keys are the names of the fields and
-    the values are booleans indicating whether the field should be included in the cache
-
-It returns a pointer to the initialized FullText object and an error, if any.
-
-Example Usage:
-
-	data := []map[string]string{
-		{"id": "1", "name": "John Doe", "description": "Software engineer"},
-		{"id": "2", "name": "Jane Smith", "description": "Data analyst"},
-	}
-
-	schema := map[string]bool{"name": true, "description": true}
-	ft, err := InitWithMap(data, schema)
-
-	if err != nil {
-		fmt.Println("Error initializing FullText object:", err)
-		return
-	}
-
-fmt.Println("FullText object successfully initialized:", ft)
-*/
+// Initialize the full-text cache with the provided data.
+// This function is thread safe.
 func InitWithMap(data []map[string]string, schema map[string]bool) (*FullText, error) {
 	var ft *FullText = &FullText{
 		mutex:     &sync.RWMutex{},
@@ -56,38 +32,19 @@ func InitWithMap(data []map[string]string, schema map[string]bool) (*FullText, e
 	}
 
 	// Load the cache data
-	if err := ft.insertIntoWordCache(data, schema); err != nil {
+	if err := ft.insert(data, schema); err != nil {
 		return nil, err
 	}
 
 	// Set the data
 	ft.data = data
 
-	// Return the cache
+	// Return the full-text variable
 	return ft, nil
 }
 
-/*
-InitWithJson initializes a FullText object by loading data from a JSON file into the wordCache field, based on the specified schema.
-It takes in two parameters:
-  - file (string): the path of the JSON file containing the data to be loaded into the wordCache field
-  - schema (map[string]bool): a map representing the schema for the data, where the keys are the names of the fields and the values are booleans
-    indicating whether the field should be included in the cache
-
-It returns a pointer to the initialized FullText object and an error, if any.
-
-Example Usage:
-
-	schema := map[string]bool{"name": true, "description": true}
-	ft, err := InitJson("data.json", schema)
-
-	if err != nil {
-		fmt.Println("Error initializing FullText object:", err)
-		return
-	}
-
-fmt.Println("FullText object successfully initialized:", ft)
-*/
+// Initialize the full-text cache with the provided json file.
+// This function is thread safe.
 func InitWithJson(file string, schema map[string]bool) (*FullText, error) {
 	// Read the json data
 	if data, err := Utils.ReadSliceJson(file); err != nil {
@@ -97,16 +54,10 @@ func InitWithJson(file string, schema map[string]bool) (*FullText, error) {
 	}
 }
 
-/*
-loadCacheData is a method of the FullText type that loads data into the wordCache field based on the provided schema.
-It takes in two parameters:
-  - data ([]map[string]string): an array of maps representing the data to be loaded into the wordCache field
-  - schema (map[string]bool): a map representing the schema for the data, where the keys are the names of the fields and the values are booleans
-    indicating whether the field should be included in the cache
-
-It returns an error, if any.
-*/
-func (ft *FullText) insertIntoWordCache(data []map[string]string, schema map[string]bool) error {
+// Insert data into the full-text cache.
+// This function is not thread-safe, and should only be called from
+// an exported function.
+func (ft *FullText) insert(data []map[string]string, schema map[string]bool) error {
 	// Loop through the data
 	for i, item := range data {
 		// Loop through the map
