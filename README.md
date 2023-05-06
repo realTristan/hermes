@@ -6,6 +6,131 @@
 Go: go get github.com/realTristan/Hermes
 ```
 
+
+# Example of NoCache Full-Text-Search
+If you want to use only the full-text-search features, then just import hermes and load it using a .json file. (as shown in /example). Note: For small to medium-sized datasets (like the ones I used in /data), Hermes works great. Although, as the words in the dataset increases, the full-text-search cache will take up significantly more memory. I recommended setting a cache limit and/or a cache keys limit.
+```
+Dataset Array Entries: 4,115
+
+Dataset Total Words: 208,092
+
+Dataset Map Size: ≈ 2.3MB
+
+?q=computer&limit=100&strict=false: 52.5µs
+
+?q=computer&limit=100&strict=true: 12.102µs
+```
+
+```go
+package main
+
+import (
+	"fmt"
+	"time"
+
+	Hermes "github.com/realTristan/Hermes/nocache"
+)
+
+// Main function
+func main() {
+	// Create a schema. These are the fields that will be searched.
+	var schema = map[string]bool{
+		"id":             false,
+		"components":     false,
+		"units":          false,
+		"description":    true,
+		"name":           true,
+		"pre_requisites": true,
+		"title":          true,
+	}
+
+	// Define variables
+	var (
+		// Initialize the full text
+		ft, _ = Hermes.InitWithJson("data.json", schema)
+
+		// Track the start time
+		start time.Time = time.Now()
+
+		// Search for a word in the cache
+		// @params: query, limit, strict
+		res, _ = ft.Search("computer", 100, false, schema)
+	)
+
+	// Print the duration
+	fmt.Printf("\nFound %v results in %v", len(res), time.Since(start))
+}
+```
+
+# Example of Cache Full-Text-Search
+The full-text-search from /cache is significantly slower than the nocache FTS. Why? Because the FTS in /cache requires more memory, keys, and utilizes a map instead of a slice to store data. If you want to use a cache along with the full text-search algorithm, import the files from /cache. To setup a cache, check out /cache/example or /cache/testing. 
+
+```
+Dataset Map Entries: 4,115
+
+Dataset Total Words: 208,092
+
+Dataset Map Size: ≈ 2.3MB
+
+?q=computer&limit=100&strict=false: 263.7µs
+
+?q=computer&limit=100&strict=true: 40.84µs
+```
+
+```go
+package main
+
+import (
+	"fmt"
+	"time"
+
+	Hermes "github.com/realTristan/Hermes"
+)
+
+func main() {
+	// Important Variables
+	var (
+		cache        *Hermes.Cache   = Hermes.InitCache()
+		maxWords     int             = 10 // -1 for no limit
+		maxBytes int             = -1 // -1 for no limit
+
+		// The keys you want to search through in the FTS
+		schema       map[string]bool = map[string]bool{
+			"name":       true,
+			"age":        false,
+			"expiration": false,
+		}
+	)
+
+	// Initialize the FT cache
+	if err := cache.FTInit(maxWords, maxBytes, schema); err != nil {
+		fmt.Println(err)
+	}
+	
+	// The data for the user_id key
+	var data = map[string]interface{}{
+		"name":       "tristan",
+		"age":        17,
+		"expiration": time.Now(),
+	}
+
+	// Set the value in the cache
+	if err := cache.Set("user_id", data, true); err != nil {
+		fmt.Println(err)
+	}
+
+	// Search for a word in the cache
+	var (
+		startTime time.Time = time.Now()
+		result, _ = cache.Search("tristan", 100, false, schema)
+	)
+
+	// Print result
+	fmt.Printf("Found %d results in %s\n", len(result), time.Since(startTime))
+	fmt.Println(result)
+}
+```
+
 # CLI
 ```
 hermes serve -p 8000
@@ -225,130 +350,6 @@ About
 
 URL Parameters
 ➤ key: string
-```
-
-# Example of NoCache Full-Text-Search
-If you want to use only the full-text-search features, then just import hermes and load it using a .json file. (as shown in /example). Note: For small to medium-sized datasets (like the ones I used in /data), Hermes works great. Although, as the words in the dataset increases, the full-text-search cache will take up significantly more memory. I recommended setting a cache limit and/or a cache keys limit.
-```
-Dataset Array Entries: 4,115
-
-Dataset Total Words: 208,092
-
-Dataset Map Size: ≈ 2.3MB
-
-?q=computer&limit=100&strict=false: 52.5µs
-
-?q=computer&limit=100&strict=true: 12.102µs
-```
-
-```go
-package main
-
-import (
-	"fmt"
-	"time"
-
-	Hermes "github.com/realTristan/Hermes/nocache"
-)
-
-// Main function
-func main() {
-	// Create a schema. These are the fields that will be searched.
-	var schema = map[string]bool{
-		"id":             false,
-		"components":     false,
-		"units":          false,
-		"description":    true,
-		"name":           true,
-		"pre_requisites": true,
-		"title":          true,
-	}
-
-	// Define variables
-	var (
-		// Initialize the full text
-		ft, _ = Hermes.InitWithJson("data.json", schema)
-
-		// Track the start time
-		start time.Time = time.Now()
-
-		// Search for a word in the cache
-		// @params: query, limit, strict
-		res, _ = ft.Search("computer", 100, false, schema)
-	)
-
-	// Print the duration
-	fmt.Printf("\nFound %v results in %v", len(res), time.Since(start))
-}
-```
-
-# Example of Cache Full-Text-Search
-The full-text-search from /cache is significantly slower than the nocache FTS. Why? Because the FTS in /cache requires more memory, keys, and utilizes a map instead of a slice to store data. If you want to use a cache along with the full text-search algorithm, import the files from /cache. To setup a cache, check out /cache/example or /cache/testing. 
-
-```
-Dataset Map Entries: 4,115
-
-Dataset Total Words: 208,092
-
-Dataset Map Size: ≈ 2.3MB
-
-?q=computer&limit=100&strict=false: 263.7µs
-
-?q=computer&limit=100&strict=true: 40.84µs
-```
-
-```go
-package main
-
-import (
-	"fmt"
-	"time"
-
-	Hermes "github.com/realTristan/Hermes"
-)
-
-func main() {
-	// Important Variables
-	var (
-		cache        *Hermes.Cache   = Hermes.InitCache()
-		maxWords     int             = 10 // -1 for no limit
-		maxBytes int             = -1 // -1 for no limit
-
-		// The keys you want to search through in the FTS
-		schema       map[string]bool = map[string]bool{
-			"name":       true,
-			"age":        false,
-			"expiration": false,
-		}
-	)
-
-	// Initialize the FT cache
-	if err := cache.FTInit(maxWords, maxBytes, schema); err != nil {
-		fmt.Println(err)
-	}
-	
-	// The data for the user_id key
-	var data = map[string]interface{}{
-		"name":       "tristan",
-		"age":        17,
-		"expiration": time.Now(),
-	}
-
-	// Set the value in the cache
-	if err := cache.Set("user_id", data, true); err != nil {
-		fmt.Println(err)
-	}
-
-	// Search for a word in the cache
-	var (
-		startTime time.Time = time.Now()
-		result, _ = cache.Search("tristan", 100, false, schema)
-	)
-
-	// Print result
-	fmt.Printf("Found %d results in %s\n", len(result), time.Since(startTime))
-	fmt.Println(result)
-}
 ```
 
 # To-do
