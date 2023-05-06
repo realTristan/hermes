@@ -8,20 +8,22 @@ import (
 
 /*
 Fields:
-  - wordCache: a map of words to an array of positions where the word appears in the text
+  - cache: a map of words to an array of indices where the word appears in the text
+  - indices: a map of indices to words
+  - currentIndex: the current position in the map of indices to words
   - maxWords: the maximum number of words to cache
   - maxBytes: the maximum size of the text to cache in bytes
   - initialized: a boolean flag indicating whether the struct has been initialized
 */
 type FullText struct {
-	indicesCache map[int]string
-	wordCache    map[string][]int
-	cacheSize    int
+	cache        map[string][]int
+	indices      map[int]string
+	currentIndex int
 	maxWords     int
 	maxBytes     int
 }
 
-// Get whether the full text cache is initialized
+// Get whether the full-text cache is initialized
 // This method is thread-safe.
 func (c *Cache) FTIsInitialized() bool {
 	c.mutex.RLock()
@@ -40,11 +42,11 @@ func (c *Cache) FTSetMaxBytes(maxBytes int) error {
 		return errors.New("full text cache not initialized")
 	}
 
-	// Check if the current size of the word cache is greater than the new max size
-	if i, err := Utils.Size(c.ft.wordCache); err != nil {
+	// Check if the current size of the cache is greater than the new max size
+	if i, err := Utils.Size(c.ft.cache); err != nil {
 		return err
 	} else if i > maxBytes {
-		return errors.New("the current size of the word cache is greater than the new max size")
+		return errors.New("the current size of the full-text cache is greater than the new max size")
 	}
 
 	// Set the maxBytes field
@@ -65,9 +67,9 @@ func (c *Cache) FTSetMaxWords(maxWords int) error {
 		return errors.New("full text cache not initialized")
 	}
 
-	// Check if the current size of the word cache is greater than the new max size
-	if len(c.ft.wordCache) > maxWords {
-		return errors.New("the current size of the word cache is greater than the new max size")
+	// Check if the current size of the cache is greater than the new max size
+	if len(c.ft.cache) > maxWords {
+		return errors.New("the current size of the full-text cache is greater than the new max size")
 	}
 
 	// Set the maxWords field
@@ -77,9 +79,9 @@ func (c *Cache) FTSetMaxWords(maxWords int) error {
 	return nil
 }
 
-// Get the full text word cache
+// Get the full text cache
 // This method is thread-safe.
-func (c *Cache) FTWordCache() (map[string][]int, error) {
+func (c *Cache) FTCache() (map[string][]int, error) {
 	c.mutex.RLock()
 	defer c.mutex.RUnlock()
 
@@ -88,17 +90,17 @@ func (c *Cache) FTWordCache() (map[string][]int, error) {
 		return nil, errors.New("full text cache not initialized")
 	}
 
-	// Copy the wordCache map
-	var copy map[string][]int = make(map[string][]int, len(c.ft.wordCache))
-	copy = c.ft.wordCache
+	// Copy the cache map
+	var copy map[string][]int = make(map[string][]int, len(c.ft.cache))
+	copy = c.ft.cache
 
 	// Return the copy
 	return copy, nil
 }
 
-// Get the word cache size in bytes
+// Get the full-text cache size in bytes
 // This method is thread-safe.
-func (c *Cache) FTWordCacheSize() (int, error) {
+func (c *Cache) FTCacheSize() (int, error) {
 	c.mutex.RLock()
 	defer c.mutex.RUnlock()
 
@@ -107,13 +109,13 @@ func (c *Cache) FTWordCacheSize() (int, error) {
 		return -1, errors.New("full text cache not initialized")
 	}
 
-	// Return the size of the wordCache map
-	return Utils.Size(c.ft.wordCache)
+	// Return the size of the cache map
+	return Utils.Size(c.ft.cache)
 }
 
-// Get the word cache length
+// Get the full-text cache length
 // This method is thread-safe.
-func (c *Cache) FTWordCacheLength() (int, error) {
+func (c *Cache) FTCacheLength() (int, error) {
 	c.mutex.RLock()
 	defer c.mutex.RUnlock()
 
@@ -122,6 +124,6 @@ func (c *Cache) FTWordCacheLength() (int, error) {
 		return -1, errors.New("full text cache not initialized")
 	}
 
-	// Return the size of the wordCache map
-	return len(c.ft.wordCache), nil
+	// Return the size of the cache map
+	return len(c.ft.cache), nil
 }

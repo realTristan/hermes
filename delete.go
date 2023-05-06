@@ -27,21 +27,21 @@ func (c *Cache) delete(key string) {
 // This function is not thread-safe, and should only be called from
 // an exported function.
 func (ft *FullText) delete(key string) {
-	// Remove the key from the ft.wordCache
-	for word, keys := range ft.wordCache {
+	// Remove the key from the ft.cache
+	for word, keys := range ft.cache {
 		for i := 0; i < len(keys); i++ {
-			if key != ft.indicesCache[keys[i]] {
+			if key != ft.indices[keys[i]] {
 				continue
 			}
 
-			// Remove the key from the ft.wordCache slice
-			ft.wordCache[word] = append(ft.wordCache[word][:i], ft.wordCache[word][i+1:]...)
+			// Remove the key from the ft.cache slice
+			ft.cache[word] = append(ft.cache[word][:i], ft.cache[word][i+1:]...)
 			break
 		}
 
-		// If the ft.wordCache[word] is empty, remove it from the cache
-		if len(ft.wordCache[word]) == 0 {
-			delete(ft.wordCache, word)
+		// If the ft.cache[word] is empty, remove it from the cache
+		if len(ft.cache[word]) == 0 {
+			delete(ft.cache, word)
 		}
 	}
 }

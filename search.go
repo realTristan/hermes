@@ -47,7 +47,7 @@ func (c *Cache) Search(query string, limit int, strict bool, schema map[string]b
 
 	// Check if the FT index is initialized
 	if c.ft == nil {
-		return []map[string]interface{}{}, errors.New("full text is not initialized")
+		return []map[string]interface{}{}, errors.New("full-text is not initialized")
 	}
 
 	// Set the query to lowercase
@@ -91,7 +91,7 @@ func (c *Cache) search(query string, limit int, strict bool, schema map[string]b
 	)
 
 	// Check if the query is in the cache
-	if v, ok := c.ft.wordCache[words[0]]; !ok {
+	if v, ok := c.ft.cache[words[0]]; !ok {
 		return []map[string]interface{}{}, errors.New("invalid query")
 	} else {
 		smallest = len(v)
@@ -100,7 +100,7 @@ func (c *Cache) search(query string, limit int, strict bool, schema map[string]b
 	// Find the smallest words array
 	// Don't include the first or last words from the query
 	for i := 1; i < len(words)-1; i++ {
-		if v, ok := c.ft.wordCache[words[i]]; ok {
+		if v, ok := c.ft.cache[words[i]]; ok {
 			if len(v) < smallest {
 				smallest = len(v)
 				smallestIndex = i
@@ -109,9 +109,9 @@ func (c *Cache) search(query string, limit int, strict bool, schema map[string]b
 	}
 
 	// Loop through the indices
-	var keys []int = c.ft.wordCache[words[smallestIndex]]
+	var keys []int = c.ft.cache[words[smallestIndex]]
 	for i := 0; i < len(keys); i++ {
-		for key, value := range c.data[c.ft.indicesCache[keys[i]]] {
+		for key, value := range c.data[c.ft.indices[keys[i]]] {
 			if !schema[key] {
 				continue
 			}
@@ -119,7 +119,7 @@ func (c *Cache) search(query string, limit int, strict bool, schema map[string]b
 			// Check if the value contains the query
 			if v, ok := value.(string); ok {
 				if strings.Contains(strings.ToLower(v), query) {
-					result = append(result, c.data[c.ft.indicesCache[keys[i]]])
+					result = append(result, c.data[c.ft.indices[keys[i]]])
 				}
 			}
 		}
@@ -326,9 +326,9 @@ func (c *Cache) SearchOneWord(query string, limit int, strict bool) ([]map[strin
 	c.mutex.RLock()
 	defer c.mutex.RUnlock()
 
-	// Check if the full text is initialized
+	// Check if the full-text is initialized
 	if c.ft == nil {
-		return []map[string]interface{}{}, errors.New("full text is not initialized")
+		return []map[string]interface{}{}, errors.New("full-text is not initialized")
 	}
 
 	// Search the data
@@ -362,18 +362,18 @@ func (c *Cache) searchOneWord(query string, limit int, strict bool) []map[string
 	// straight from the cache
 	if strict {
 		// Check if the query is in the cache
-		if _, ok := c.ft.wordCache[query]; !ok {
+		if _, ok := c.ft.cache[query]; !ok {
 			return result
 		}
 
 		// Loop through the indices
-		for i := 0; i < len(c.ft.wordCache[query]); i++ {
+		for i := 0; i < len(c.ft.cache[query]); i++ {
 			if len(result) >= limit {
 				return result
 			}
 			var (
-				index int    = c.ft.wordCache[query][i]
-				key   string = c.ft.indicesCache[index]
+				index int    = c.ft.cache[query][i]
+				key   string = c.ft.indices[index]
 			)
 			result = append(result, c.data[key])
 		}
@@ -386,7 +386,7 @@ func (c *Cache) searchOneWord(query string, limit int, strict bool) []map[string
 	var alreadyAdded map[int]int = map[int]int{}
 
 	// Loop through the cache keys
-	for k, v := range c.ft.wordCache {
+	for k, v := range c.ft.cache {
 		switch {
 		case len(result) >= limit:
 			return result
@@ -401,7 +401,7 @@ func (c *Cache) searchOneWord(query string, limit int, strict bool) []map[string
 			}
 
 			// Else, append the index to the result
-			result = append(result, c.data[c.ft.indicesCache[v[j]]])
+			result = append(result, c.data[c.ft.indices[v[j]]])
 			alreadyAdded[v[j]] = 0
 		}
 	}

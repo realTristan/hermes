@@ -11,7 +11,7 @@ import (
 	Utils "github.com/realTristan/Hermes/server/utils"
 )
 
-// Check if full text is initialized
+// Check if full-text is initialized
 // This is a handler function that returns a http.HandlerFunc
 func FTIsInitialized(c *Hermes.Cache) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -19,7 +19,7 @@ func FTIsInitialized(c *Hermes.Cache) http.HandlerFunc {
 	}
 }
 
-// Set the full text max bytes
+// Set the full-text max bytes
 // This is a handler function that returns a http.HandlerFunc
 func FTSetMaxBytes(c *Hermes.Cache) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -44,7 +44,7 @@ func FTSetMaxBytes(c *Hermes.Cache) http.HandlerFunc {
 	}
 }
 
-// Set the full text max words
+// Set the full-text max words
 // This is a handler function that returns a http.HandlerFunc
 func FTSetMaxWords(c *Hermes.Cache) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -69,11 +69,11 @@ func FTSetMaxWords(c *Hermes.Cache) http.HandlerFunc {
 	}
 }
 
-// Get the full text word cache
+// Get the full-text cache
 // This is a handler function that returns a http.HandlerFunc
 func FTWordCache(c *Hermes.Cache) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		if data, err := c.FTWordCache(); err != nil {
+		if data, err := c.FTCache(); err != nil {
 			w.Write(Utils.Error(err))
 		} else {
 			// Marshal the data
@@ -86,11 +86,11 @@ func FTWordCache(c *Hermes.Cache) http.HandlerFunc {
 	}
 }
 
-// Get the full text word cache size
+// Get the full-text cache size
 // This is a handler function that returns a http.HandlerFunc
 func FTWordCacheSize(c *Hermes.Cache) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		if size, err := c.FTWordCacheSize(); err != nil {
+		if size, err := c.FTCacheSize(); err != nil {
 			w.Write(Utils.Error(err))
 		} else {
 			w.Write([]byte(fmt.Sprintf("%d", size)))

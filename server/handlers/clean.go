@@ -16,7 +16,7 @@ func Clean(c *Hermes.Cache) http.HandlerFunc {
 	}
 }
 
-// Clean the full text cache
+// Clean the full-text cache
 // This is a handler function that returns a http.HandlerFunc
 func FTClean(c *Hermes.Cache) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {

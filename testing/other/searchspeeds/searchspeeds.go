@@ -19,7 +19,7 @@ func main() {
 // Basic Search
 func BasicSearch() {
 	// read the json data
-	if data, err := readJson("../../data/data_hash.json"); err != nil {
+	if data, err := readJson("../../../data/data_hash.json"); err != nil {
 		panic(err)
 	} else {
 		var average int64 = 0
@@ -47,7 +47,7 @@ func HermesSearch() {
 	var cache *Hermes.Cache = Hermes.InitCache()
 
 	// Initialize the FT cache with a json file
-	cache.FTInitWithJson("../../data/data_hash.json", -1, -1, map[string]bool{
+	cache.FTInitWithJson("../../../data/data_hash.json", -1, -1, map[string]bool{
 		"id":             false,
 		"components":     false,
 		"units":          false,

@@ -32,7 +32,7 @@ func Set(c *Hermes.Cache) http.HandlerFunc {
 			}
 		}
 
-		// Get whether or not to store the full text
+		// Get whether or not to store the full-text
 		var ft bool
 		if ftStr := r.URL.Query().Get("ft"); len(ftStr) == 0 {
 			w.Write(Utils.Error(errors.New("invalid ft")))

@@ -20,7 +20,7 @@ func Set(cache *Hermes.Cache, router *mux.Router) {
 	router.HandleFunc("/info", handlers.Info(cache)).Methods("GET")
 	router.HandleFunc("/exists", handlers.Exists(cache)).Methods("GET")
 
-	// Full text cache handlers
+	// full-text cache handlers
 	router.HandleFunc("/ft/init", handlers.FTInit(cache)).Methods("POST")
 	router.HandleFunc("/ft/init/json", handlers.FTInitJson(cache)).Methods("POST")
 	router.HandleFunc("/ft/clean", handlers.FTClean(cache)).Methods("POST")
@@ -30,8 +30,8 @@ func Set(cache *Hermes.Cache, router *mux.Router) {
 	router.HandleFunc("/ft/searchvalueswithkey", handlers.SearchValuesWithKey(cache)).Methods("GET")
 	router.HandleFunc("/ft/maxbytes", handlers.FTSetMaxBytes(cache)).Methods("POST")
 	router.HandleFunc("/ft/maxwords", handlers.FTSetMaxWords(cache)).Methods("POST")
-	router.HandleFunc("/ft/wordcache", handlers.FTWordCache(cache)).Methods("GET")
-	router.HandleFunc("/ft/wordcachesize", handlers.FTWordCacheSize(cache)).Methods("GET")
+	router.HandleFunc("/ft/cache", handlers.FTWordCache(cache)).Methods("GET")
+	router.HandleFunc("/ft/cachesize", handlers.FTWordCacheSize(cache)).Methods("GET")
 	router.HandleFunc("/ft/isinitialized", handlers.FTIsInitialized(cache)).Methods("GET")
 	router.HandleFunc("/ft/add", handlers.FTAdd(cache)).Methods("POST")
 }

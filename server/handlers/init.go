@@ -9,7 +9,7 @@ import (
 	Utils "github.com/realTristan/Hermes/server/utils"
 )
 
-// Initialize the full text search cache
+// Initialize the full-text search cache
 // This is a handler function that returns a http.HandlerFunc
 func FTInit(c *Hermes.Cache) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -56,7 +56,7 @@ func FTInit(c *Hermes.Cache) http.HandlerFunc {
 			}
 		}
 
-		// Initialize the full text cache
+		// Initialize the full-text cache
 		if err := c.FTInit(maxWords, maxBytes, schema); err != nil {
 			w.Write(Utils.Error(err))
 			return
@@ -65,7 +65,7 @@ func FTInit(c *Hermes.Cache) http.HandlerFunc {
 	}
 }
 
-// Initialize the full text search cache
+// Initialize the full-text search cache
 // This is a handler function that returns a http.HandlerFunc
 func FTInitJson(c *Hermes.Cache) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -124,7 +124,7 @@ func FTInitJson(c *Hermes.Cache) http.HandlerFunc {
 			}
 		}
 
-		// Initialize the full text cache
+		// Initialize the full-text cache
 		if err := c.FTInitWithMap(json, maxWords, maxBytes, schema); err != nil {
 			w.Write(Utils.Error(err))
 			return
