@@ -26,7 +26,11 @@ Install Windows:
 
 [GET /values](https://github.com/realTristan/Hermes/blob/master/server/handlers/values.go)
 ```
-Get data from the cache using a key.
+About
+@Get data from the cache using a key.
+
+URL Parameters:
+@key: string
 ```
 
 [GET /length](https://github.com/realTristan/Hermes/blob/master/server/handlers/length.go)
