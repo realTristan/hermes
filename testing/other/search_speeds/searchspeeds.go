@@ -72,10 +72,10 @@ func HermesSearch() {
 			"pre_requisites": true,
 			"title":          true,
 		})
-		total += len(res)
 
 		// Print the duration
 		average += time.Since(start).Nanoseconds()
+		total += len(res)
 	}
 	var averageNanos float64 = float64(average) / 100
 	var averageMillis float64 = averageNanos / 1000000

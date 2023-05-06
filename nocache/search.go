@@ -207,7 +207,7 @@ func (ft *FullText) searchValuesWithKey(query string, key string, limit int) []m
 		switch {
 		case len(result) >= limit:
 			return result
-		case strings.Contains(ft.data[i][key], query):
+		case strings.Contains(strings.ToLower(ft.data[i][key]), query):
 			result = append(result, ft.data[i])
 		}
 	}

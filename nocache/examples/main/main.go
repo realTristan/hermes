@@ -35,4 +35,16 @@ func main() {
 
 	// Print the duration
 	fmt.Printf("\nFound %v results in %v", len(res), time.Since(start))
+
+	// Search in values with key
+	var (
+		// Track the start time
+		start2 time.Time = time.Now()
+
+		// Search for a word in the cache
+		res2, _ = ft.SearchValuesWithKey("CS", "title", 100)
+	)
+
+	// Print the duration
+	fmt.Printf("\nFound %v results in %v", len(res2), time.Since(start2))
 }
