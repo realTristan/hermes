@@ -6,7 +6,7 @@ import (
 	Hermes "github.com/realTristan/Hermes"
 )
 
-func main() {
+func clean() {
 	var cache *Hermes.Cache = Hermes.InitCache()
 
 	// Test CleanFT()

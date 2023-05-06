@@ -6,7 +6,7 @@ import (
 	Hermes "github.com/realTristan/Hermes"
 )
 
-func main() {
+func delete() {
 	var cache *Hermes.Cache = Hermes.InitCache()
 
 	// Initialize the FT cache
@@ -21,7 +21,7 @@ func main() {
 	}
 
 	// print cache info
-	cache.Info()
+	fmt.Println(cache.Info())
 
 	// Set data
 	cache.Set("user_id1", data, true)
@@ -29,7 +29,7 @@ func main() {
 	cache.Set("user_id2", data, true)
 
 	// print cache info
-	cache.Info()
+	fmt.Println(cache.Info())
 
 	// Delete data
 	cache.Delete("user_id1")
@@ -53,5 +53,5 @@ func main() {
 	fmt.Println(cache.Keys())
 
 	// Print the cache info
-	cache.Info()
+	fmt.Println(cache.Info())
 }
