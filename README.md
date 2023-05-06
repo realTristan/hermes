@@ -131,7 +131,7 @@ func main() {
 }
 ```
 
-# CLI
+# API and CLI
 ```
 hermes serve -p 8000
 ```
@@ -145,8 +145,6 @@ Install Windows:
   > Add "C:\hermes" to Environment Variables
 ```
 
-
-# API
 ## Cache
 
 [POST /set](https://github.com/realTristan/Hermes/blob/master/server/handlers/set.go)
