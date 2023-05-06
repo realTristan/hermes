@@ -24,13 +24,50 @@ Install Windows:
 # API
 ## Cache
 
-[GET /values](https://github.com/realTristan/Hermes/blob/master/server/handlers/values.go)
+[POST /set](https://github.com/realTristan/Hermes/blob/master/server/handlers/set.go)
+```
+About
+➤ Set a value in the cache with the corresponding key.
+
+URL Parameters
+➤ key: string
+➤ value: base64(map[string]map[string]interface{})
+```
+
+[DELETE /delete](https://github.com/realTristan/Hermes/blob/master/server/handlers/delete.go)
+```
+About
+➤ Delete the provided key, and the data correlated to it from the cache.
+
+URL Parameters
+➤ key: string
+```
+
+[GET /get](https://github.com/realTristan/Hermes/blob/master/server/handlers/get.go)
 ```
 About
 ➤ Get data from the cache using a key.
 
 URL Parameters
-➤ key: string
+➤ None
+```
+
+[GET /keys](https://github.com/realTristan/Hermes/blob/master/server/handlers/keys.go)
+```
+About
+➤ Get all of the keys in the cache.
+
+URL Parameters
+➤ None
+```
+
+[GET /values](https://github.com/realTristan/Hermes/blob/master/server/handlers/values.go)
+```
+About
+➤ Get all of the values in the cache.
+
+URL Parameters
+➤ None
 ```
 
 [GET /length](https://github.com/realTristan/Hermes/blob/master/server/handlers/length.go)
@@ -51,51 +88,143 @@ URL Parameters
 ➤ None
 ```
 
-[POST /set](https://github.com/realTristan/Hermes/blob/master/server/handlers/set.go)
+[GET /info](https://github.com/realTristan/Hermes/blob/master/server/handlers/info.go)
 ```
 About
-➤ Get data from the cache using a key.
+➤ Get the cache and full-text cache statistics.
+
+URL Parameters
+➤ None
+```
+
+[GET /exists](https://github.com/realTristan/Hermes/blob/master/server/handlers/exists.go)
+```
+About
+➤ Get whether a key exists in the cache.
 
 URL Parameters
 ➤ key: string
-➤ value: string [base64(map[string]map[string]interface{})]
 ```
-
-[DELETE /delete](https://github.com/realTristan/Hermes/blob/master/server/handlers/delete.go)
-
-[GET /get](https://github.com/realTristan/Hermes/blob/master/server/handlers/get.go)
-
-[GET /keys](https://github.com/realTristan/Hermes/blob/master/server/handlers/keys.go)
-
-[GET /info](https://github.com/realTristan/Hermes/blob/master/server/handlers/info.go)
-
-[GET /exists](https://github.com/realTristan/Hermes/blob/master/server/handlers/exists.go)
 
 ## Full Text Search
 
 [POST /ft/init](https://github.com/realTristan/Hermes/blob/master/server/handlers/init.go)
+```
+About
+➤ Intialize the full text cache.
+
+URL Parameters
+➤ None
+```
 
 [POST /ft/clean](https://github.com/realTristan/Hermes/blob/master/server/handlers/clean.go)
+```
+About
+➤ Clean all of the data in the full-text cache.
+
+URL Parameters
+➤ None
+```
 
 [GET /ft/search](https://github.com/realTristan/Hermes/blob/master/server/handlers/search.go)
+```
+About
+➤ Search for a query in the full-text cache.
+
+URL Parameters
+➤ q: string
+➤ strict: bool
+➤ limit: int
+➤ schema: map[string]bool
+```
 
 [GET /ft/searchoneword](https://github.com/realTristan/Hermes/blob/master/server/handlers/search.go)
+```
+About
+➤ Search for a single word in the full-text cache.
+
+URL Parameters
+➤ q: string
+➤ strict: bool
+➤ limit: int
+```
 
 [GET /ft/searchvalues](https://github.com/realTristan/Hermes/blob/master/server/handlers/search.go)
+```
+About
+➤ Search in the cache data values. (Slower)
+
+URL Parameters
+➤ q: string
+➤ limit: int
+➤ schema: map[string]bool
+```
 
 [GET /ft/searchvalueswithkey](https://github.com/realTristan/Hermes/blob/master/server/handlers/search.go)
+```
+About
+➤ Search in the cache data values for a specific key.
+
+URL Parameters
+➤ q: string
+➤ strict: bool
+➤ limit: int
+➤ key: string
+```
 
 [POST /ft/maxbytes](https://github.com/realTristan/Hermes/blob/master/server/handlers/fulltext.go)
+```
+About
+➤ Set the maximum full-text cache size in bytes
+
+URL Parameters
+➤ maxbytes: int
+```
 
 [POST /ft/maxwords](https://github.com/realTristan/Hermes/blob/master/server/handlers/fulltext.go)
+```
+About
+➤ 
+
+URL Parameters
+➤ None
+```
 
 [GET /ft/wordcache](https://github.com/realTristan/Hermes/blob/master/server/handlers/fulltext.go)
+```
+About
+➤ 
+
+URL Parameters
+➤ None
+```
 
 [GET /ft/wordcachesize](https://github.com/realTristan/Hermes/blob/master/server/handlers/fulltext.go)
+```
+About
+➤ 
+
+URL Parameters
+➤ None
+```
 
 [GET /ft/isinitialized](https://github.com/realTristan/Hermes/blob/master/server/handlers/fulltext.go)
+```
+About
+➤ 
+
+URL Parameters
+➤ None
+```
 
 [POST /ft/add](https://github.com/realTristan/Hermes/blob/master/server/handlers/add.go)
+```
+About
+➤ 
+
+URL Parameters
+➤ None
+```
 
 # Example of NoCache Full-Text-Search
 If you want to use only the full-text-search features, then just import hermes and load it using a .json file. (as shown in /example). Note: For small to medium-sized datasets (like the ones I used in /data), Hermes works great. Although, as the words in the dataset increases, the full-text-search cache will take up significantly more memory. I recommended setting a cache limit and/or a cache keys limit.
