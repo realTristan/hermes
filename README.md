@@ -311,7 +311,7 @@ func main() {
 	var (
 		cache        *Hermes.Cache   = Hermes.InitCache()
 		maxWords     int             = 10 // -1 for no limit
-		maxSizeBytes int             = -1 // -1 for no limit
+		maxBytes int             = -1 // -1 for no limit
 
 		// The keys you want to search through in the FTS
 		schema       map[string]bool = map[string]bool{
@@ -322,7 +322,7 @@ func main() {
 	)
 
 	// Initialize the FT cache
-	if err := cache.FTInit(maxWords, maxSizeBytes, schema); err != nil {
+	if err := cache.FTInit(maxWords, maxBytes, schema); err != nil {
 		fmt.Println(err)
 	}
 	
