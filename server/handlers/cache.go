@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 	"strconv"
@@ -21,7 +22,14 @@ func Clean(c *Hermes.Cache) http.HandlerFunc {
 // Delete a key from the cache
 func Delete(c *Hermes.Cache) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		var key string = r.URL.Query().Get("key")
+		// Get the key from the query
+		var key string
+		if key = r.URL.Query().Get("key"); len(key) == 0 {
+			w.Write(Utils.Error(errors.New("invalid key")))
+			return
+		}
+
+		// Delete the key from the cache
 		c.Delete(key)
 		w.Write(Utils.Success())
 	}
@@ -30,7 +38,14 @@ func Delete(c *Hermes.Cache) http.HandlerFunc {
 // Get a key from the cache
 func Get(c *Hermes.Cache) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		var key string = r.URL.Query().Get("key")
+		// Get the key from the query
+		var key string
+		if key = r.URL.Query().Get("key"); len(key) == 0 {
+			w.Write(Utils.Error(errors.New("invalid key")))
+			return
+		}
+
+		// Get the value from the cache
 		if data, err := json.Marshal(c.Get(key)); err != nil {
 			w.Write(Utils.Error(err))
 		} else {
@@ -48,20 +63,37 @@ func GetAll(c *Hermes.Cache) http.HandlerFunc {
 // Set a value in the cache
 func Set(c *Hermes.Cache) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		var (
-			key        string = r.URL.Query().Get("key")
-			value, err        = Utils.Decode(r.URL.Query().Get("value"))
-		)
-		if err != nil {
-			w.Write(Utils.Error(err))
+		// Get the key from the query
+		var key string
+		if key = r.URL.Query().Get("key"); len(key) == 0 {
+			w.Write(Utils.Error(errors.New("invalid key")))
 			return
 		}
 
-		// Get whether or not to store the full text
-		ft, err := strconv.ParseBool(r.URL.Query().Get("ft"))
-		if err != nil {
-			w.Write(Utils.Error(err))
+		// Get the value from the query
+		var value map[string]interface{}
+		if valueStr := r.URL.Query().Get("value"); len(valueStr) == 0 {
+			w.Write(Utils.Error(errors.New("invalid value")))
 			return
+		} else {
+			if err := Utils.Decode(valueStr, &value); err != nil {
+				w.Write(Utils.Error(err))
+				return
+			}
+		}
+
+		// Get whether or not to store the full text
+		var ft bool
+		if ftStr := r.URL.Query().Get("ft"); len(ftStr) == 0 {
+			w.Write(Utils.Error(errors.New("invalid ft")))
+			return
+		} else {
+			if ftBool, err := strconv.ParseBool(ftStr); err != nil {
+				w.Write(Utils.Error(err))
+				return
+			} else {
+				ft = ftBool
+			}
 		}
 
 		// Set the value in the cache
@@ -116,7 +148,14 @@ func Length(c *Hermes.Cache) http.HandlerFunc {
 // Check if key exists
 func Exists(c *Hermes.Cache) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		var key string = r.URL.Query().Get("key")
+		// Get the key from the query
+		var key string
+		if key = r.URL.Query().Get("key"); len(key) == 0 {
+			w.Write(Utils.Error(errors.New("invalid key")))
+			return
+		}
+
+		// Return whether the key exists
 		w.Write([]byte(fmt.Sprintf("%v", c.Exists(key))))
 	}
 }

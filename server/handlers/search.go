@@ -2,8 +2,8 @@ package handlers
 
 import (
 	"encoding/json"
+	"errors"
 	"net/http"
-	"net/url"
 	"strconv"
 
 	Hermes "github.com/realTristan/Hermes"
@@ -14,33 +14,53 @@ import (
 func Search(c *Hermes.Cache) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var (
-			params     url.Values = r.URL.Query()
-			query      string     = params.Get("q")
-			limit, err            = strconv.Atoi(params.Get("limit"))
+			strict bool
+			query  string
+			limit  int
+			schema map[string]bool
 		)
 
-		// Check the limit
-		if err != nil {
-			w.Write(Utils.Error(err))
+		// Get the query from the url params
+		if query = r.URL.Query().Get("q"); len(query) == 0 {
+			w.Write(Utils.Error(errors.New("invalid query")))
 			return
+		}
+
+		// Get the limit from the url params
+		if limitStr := r.URL.Query().Get("limit"); len(limitStr) == 0 {
+			w.Write(Utils.Error(errors.New("invalid limit")))
+			return
+		} else {
+			if limitInt, err := strconv.Atoi(limitStr); err != nil {
+				w.Write(Utils.Error(err))
+				return
+			} else {
+				limit = limitInt
+			}
 		}
 
 		// Get whether strict mode is enabled/disabled
-		strict, err := strconv.ParseBool(params.Get("strict"))
-		if err != nil {
-			w.Write(Utils.Error(err))
+		if strictStr := r.URL.Query().Get("strict"); len(strictStr) == 0 {
+			w.Write(Utils.Error(errors.New("invalid strict")))
 			return
+		} else {
+			if strictBool, err := strconv.ParseBool(strictStr); err != nil {
+				w.Write(Utils.Error(err))
+				return
+			} else {
+				strict = strictBool
+			}
 		}
 
-		// base64 decode the schema
-		var (
-			schema    map[string]bool
-			b64schema []byte = []byte(params.Get("schema"))
-		)
-		err = json.Unmarshal(b64schema, &schema)
-		if err != nil {
-			w.Write(Utils.Error(err))
+		// Get the schema from the url params
+		if schemaStr := r.URL.Query().Get("schema"); len(schemaStr) == 0 {
+			w.Write(Utils.Error(errors.New("invalid schema")))
 			return
+		} else {
+			if err := Utils.Decode(schemaStr, &schema); err != nil {
+				w.Write(Utils.Error(err))
+				return
+			}
 		}
 
 		// Search for the query
@@ -60,22 +80,41 @@ func Search(c *Hermes.Cache) http.HandlerFunc {
 func SearchOneWord(c *Hermes.Cache) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var (
-			params     url.Values = r.URL.Query()
-			query      string     = params.Get("q")
-			limit, err            = strconv.Atoi(params.Get("limit"))
+			strict bool
+			query  string
+			limit  int
 		)
 
-		// Check the limit
-		if err != nil {
-			w.Write(Utils.Error(err))
+		// Get the query from the url params
+		if query = r.URL.Query().Get("q"); len(query) == 0 {
+			w.Write(Utils.Error(errors.New("invalid query")))
 			return
 		}
 
-		// Get whether strict mode is enabled/disabled
-		strict, err := strconv.ParseBool(params.Get("strict"))
-		if err != nil {
-			w.Write(Utils.Error(err))
+		// Get the limit from the url params
+		if limitStr := r.URL.Query().Get("limit"); len(limitStr) == 0 {
+			w.Write(Utils.Error(errors.New("invalid limit")))
 			return
+		} else {
+			if limitInt, err := strconv.Atoi(limitStr); err != nil {
+				w.Write(Utils.Error(err))
+				return
+			} else {
+				limit = limitInt
+			}
+		}
+
+		// Get whether strict mode is enabled/disabled
+		if strictStr := r.URL.Query().Get("strict"); len(strictStr) == 0 {
+			w.Write(Utils.Error(errors.New("invalid strict")))
+			return
+		} else {
+			if strictBool, err := strconv.ParseBool(strictStr); err != nil {
+				w.Write(Utils.Error(err))
+				return
+			} else {
+				strict = strictBool
+			}
 		}
 
 		// Search for the query
@@ -95,26 +134,39 @@ func SearchOneWord(c *Hermes.Cache) http.HandlerFunc {
 func SearchValues(c *Hermes.Cache) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var (
-			params     url.Values = r.URL.Query()
-			query      string     = params.Get("q")
-			limit, err            = strconv.Atoi(params.Get("limit"))
+			query  string
+			limit  int
+			schema map[string]bool
 		)
 
-		// Check the limit
-		if err != nil {
-			w.Write(Utils.Error(err))
+		// Get the query from the url params
+		if query = r.URL.Query().Get("q"); len(query) == 0 {
+			w.Write(Utils.Error(errors.New("invalid query")))
 			return
 		}
 
-		// base64 decode the schema
-		var (
-			schema    map[string]bool
-			b64schema []byte = []byte(params.Get("schema"))
-		)
-		err = json.Unmarshal(b64schema, &schema)
-		if err != nil {
-			w.Write(Utils.Error(err))
+		// Get the limit from the url params
+		if limitStr := r.URL.Query().Get("limit"); len(limitStr) == 0 {
+			w.Write(Utils.Error(errors.New("invalid limit")))
 			return
+		} else {
+			if limitInt, err := strconv.Atoi(limitStr); err != nil {
+				w.Write(Utils.Error(err))
+				return
+			} else {
+				limit = limitInt
+			}
+		}
+
+		// Get the schema from the url params
+		if schemaStr := r.URL.Query().Get("schema"); len(schemaStr) == 0 {
+			w.Write(Utils.Error(errors.New("invalid schema")))
+			return
+		} else {
+			if err := Utils.Decode(schemaStr, &schema); err != nil {
+				w.Write(Utils.Error(err))
+				return
+			}
 		}
 
 		// Search for the query
@@ -134,16 +186,46 @@ func SearchValues(c *Hermes.Cache) http.HandlerFunc {
 func SearchValuesWithKey(c *Hermes.Cache) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var (
-			params     url.Values = r.URL.Query()
-			query      string     = params.Get("q")
-			key        string     = params.Get("key")
-			limit, err            = strconv.Atoi(params.Get("limit"))
+			key    string
+			query  string
+			limit  int
+			schema map[string]bool
 		)
 
-		// Check the limit
-		if err != nil {
-			w.Write(Utils.Error(err))
+		// Get the query from the url params
+		if query = r.URL.Query().Get("q"); len(query) == 0 {
+			w.Write(Utils.Error(errors.New("invalid query")))
 			return
+		}
+
+		// Get the key from the url params
+		if key = r.URL.Query().Get("key"); len(key) == 0 {
+			w.Write(Utils.Error(errors.New("invalid key")))
+			return
+		}
+
+		// Get the limit from the url params
+		if limitStr := r.URL.Query().Get("limit"); len(limitStr) == 0 {
+			w.Write(Utils.Error(errors.New("invalid limit")))
+			return
+		} else {
+			if limitInt, err := strconv.Atoi(limitStr); err != nil {
+				w.Write(Utils.Error(err))
+				return
+			} else {
+				limit = limitInt
+			}
+		}
+
+		// Get the schema from the url params
+		if schemaStr := r.URL.Query().Get("schema"); len(schemaStr) == 0 {
+			w.Write(Utils.Error(errors.New("invalid schema")))
+			return
+		} else {
+			if err := Utils.Decode(schemaStr, &schema); err != nil {
+				w.Write(Utils.Error(err))
+				return
+			}
 		}
 
 		// Search for the query

@@ -5,17 +5,23 @@ import (
 	"encoding/json"
 )
 
-func Decode(s string) (map[string]interface{}, error) {
+// Base64 decode then JSON decode
+func Decode[T any](s string, v *T) error {
 	var (
 		data []byte
 		err  error
 	)
+
+	// Decode the base64 string
 	if data, err = base64.StdEncoding.DecodeString(s); err != nil {
-		return nil, err
+		return err
 	}
-	var value map[string]interface{}
-	if err := json.Unmarshal(data, &value); err != nil {
-		return nil, err
+
+	// Unmarshal the data
+	if err := json.Unmarshal(data, v); err != nil {
+		return err
 	}
-	return value, nil
+
+	// Return no error
+	return nil
 }
