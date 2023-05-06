@@ -132,6 +132,7 @@ func main() {
 ```
 
 # API and CLI
+## Usage
 ```
 hermes serve -p 8000
 ```
@@ -230,7 +231,7 @@ URL Parameters
 ➤ key: string
 ```
 
-## Full Text Search
+## Full-Text
 
 [POST /ft/init](https://github.com/realTristan/Hermes/blob/master/server/handlers/init.go)
 ```
