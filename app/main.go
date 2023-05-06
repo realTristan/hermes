@@ -22,14 +22,13 @@ func main() {
 
 	// Verify that the user is trying to serve the cache
 	if os.Args[1] != "serve" {
-		return
+		panic("incorrect usage. example: ./hermes serve")
 	}
 
 	// Get the arg data
 	var args, err = Utils.GetArgData(os.Args)
 	if err != nil {
-		fmt.Println(err)
-		return
+		panic(err)
 	}
 
 	// Get the port and json file
@@ -42,10 +41,8 @@ func main() {
 		// Establish a new gorilla mux router
 		var router *mux.Router = mux.NewRouter()
 
-		// Set router handlers
-		routes.Set(cache, router)
-
-		// Handle Router
+		// Set and handle router endpoints
+		routes.Set(router, cache)
 		http.Handle("/", router)
 
 		// Print the serving port

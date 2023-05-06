@@ -7,7 +7,7 @@ import (
 )
 
 // Set the routes
-func Set(cache *Hermes.Cache, router *mux.Router) {
+func Set(router *mux.Router, cache *Hermes.Cache) {
 	// Cache handlers
 	router.HandleFunc("/values", handlers.Values(cache)).Methods("GET")
 	router.HandleFunc("/length", handlers.Length(cache)).Methods("GET")
