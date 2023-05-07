@@ -13,9 +13,6 @@ import (
 
 // Main function
 func main() {
-	// Update hermes
-	Utils.UpdateHermes()
-
 	// Verify that the user is trying to serve the cache
 	if len(os.Args) < 1 || os.Args[1] != "serve" {
 		panic("incorrect usage. example: ./hermes serve -p {port}")
