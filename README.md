@@ -1,10 +1,9 @@
 # Hermes ![Stars](https://img.shields.io/github/stars/realTristan/Hermes?color=brightgreen) ![Watchers](https://img.shields.io/github/watchers/realTristan/Hermes?label=Watchers)
 ![banner](https://user-images.githubusercontent.com/75189508/230987049-665418b1-3576-49b7-861e-29036859ad8a.png)
 
-# Import
+# Install
 ```
-Go: go get github.com/realTristan/Hermes
-Python: See /wrappers/python/src
+go get github.com/realTristan/Hermes
 ```
 
 # Example of NoCache Full-Text-Search
@@ -25,7 +24,7 @@ Dataset Map Size: ≈ 2.3MB
 Example Dataset (data.json):
 [
     {
-		"id": 1,
+	"id": 1,
         "name": {
             "$hermes.full_text": true,
             "value": "Tristan Simpson"
@@ -95,7 +94,7 @@ Dataset Map Size: ≈ 2.3MB
 Example Dataset (data.json) [ONLY IF USING cache.FTInitWithJson()]:
 {
     "user_id": {
-		"age": 17,
+	"age": 17,
         "name": {
             "$hermes.full_text": true,
             "value": "Tristan Simpson"
@@ -120,10 +119,10 @@ func main() {
 	var (
 		cache        *Hermes.Cache   = Hermes.InitCache()
 		maxWords     int             = 10 // -1 for no limit
-		maxBytes int             = -1 // -1 for no limit
+		maxBytes int                 = -1 // -1 for no limit
 
 		// The keys you want to search through in the FTS
-		schema       map[string]bool = map[string]bool{
+		schema map[string]bool = map[string]bool{
 			"name":       true,
 			"age":        false,
 			"expiration": false,
