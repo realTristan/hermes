@@ -1,15 +1,8 @@
 # Hermes ![Stars](https://img.shields.io/github/stars/realTristan/Hermes?color=brightgreen) ![Watchers](https://img.shields.io/github/watchers/realTristan/Hermes?label=Watchers)
 ![banner](https://user-images.githubusercontent.com/75189508/230987049-665418b1-3576-49b7-861e-29036859ad8a.png)
 
-# API and CLI App
-## Docker Container
-```
-$ git clone https://github.com/realTristan/Hermes.git
-$ docker build -t hermes .
-$ docker run -p 6000:6000 hermes
-```
-
-## App Usage
+# CLI
+## Usage
 ```
 hermes serve -p 6000
 ```
