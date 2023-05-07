@@ -63,9 +63,13 @@ func (ft *FullText) insert(data []map[string]interface{}) error {
 		// Loop through the map
 		for key, value := range item {
 			// Get the string value
-			var strv string
+			var (
+				strvNormal string
+				strv       string
+			)
 			if _strv := fullTextMap(value); len(_strv) > 0 {
 				strv = _strv
+				strvNormal = _strv
 			} else {
 				continue
 			}
@@ -95,7 +99,7 @@ func (ft *FullText) insert(data []map[string]interface{}) error {
 			}
 
 			// Set the value
-			data[i][key] = strv
+			data[i][key] = strvNormal
 		}
 	}
 	return nil
