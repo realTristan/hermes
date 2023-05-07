@@ -1,56 +1,39 @@
 package handlers
 
 import (
-	"errors"
-	"net/http"
-	"strconv"
-
+	"github.com/gofiber/fiber/v2"
 	Hermes "github.com/realTristan/Hermes"
 	Utils "github.com/realTristan/Hermes/server/utils"
 )
 
 // Set a value in the cache
-// This is a handler function that returns a http.HandlerFunc
-func Set(c *Hermes.Cache) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
+// This is a handler function that returns a fiber context handler function
+func Set(c *Hermes.Cache) func(ctx *fiber.Ctx) error {
+	return func(ctx *fiber.Ctx) error {
+		var (
+			key   string
+			ft    bool
+			value map[string]interface{}
+		)
 		// Get the key from the query
-		var key string
-		if key = r.URL.Query().Get("key"); len(key) == 0 {
-			w.Write(Utils.Error(errors.New("invalid key")))
-			return
+		if key = ctx.Params("key"); len(key) == 0 {
+			return ctx.Send(Utils.Error("invalid key"))
 		}
 
 		// Get the value from the query
-		var value map[string]interface{}
-		if valueStr := r.URL.Query().Get("value"); len(valueStr) == 0 {
-			w.Write(Utils.Error(errors.New("invalid value")))
-			return
-		} else {
-			if err := Utils.Decode(valueStr, &value); err != nil {
-				w.Write(Utils.Error(err))
-				return
-			}
+		if err := Utils.GetValueParam(ctx, &value); err != nil {
+			return ctx.Send(Utils.Error(err))
 		}
 
 		// Get whether or not to store the full-text
-		var ft bool
-		if ftStr := r.URL.Query().Get("ft"); len(ftStr) == 0 {
-			w.Write(Utils.Error(errors.New("invalid ft")))
-			return
-		} else {
-			if ftBool, err := strconv.ParseBool(ftStr); err != nil {
-				w.Write(Utils.Error(err))
-				return
-			} else {
-				ft = ftBool
-			}
+		if err := Utils.GetFTParam(ctx, &ft); err != nil {
+			return ctx.Send(Utils.Error(err))
 		}
 
 		// Set the value in the cache
 		if err := c.Set(key, value, ft); err != nil {
-			w.Write(Utils.Error(err))
-			return
+			return ctx.Send(Utils.Error(err))
 		}
-		w.Write(Utils.Success())
+		return ctx.Send(Utils.Success("null"))
 	}
 }

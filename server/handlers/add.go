@@ -1,29 +1,25 @@
 package handlers
 
 import (
-	"errors"
-	"net/http"
-
+	"github.com/gofiber/fiber/v2"
 	Hermes "github.com/realTristan/Hermes"
 	Utils "github.com/realTristan/Hermes/server/utils"
 )
 
 // Add key from cache to the full-text cache
-// This is a handler function that returns a http.HandlerFunc
-func FTAdd(c *Hermes.Cache) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
+// This is a handler function that returns a fiber context handler function
+func FTAdd(c *Hermes.Cache) func(ctx *fiber.Ctx) error {
+	return func(ctx *fiber.Ctx) error {
 		// Get the key from the query
 		var key string
-		if key = r.URL.Query().Get("key"); len(key) == 0 {
-			w.Write(Utils.Error(errors.New("invalid key")))
-			return
+		if key = ctx.Params("key"); len(key) == 0 {
+			return ctx.Send(Utils.Error("key not provided"))
 		}
 
 		// Add the key to the full-text cache
 		if err := c.FTAdd(key); err != nil {
-			w.Write(Utils.Error(err))
-			return
+			return ctx.Send(Utils.Error(err))
 		}
-		w.Write(Utils.Success())
+		return ctx.Send(Utils.Success("null"))
 	}
 }

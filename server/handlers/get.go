@@ -2,36 +2,35 @@ package handlers
 
 import (
 	"encoding/json"
-	"errors"
-	"net/http"
 
+	"github.com/gofiber/fiber/v2"
 	Hermes "github.com/realTristan/Hermes"
 	Utils "github.com/realTristan/Hermes/server/utils"
 )
 
 // Get a key from the cache
-// This is a handler function that returns a http.HandlerFunc
-func Get(c *Hermes.Cache) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
+// This is a handler function that returns a fiber context handler function
+func Get(c *Hermes.Cache) func(ctx *fiber.Ctx) error {
+	return func(ctx *fiber.Ctx) error {
 		// Get the key from the query
 		var key string
-		if key = r.URL.Query().Get("key"); len(key) == 0 {
-			w.Write(Utils.Error(errors.New("invalid key")))
-			return
+		if key = ctx.Params("key"); len(key) == 0 {
+			return ctx.Send(Utils.Error("key not provided"))
 		}
 
 		// Get the value from the cache
 		if data, err := json.Marshal(c.Get(key)); err != nil {
-			w.Write(Utils.Error(err))
+			return ctx.Send(Utils.Error(err))
 		} else {
-			w.Write(data)
+			return ctx.Send(data)
 		}
 	}
 }
 
 // Get all the data from the cache
-// This is a handler function that returns a http.HandlerFunc
-func GetAll(c *Hermes.Cache) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
+// This is a handler function that returns a fiber context handler function
+func GetAll(c *Hermes.Cache) func(ctx *fiber.Ctx) error {
+	return func(ctx *fiber.Ctx) error {
+		return nil
 	}
 }

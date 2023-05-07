@@ -2,20 +2,20 @@ package handlers
 
 import (
 	"encoding/json"
-	"net/http"
 
+	"github.com/gofiber/fiber/v2"
 	Hermes "github.com/realTristan/Hermes"
 	Utils "github.com/realTristan/Hermes/server/utils"
 )
 
 // Get Keys from cache
-// This is a handler function that returns a http.HandlerFunc
-func Keys(c *Hermes.Cache) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
+// This is a handler function that returns a fiber context handler function
+func Keys(c *Hermes.Cache) func(ctx *fiber.Ctx) error {
+	return func(ctx *fiber.Ctx) error {
 		if keys, err := json.Marshal(c.Keys()); err != nil {
-			w.Write(Utils.Error(err))
+			return ctx.Send(Utils.Error(err))
 		} else {
-			w.Write(keys)
+			return ctx.Send(keys)
 		}
 	}
 }

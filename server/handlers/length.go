@@ -1,16 +1,15 @@
 package handlers
 
 import (
-	"fmt"
-	"net/http"
-
+	"github.com/gofiber/fiber/v2"
 	Hermes "github.com/realTristan/Hermes"
+	Utils "github.com/realTristan/Hermes/server/utils"
 )
 
 // Get the cache length
-// This is a handler function that returns a http.HandlerFunc
-func Length(c *Hermes.Cache) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte(fmt.Sprintf("%d", c.Length())))
+// This is a handler function that returns a fiber context handler function
+func Length(c *Hermes.Cache) func(ctx *fiber.Ctx) error {
+	return func(ctx *fiber.Ctx) error {
+		return ctx.Send(Utils.Success(c.Length()))
 	}
 }

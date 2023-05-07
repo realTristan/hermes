@@ -1,20 +1,19 @@
 package handlers
 
 import (
-	"net/http"
-
+	"github.com/gofiber/fiber/v2"
 	Hermes "github.com/realTristan/Hermes"
 	Utils "github.com/realTristan/Hermes/server/utils"
 )
 
 // Get cache info
-// This is a handler function that returns a http.HandlerFunc
-func Info(c *Hermes.Cache) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
+// This is a handler function that returns a fiber context handler function
+func Info(c *Hermes.Cache) func(ctx *fiber.Ctx) error {
+	return func(ctx *fiber.Ctx) error {
 		if info, err := c.Info(); err != nil {
-			w.Write(Utils.Error(err))
+			return ctx.Send(Utils.Error(err))
 		} else {
-			w.Write([]byte(info))
+			return ctx.Send(Utils.Success(info))
 		}
 	}
 }

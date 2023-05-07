@@ -1,29 +1,27 @@
 package handlers
 
 import (
-	"net/http"
-
+	"github.com/gofiber/fiber/v2"
 	Hermes "github.com/realTristan/Hermes"
 	Utils "github.com/realTristan/Hermes/server/utils"
 )
 
 // Clean the regular cache
-// This is a handler function that returns a http.HandlerFunc
-func Clean(c *Hermes.Cache) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
+// This is a handler function that returns a fiber context handler function
+func Clean(c *Hermes.Cache) func(ctx *fiber.Ctx) error {
+	return func(ctx *fiber.Ctx) error {
 		c.Clean()
-		w.Write(Utils.Success())
+		return ctx.Send(Utils.Success("null"))
 	}
 }
 
 // Clean the full-text cache
-// This is a handler function that returns a http.HandlerFunc
-func FTClean(c *Hermes.Cache) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
+// This is a handler function that returns a fiber context handler function
+func FTClean(c *Hermes.Cache) func(ctx *fiber.Ctx) error {
+	return func(ctx *fiber.Ctx) error {
 		if err := c.FTClean(); err != nil {
-			w.Write(Utils.Error(err))
-			return
+			return ctx.Send(Utils.Error(err))
 		}
-		w.Write(Utils.Success())
+		return ctx.Send(Utils.Success("null"))
 	}
 }

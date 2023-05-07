@@ -1,18 +1,15 @@
 package handlers
 
 import (
-	"errors"
-	"net/http"
-	"strconv"
-
+	"github.com/gofiber/fiber/v2"
 	Hermes "github.com/realTristan/Hermes"
 	Utils "github.com/realTristan/Hermes/server/utils"
 )
 
 // Initialize the full-text search cache
-// This is a handler function that returns a http.HandlerFunc
-func FTInit(c *Hermes.Cache) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
+// This is a handler function that returns a fiber context handler function
+func FTInit(c *Hermes.Cache) func(ctx *fiber.Ctx) error {
+	return func(ctx *fiber.Ctx) error {
 		var (
 			maxWords int
 			maxBytes int
@@ -20,55 +17,32 @@ func FTInit(c *Hermes.Cache) http.HandlerFunc {
 		)
 
 		// Convert the max words to an integer
-		if maxWordsStr := r.URL.Query().Get("maxwords"); len(maxWordsStr) == 0 {
-			w.Write(Utils.Error(errors.New("invalid maxWords")))
-			return
-		} else {
-			if maxWordsInt, err := strconv.Atoi(maxWordsStr); err != nil {
-				w.Write(Utils.Error(err))
-				return
-			} else {
-				maxWords = maxWordsInt
-			}
+		if err := Utils.GetMaxWordsParam(ctx, &maxWords); err != nil {
+			return ctx.Send(Utils.Error(err))
 		}
 
 		// Convert the max size bytes to an integer
-		if maxBytesStr := r.URL.Query().Get("maxbytes"); len(maxBytesStr) == 0 {
-			w.Write(Utils.Error(errors.New("invalid maxBytes")))
-			return
-		} else {
-			if maxBytesInt, err := strconv.Atoi(maxBytesStr); err != nil {
-				w.Write(Utils.Error(err))
-				return
-			} else {
-				maxBytes = maxBytesInt
-			}
+		if err := Utils.GetMaxBytesParam(ctx, &maxBytes); err != nil {
+			return ctx.Send(Utils.Error(err))
 		}
 
 		// Decode the schema
-		if schemaStr := r.URL.Query().Get("schema"); len(schemaStr) == 0 {
-			w.Write(Utils.Error(errors.New("invalid schema")))
-			return
-		} else {
-			if err := Utils.Decode(schemaStr, &schema); err != nil {
-				w.Write(Utils.Error(err))
-				return
-			}
+		if err := Utils.GetSchemaParam(ctx, &schema); err != nil {
+			return ctx.Send(Utils.Error(err))
 		}
 
 		// Initialize the full-text cache
 		if err := c.FTInit(maxWords, maxBytes, schema); err != nil {
-			w.Write(Utils.Error(err))
-			return
+			return ctx.Send(Utils.Error(err))
 		}
-		w.Write(Utils.Success())
+		return ctx.Send(Utils.Success("null"))
 	}
 }
 
 // Initialize the full-text search cache
-// This is a handler function that returns a http.HandlerFunc
-func FTInitJson(c *Hermes.Cache) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
+// This is a handler function that returns a fiber context handler function
+func FTInitJson(c *Hermes.Cache) func(ctx *fiber.Ctx) error {
+	return func(ctx *fiber.Ctx) error {
 		var (
 			maxWords int
 			maxBytes int
@@ -77,60 +51,31 @@ func FTInitJson(c *Hermes.Cache) http.HandlerFunc {
 		)
 
 		// Convert the max words to an integer
-		if maxWordsStr := r.URL.Query().Get("maxwords"); len(maxWordsStr) == 0 {
-			w.Write(Utils.Error(errors.New("invalid max words")))
-			return
-		} else {
-			if maxWordsInt, err := strconv.Atoi(maxWordsStr); err != nil {
-				w.Write(Utils.Error(err))
-				return
-			} else {
-				maxWords = maxWordsInt
-			}
+		if err := Utils.GetMaxWordsParam(ctx, &maxWords); err != nil {
+			return ctx.Send(Utils.Error(err))
 		}
 
 		// Convert the max size bytes to an integer
-		if maxBytesStr := r.URL.Query().Get("maxbytes"); len(maxBytesStr) == 0 {
-			w.Write(Utils.Error(errors.New("invalid max size bytes")))
-			return
-		} else {
-			if maxBytesInt, err := strconv.Atoi(maxBytesStr); err != nil {
-				w.Write(Utils.Error(err))
-				return
-			} else {
-				maxBytes = maxBytesInt
-			}
+		if err := Utils.GetMaxBytesParam(ctx, &maxBytes); err != nil {
+			return ctx.Send(Utils.Error(err))
 		}
 
 		// Decode the schema
-		if schemaStr := r.URL.Query().Get("schema"); len(schemaStr) == 0 {
-			w.Write(Utils.Error(errors.New("invalid schema")))
-			return
-		} else {
-			if err := Utils.Decode(schemaStr, &schema); err != nil {
-				w.Write(Utils.Error(err))
-				return
-			}
+		if err := Utils.GetSchemaParam(ctx, &schema); err != nil {
+			return ctx.Send(Utils.Error(err))
 		}
 
 		// Get the json from the request url
-		if jsonStr := r.URL.Query().Get("json"); len(jsonStr) == 0 {
-			w.Write(Utils.Error(errors.New("invalid json")))
-			return
-		} else {
-			if err := Utils.Decode(jsonStr, &json); err != nil {
-				w.Write(Utils.Error(err))
-				return
-			}
+		if err := Utils.GetJSONParam(ctx, &json); err != nil {
+			return ctx.Send(Utils.Error(err))
 		}
 
 		// Initialize the full-text cache
 		if err := c.FTInitWithMap(json, maxWords, maxBytes, schema); err != nil {
-			w.Write(Utils.Error(err))
-			return
+			return ctx.Send(Utils.Error(err))
 		}
 
 		// Return success message
-		w.Write(Utils.Success())
+		return ctx.Send(Utils.Success("null"))
 	}
 }
