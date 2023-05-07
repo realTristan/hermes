@@ -91,7 +91,7 @@ func (c *Cache) search(query string, limit int, strict bool, schema map[string]b
 	)
 
 	// Check if the query is in the cache
-	if v, ok := c.ft.cache[words[0]]; !ok {
+	if v, ok := c.ft.storage[words[0]]; !ok {
 		return []map[string]interface{}{}, errors.New("invalid query")
 	} else {
 		smallest = len(v)
@@ -100,7 +100,7 @@ func (c *Cache) search(query string, limit int, strict bool, schema map[string]b
 	// Find the smallest words array
 	// Don't include the first or last words from the query
 	for i := 1; i < len(words)-1; i++ {
-		if v, ok := c.ft.cache[words[i]]; ok {
+		if v, ok := c.ft.storage[words[i]]; ok {
 			if len(v) < smallest {
 				smallest = len(v)
 				smallestIndex = i
@@ -109,7 +109,7 @@ func (c *Cache) search(query string, limit int, strict bool, schema map[string]b
 	}
 
 	// Loop through the indices
-	var keys []int = c.ft.cache[words[smallestIndex]]
+	var keys []int = c.ft.storage[words[smallestIndex]]
 	for i := 0; i < len(keys); i++ {
 		for key, value := range c.data[c.ft.indices[keys[i]]] {
 			if !schema[key] {
@@ -362,17 +362,17 @@ func (c *Cache) searchOneWord(query string, limit int, strict bool) []map[string
 	// straight from the cache
 	if strict {
 		// Check if the query is in the cache
-		if _, ok := c.ft.cache[query]; !ok {
+		if _, ok := c.ft.storage[query]; !ok {
 			return result
 		}
 
 		// Loop through the indices
-		for i := 0; i < len(c.ft.cache[query]); i++ {
+		for i := 0; i < len(c.ft.storage[query]); i++ {
 			if len(result) >= limit {
 				return result
 			}
 			var (
-				index int    = c.ft.cache[query][i]
+				index int    = c.ft.storage[query][i]
 				key   string = c.ft.indices[index]
 			)
 			result = append(result, c.data[key])
@@ -386,7 +386,7 @@ func (c *Cache) searchOneWord(query string, limit int, strict bool) []map[string
 	var alreadyAdded map[int]int = map[int]int{}
 
 	// Loop through the cache keys
-	for k, v := range c.ft.cache {
+	for k, v := range c.ft.storage {
 		switch {
 		case len(result) >= limit:
 			return result

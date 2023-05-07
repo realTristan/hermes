@@ -8,7 +8,7 @@ import (
 
 /*
 Fields:
-  - cache: a map of words to an array of indices where the word appears in the text
+  - storage: a map of words to an array of indices where the word appears in the text
   - indices: a map of indices to words
   - currentIndex: the current position in the map of indices to words
   - maxWords: the maximum number of words to cache
@@ -16,7 +16,7 @@ Fields:
   - initialized: a boolean flag indicating whether the struct has been initialized
 */
 type FullText struct {
-	cache        map[string][]int
+	storage      map[string][]int
 	indices      map[int]string
 	currentIndex int
 	maxWords     int
@@ -43,7 +43,7 @@ func (c *Cache) FTSetMaxBytes(maxBytes int) error {
 	}
 
 	// Check if the current size of the cache is greater than the new max size
-	if i, err := Utils.Size(c.ft.cache); err != nil {
+	if i, err := Utils.Size(c.ft.storage); err != nil {
 		return err
 	} else if i > maxBytes {
 		return errors.New("the current size of the full-text cache is greater than the new max size")
@@ -68,7 +68,7 @@ func (c *Cache) FTSetMaxWords(maxWords int) error {
 	}
 
 	// Check if the current size of the cache is greater than the new max size
-	if len(c.ft.cache) > maxWords {
+	if len(c.ft.storage) > maxWords {
 		return errors.New("the current size of the full-text cache is greater than the new max size")
 	}
 
@@ -91,8 +91,8 @@ func (c *Cache) FTCache() (map[string][]int, error) {
 	}
 
 	// Copy the cache map
-	var copy map[string][]int = make(map[string][]int, len(c.ft.cache))
-	copy = c.ft.cache
+	var copy map[string][]int = make(map[string][]int, len(c.ft.storage))
+	copy = c.ft.storage
 
 	// Return the copy
 	return copy, nil
@@ -110,7 +110,7 @@ func (c *Cache) FTCacheSize() (int, error) {
 	}
 
 	// Return the size of the cache map
-	return Utils.Size(c.ft.cache)
+	return Utils.Size(c.ft.storage)
 }
 
 // Get the full-text cache length
@@ -125,5 +125,5 @@ func (c *Cache) FTCacheLength() (int, error) {
 	}
 
 	// Return the size of the cache map
-	return len(c.ft.cache), nil
+	return len(c.ft.storage), nil
 }

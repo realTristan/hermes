@@ -13,7 +13,7 @@ import (
 func (ft *FullText) insert(data map[string]map[string]interface{}, schema map[string]bool) error {
 	// Create a copy of the existing full-text variables
 	var (
-		tempCache        map[string][]int = ft.cache
+		tempStorage      map[string][]int = ft.storage
 		tempIndices      map[int]string   = ft.indices
 		tempCurrentIndex int              = ft.currentIndex
 		tempKeys         map[string]int   = make(map[string]int)
@@ -50,12 +50,12 @@ func (ft *FullText) insert(data map[string]map[string]interface{}, schema map[st
 				// Loop through the words
 				for _, word := range strings.Split(strv, " ") {
 					if ft.maxWords > 0 {
-						if len(tempCache) > ft.maxWords {
-							return fmt.Errorf("full-text cache key limit reached (%d/%d keys). load cancelled", len(tempCache), ft.maxWords)
+						if len(tempStorage) > ft.maxWords {
+							return fmt.Errorf("full-text cache key limit reached (%d/%d keys). load cancelled", len(tempStorage), ft.maxWords)
 						}
 					}
 					if ft.maxBytes > 0 {
-						if cacheSize, err := Utils.Size(tempCache); err != nil {
+						if cacheSize, err := Utils.Size(tempStorage); err != nil {
 							return err
 						} else if cacheSize > ft.maxBytes {
 							return fmt.Errorf("full-text cache size limit reached (%d/%d bytes). load cancelled", cacheSize, ft.maxBytes)
@@ -67,21 +67,21 @@ func (ft *FullText) insert(data map[string]map[string]interface{}, schema map[st
 					case !Utils.IsAlphaNum(word):
 						word = Utils.RemoveNonAlphaNum(word)
 					}
-					if _, ok := tempCache[word]; !ok {
-						tempCache[word] = []int{tempCurrentIndex}
+					if _, ok := tempStorage[word]; !ok {
+						tempStorage[word] = []int{tempCurrentIndex}
 						continue
 					}
-					if Utils.ContainsInt(tempCache[word], tempKeys[cacheKey]) {
+					if Utils.ContainsInt(tempStorage[word], tempKeys[cacheKey]) {
 						continue
 					}
-					tempCache[word] = append(tempCache[word], tempKeys[cacheKey])
+					tempStorage[word] = append(tempStorage[word], tempKeys[cacheKey])
 				}
 			}
 		}
 	}
 
 	// Set the full-text cache to the temp map
-	ft.cache = tempCache
+	ft.storage = tempStorage
 	ft.indices = tempIndices
 	ft.currentIndex = tempCurrentIndex
 

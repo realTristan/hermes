@@ -31,10 +31,10 @@ func (c *Cache) info() (string, error) {
 
 	// Append the full-text info to the cache info string
 	s += "\nFull-Text Cache Info:\n-----------\n"
-	if wordCacheSize, err := Utils.Size(c.ft.cache); err != nil {
+	if wordCacheSize, err := Utils.Size(c.ft.storage); err != nil {
 		return s, err
 	} else {
-		s += fmt.Sprintf("Number of keys: %d\n", len(c.ft.cache))
+		s += fmt.Sprintf("Number of keys: %d\n", len(c.ft.storage))
 		s += fmt.Sprintf("Full-text cache size (bytes): %d\n", wordCacheSize)
 	}
 	return s, nil
@@ -55,11 +55,11 @@ func (c *Cache) InfoForTesting() (string, error) {
 
 	// Append the full-text info to the cache info string
 	s += "\nFull-Text Cache Info:\n-----------\n"
-	if wordCacheSize, err := Utils.Size(c.ft.cache); err != nil {
+	if wordCacheSize, err := Utils.Size(c.ft.storage); err != nil {
 		return s, err
 	} else {
-		s += fmt.Sprintf("Number of keys: %d\n", len(c.ft.cache))
-		s += fmt.Sprintf("Full-text cache: %v\n", c.ft.cache)
+		s += fmt.Sprintf("Number of keys: %d\n", len(c.ft.storage))
+		s += fmt.Sprintf("Full-text cache: %v\n", c.ft.storage)
 		s += fmt.Sprintf("Full-text cache size: %d\n", wordCacheSize)
 	}
 	return s, nil
