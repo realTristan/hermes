@@ -58,15 +58,7 @@ func HermesSearch() {
 	var cache *Hermes.Cache = Hermes.InitCache()
 
 	// Initialize the FT cache with a json file
-	cache.FTInitWithJson("../../../data/data_hash.json", -1, -1, map[string]bool{
-		"id":             false,
-		"components":     false,
-		"units":          false,
-		"description":    true,
-		"name":           true,
-		"pre_requisites": true,
-		"title":          true,
-	})
+	cache.FTInitWithJson("../../../data/data_hash.json", -1, -1)
 	var (
 		average int64 = 0
 		total   int   = 0

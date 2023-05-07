@@ -13,7 +13,6 @@ func FTInit(c *Hermes.Cache) func(ctx *fiber.Ctx) error {
 		var (
 			maxWords int
 			maxBytes int
-			schema   map[string]bool
 		)
 
 		// Convert the max words to an integer
@@ -26,13 +25,8 @@ func FTInit(c *Hermes.Cache) func(ctx *fiber.Ctx) error {
 			return ctx.Send(Utils.Error(err))
 		}
 
-		// Decode the schema
-		if err := Utils.GetSchemaParam(ctx, &schema); err != nil {
-			return ctx.Send(Utils.Error(err))
-		}
-
 		// Initialize the full-text cache
-		if err := c.FTInit(maxWords, maxBytes, schema); err != nil {
+		if err := c.FTInit(maxWords, maxBytes); err != nil {
 			return ctx.Send(Utils.Error(err))
 		}
 		return ctx.Send(Utils.Success("null"))
@@ -46,7 +40,6 @@ func FTInitJson(c *Hermes.Cache) func(ctx *fiber.Ctx) error {
 		var (
 			maxWords int
 			maxBytes int
-			schema   map[string]bool
 			json     map[string]map[string]interface{}
 		)
 
@@ -60,18 +53,13 @@ func FTInitJson(c *Hermes.Cache) func(ctx *fiber.Ctx) error {
 			return ctx.Send(Utils.Error(err))
 		}
 
-		// Decode the schema
-		if err := Utils.GetSchemaParam(ctx, &schema); err != nil {
-			return ctx.Send(Utils.Error(err))
-		}
-
 		// Get the json from the request url
 		if err := Utils.GetJSONParam(ctx, &json); err != nil {
 			return ctx.Send(Utils.Error(err))
 		}
 
 		// Initialize the full-text cache
-		if err := c.FTInitWithMap(json, maxWords, maxBytes, schema); err != nil {
+		if err := c.FTInitWithMap(json, maxWords, maxBytes); err != nil {
 			return ctx.Send(Utils.Error(err))
 		}
 

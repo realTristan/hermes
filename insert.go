@@ -10,7 +10,7 @@ import (
 // Insert a value in the full-text cache for the specified key.
 // This function is not thread-safe, and should only be called from
 // an exported function.
-func (ft *FullText) insert(data map[string]map[string]interface{}, schema map[string]bool) error {
+func (ft *FullText) insert(data map[string]map[string]interface{}) error {
 	// Create a copy of the existing full-text variables
 	var (
 		tempStorage      map[string][]int = ft.storage
@@ -35,11 +35,6 @@ func (ft *FullText) insert(data map[string]map[string]interface{}, schema map[st
 
 		// Loop through the map
 		for k, v := range cacheValue {
-			// Check if the key is in the schema
-			if !schema[k] {
-				continue
-			}
-
 			// Check if the value is a WFT
 			var strv string
 			if wft, ok := v.(WFT); ok {

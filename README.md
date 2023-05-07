@@ -103,7 +103,7 @@ func main() {
 	)
 
 	// Initialize the FT cache
-	if err := cache.FTInit(maxWords, maxBytes, schema); err != nil {
+	if err := cache.FTInit(maxWords, maxBytes); err != nil {
 		fmt.Println(err)
 	}
 	
@@ -241,7 +241,8 @@ About
 ➤ Intialize the full text cache.
 
 URL Parameters
-➤ None
+➤ maxbytes: int
+➤ maxwords: int
 ```
 
 [POST /ft/clean](https://github.com/realTristan/Hermes/blob/master/server/handlers/clean.go)

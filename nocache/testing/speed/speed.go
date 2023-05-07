@@ -55,15 +55,7 @@ func BasicSearch() {
 // Hermes Search
 func HermesSearch() {
 	// Initialize the cache
-	var cache, err = Hermes.InitWithJson("../../../data/data_array.json", map[string]bool{
-		"id":             false,
-		"components":     false,
-		"units":          false,
-		"pre_requisites": false,
-		"title":          false,
-		"description":    true,
-		"name":           true,
-	})
+	var cache, err = Hermes.InitWithJson("../../../data/data_array.json")
 	if err != nil {
 		panic(err)
 	}

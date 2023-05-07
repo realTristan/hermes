@@ -23,7 +23,7 @@ type FullText struct {
 
 // Initialize the full-text cache with the provided data.
 // This function is thread safe.
-func InitWithMap(data []map[string]interface{}, schema map[string]bool) (*FullText, error) {
+func InitWithMap(data []map[string]interface{}) (*FullText, error) {
 	var ft *FullText = &FullText{
 		mutex:     &sync.RWMutex{},
 		wordCache: make(map[string][]int),
@@ -32,7 +32,7 @@ func InitWithMap(data []map[string]interface{}, schema map[string]bool) (*FullTe
 	}
 
 	// Load the cache data
-	if err := ft.insert(data, schema); err != nil {
+	if err := ft.insert(data); err != nil {
 		return nil, err
 	}
 
@@ -45,27 +45,23 @@ func InitWithMap(data []map[string]interface{}, schema map[string]bool) (*FullTe
 
 // Initialize the full-text cache with the provided json file.
 // This function is thread safe.
-func InitWithJson(file string, schema map[string]bool) (*FullText, error) {
+func InitWithJson(file string) (*FullText, error) {
 	// Read the json data
 	if data, err := Utils.ReadSliceJson(file); err != nil {
 		return nil, err
 	} else {
-		return InitWithMap(data, schema)
+		return InitWithMap(data)
 	}
 }
 
 // Insert data into the full-text cache.
 // This function is not thread-safe, and should only be called from
 // an exported function.
-func (ft *FullText) insert(data []map[string]interface{}, schema map[string]bool) error {
+func (ft *FullText) insert(data []map[string]interface{}) error {
 	// Loop through the data
 	for i, item := range data {
 		// Loop through the map
 		for key, value := range item {
-			if !schema[key] {
-				continue
-			}
-
 			// Get the string value
 			var strv string
 			if _strv := fullTextMap(value); len(_strv) > 0 {

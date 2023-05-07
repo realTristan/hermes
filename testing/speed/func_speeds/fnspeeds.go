@@ -10,14 +10,9 @@ import (
 func main() {
 	// Important Variables
 	var (
-		cache        *Hermes.Cache   = Hermes.InitCache()
-		maxWords     int             = -1 // -1 for no limit
-		maxSizeBytes int             = -1 // -1 for no limit
-		schema       map[string]bool = map[string]bool{
-			"name":       true,
-			"age":        false,
-			"expiration": false,
-		}
+		cache        *Hermes.Cache = Hermes.InitCache()
+		maxWords     int           = -1 // -1 for no limit
+		maxSizeBytes int           = -1 // -1 for no limit
 	)
 
 	/* Initialize the FT cache
@@ -28,7 +23,7 @@ func main() {
 	// cache.Info()
 
 	// Initialize the FT cache
-	if err := cache.FTInit(maxWords, maxSizeBytes, schema); err != nil {
+	if err := cache.FTInit(maxWords, maxSizeBytes); err != nil {
 		fmt.Println(err)
 	}
 

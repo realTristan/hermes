@@ -21,9 +21,7 @@ func clean() {
 	cache.Set("user_id2", data)
 
 	// Initialize the FT cache
-	cache.FTInit(-1, -1, map[string]bool{
-		"name": true,
-	})
+	cache.FTInit(-1, -1)
 
 	// Search for a word in the cache
 	var result, _ = cache.SearchOneWord("tristan", 100, false)
