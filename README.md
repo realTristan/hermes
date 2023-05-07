@@ -3,7 +3,8 @@
 
 # Import
 ```
-go get github.com/realTristan/Hermes
+Go: go get github.com/realTristan/Hermes
+Python: See /wrappers/python
 ```
 
 # Example of NoCache Full-Text-Search
