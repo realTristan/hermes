@@ -38,5 +38,4 @@ func SetRoutes(app *fiber.App, cache *Hermes.Cache) {
 	app.Get("/ft/cache", handlers.FTWordCache(cache))
 	app.Get("/ft/cachesize", handlers.FTWordCacheSize(cache))
 	app.Get("/ft/isinitialized", handlers.FTIsInitialized(cache))
-	app.Post("/ft/add", handlers.FTAdd(cache))
 }

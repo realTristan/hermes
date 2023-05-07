@@ -21,7 +21,7 @@ func main() {
 	)
 
 	/* Initialize the FT cache
-	if err := cache.InitFTWithJson("../../data/data_indices.json", maxWords, maxSizeBytes, schema); err != nil {
+	if err := cache.InitFTWithJson("../../data/data_hash.json", maxWords, maxSizeBytes, schema); err != nil {
 		fmt.Println(err)
 	}
 	*/
@@ -32,19 +32,26 @@ func main() {
 		fmt.Println(err)
 	}
 
-	// The data for the user_id key
+	// The data for the user_id and user_id2 key
 	var data = map[string]interface{}{
-		"name": "tristan",
+		"name": Hermes.WithFT("tristan1"),
 		"age":  17,
+	}
+	var data2 = map[string]interface{}{
+		"name": map[string]interface{}{
+			"$hermes.full_text": true,
+			"value":             "tristan2",
+		},
+		"age": 17,
 	}
 
 	// Set the value in the cache
 	duration("Set", func() {
-		if err := cache.Set("user_id", data, true); err != nil {
+		if err := cache.Set("user_id", data); err != nil {
 			fmt.Println(err)
 		}
 
-		if err := cache.Set("user_id", data, true); err != nil {
+		if err := cache.Set("user_id2", data2); err != nil {
 			fmt.Println(err)
 		}
 	})

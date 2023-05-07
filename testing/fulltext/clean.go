@@ -16,9 +16,9 @@ func clean() {
 	}
 
 	// Set data
-	cache.Set("user_id1", data, true)
-	cache.Set("user_id1", data, true)
-	cache.Set("user_id2", data, true)
+	cache.Set("user_id1", data)
+	cache.Set("user_id1", data)
+	cache.Set("user_id2", data)
 
 	// Initialize the FT cache
 	cache.FTInit(-1, -1, map[string]bool{

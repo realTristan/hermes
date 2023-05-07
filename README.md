@@ -109,7 +109,7 @@ func main() {
 	
 	// The data for the user_id key
 	var data = map[string]interface{}{
-		"name":       "tristan",
+		"name":       Hermes.WithFT("tristan"),
 		"age":        17,
 		"expiration": time.Now(),
 	}
@@ -341,15 +341,6 @@ About
 
 URL Parameters
 ➤ None
-```
-
-[POST /ft/add](https://github.com/realTristan/Hermes/blob/master/server/handlers/add.go)
-```
-About
-➤ Add value data to the full-text cache. Key must already exist in the cache.
-
-URL Parameters
-➤ key: string
 ```
 
 # To-do

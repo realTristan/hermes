@@ -9,26 +9,27 @@ import (
 
 // Set a value in the cache for the specified key.
 // This function is thread-safe.
-func (c *Cache) Set(key string, value map[string]interface{}, fullText bool) error {
+func (c *Cache) Set(key string, value map[string]interface{}) error {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
-	return c.set(key, value, fullText)
+	return c.set(key, value)
 }
 
 // Set a value in the cache for the specified key.
 // This function is not thread-safe, and should only be called from
 // an exported function.
 // If fullText is true, set the value in the full-text cache as well.
-func (c *Cache) set(key string, value map[string]interface{}, fullText bool) error {
+func (c *Cache) set(key string, value map[string]interface{}) error {
 	if _, ok := c.data[key]; ok {
 		return fmt.Errorf("full-text cache key already exists (%s). please delete it before setting it another value", key)
 	}
 
 	// Update the value in the FT cache
-	if fullText && c.ft != nil {
-		if err := c.ft.set(key, value); err != nil {
+	if c.ft != nil {
+		if err := c.ftSet(key, value); err != nil {
 			return err
 		}
+		return nil
 	}
 
 	// Update the value in the cache
@@ -41,12 +42,12 @@ func (c *Cache) set(key string, value map[string]interface{}, fullText bool) err
 // Set a value in the full-text cache for the specified key.
 // This function is not thread-safe, and should only be called from
 // an exported function.
-func (ft *FullText) set(key string, value map[string]interface{}) error {
+func (c *Cache) ftSet(key string, value map[string]interface{}) error {
 	// Create a copy of the existing full-text variables
 	var (
-		tempStorage      map[string][]int = ft.storage
-		tempIndices      map[int]string   = ft.indices
-		tempCurrentIndex int              = ft.currentIndex
+		tempStorage      map[string][]int = c.ft.storage
+		tempIndices      map[int]string   = c.ft.indices
+		tempCurrentIndex int              = c.ft.currentIndex
 		tempKeys         map[string]int   = make(map[string]int)
 	)
 
@@ -63,49 +64,63 @@ func (ft *FullText) set(key string, value map[string]interface{}) error {
 	}
 
 	// Loop through the provided value
-	for _, v := range value {
-		if strv, ok := v.(string); ok {
-			// Clean the string value
-			strv = strings.TrimSpace(strv)
-			strv = Utils.RemoveDoubleSpaces(strv)
-			strv = strings.ToLower(strv)
+	for k, v := range value {
+		var strv string
+		// Check if the value is a WFT
+		if wft, ok := v.(WFT); ok {
+			strv = wft.value
+		} else if _strv := fullTextMap(v); len(_strv) > 0 {
+			strv = _strv
+		} else {
+			continue
+		}
 
-			// Loop through the words
-			for _, word := range strings.Split(strv, " ") {
-				if ft.maxWords > 0 {
-					if len(tempStorage) > ft.maxWords {
-						return fmt.Errorf("full-text cache key limit reached (%d/%d keys). set cancelled. cache reverted", len(tempStorage), ft.maxWords)
-					}
+		// Set the key in the provided value to the string wft value
+		value[k] = strv
+
+		// Clean the string value
+		strv = strings.TrimSpace(strv)
+		strv = Utils.RemoveDoubleSpaces(strv)
+		strv = strings.ToLower(strv)
+
+		// Loop through the words
+		for _, word := range strings.Split(strv, " ") {
+			if c.ft.maxWords > 0 {
+				if len(tempStorage) > c.ft.maxWords {
+					return fmt.Errorf("full-text cache key limit reached (%d/%d keys). set cancelled. cache reverted", len(tempStorage), c.ft.maxWords)
 				}
-				if ft.maxBytes > 0 {
-					if cacheSize, err := Utils.Size(tempStorage); err != nil {
-						return err
-					} else if cacheSize > ft.maxBytes {
-						return fmt.Errorf("full-text cache size limit reached (%d/%d bytes). set cancelled. cache reverted", cacheSize, ft.maxBytes)
-					}
-				}
-				switch {
-				case len(word) <= 1:
-					continue
-				case !Utils.IsAlphaNum(word):
-					word = Utils.RemoveNonAlphaNum(word)
-				}
-				if _, ok := tempStorage[word]; !ok {
-					tempStorage[word] = []int{tempCurrentIndex}
-					continue
-				}
-				if Utils.ContainsInt(tempStorage[word], tempKeys[key]) {
-					continue
-				}
-				tempStorage[word] = append(tempStorage[word], tempKeys[key])
 			}
+			if c.ft.maxBytes > 0 {
+				if cacheSize, err := Utils.Size(tempStorage); err != nil {
+					return err
+				} else if cacheSize > c.ft.maxBytes {
+					return fmt.Errorf("full-text cache size limit reached (%d/%d bytes). set cancelled. cache reverted", cacheSize, c.ft.maxBytes)
+				}
+			}
+			switch {
+			case len(word) <= 1:
+				continue
+			case !Utils.IsAlphaNum(word):
+				word = Utils.RemoveNonAlphaNum(word)
+			}
+			if _, ok := tempStorage[word]; !ok {
+				tempStorage[word] = []int{tempKeys[key]}
+				continue
+			}
+			if Utils.ContainsInt(tempStorage[word], tempKeys[key]) {
+				continue
+			}
+			tempStorage[word] = append(tempStorage[word], tempKeys[key])
 		}
 	}
 
 	// Set the full-text cache to the temp map
-	ft.storage = tempStorage
-	ft.indices = tempIndices
-	ft.currentIndex = tempCurrentIndex
+	c.ft.storage = tempStorage
+	c.ft.indices = tempIndices
+	c.ft.currentIndex = tempCurrentIndex
+
+	// Update the cache
+	c.data[key] = value
 
 	// Return nil for no errors
 	return nil

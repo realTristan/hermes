@@ -31,7 +31,7 @@ func Set(c *Hermes.Cache) func(ctx *fiber.Ctx) error {
 		}
 
 		// Set the value in the cache
-		if err := c.Set(key, value, ft); err != nil {
+		if err := c.Set(key, value); err != nil {
 			return ctx.Send(Utils.Error(err))
 		}
 		return ctx.Send(Utils.Success("null"))

@@ -28,15 +28,26 @@ func BasicSearch() {
 			// print the data
 			for _, val := range data {
 				for k, v := range val {
-					if strings.Contains(strings.ToLower(v.(string)), strings.ToLower("computer")) {
+					var data map[string]interface{}
+					if v, ok := v.(map[string]interface{}); !ok {
+						continue
+					} else {
+						data = v
+					}
+					// Get the value
+					var value string = data["value"].(string)
+
+					if strings.Contains(strings.ToLower(value), strings.ToLower("computer")) {
 						var _ = k
 					}
 				}
 			}
 			average += time.Since(startTime).Nanoseconds()
 		}
-		var averageNanos float64 = float64(average) / 100
-		var averageMillis float64 = averageNanos / 1000000
+		var (
+			averageNanos  float64 = float64(average) / 100
+			averageMillis float64 = averageNanos / 1000000
+		)
 		fmt.Println("Basic: Average time is: ", averageNanos, "ns or", averageMillis, "ms")
 	}
 }
@@ -56,29 +67,35 @@ func HermesSearch() {
 		"pre_requisites": true,
 		"title":          true,
 	})
-	var average int64 = 0
-	var total int = 0
+	var (
+		average int64 = 0
+		total   int   = 0
+	)
 	for i := 0; i < 100; i++ {
 		// Track the start time
-		var start time.Time = time.Now()
+		var (
+			start time.Time = time.Now()
 
-		// Search for a word in the cache
-		var res, _ = cache.Search("computer science", 100, false, map[string]bool{
-			"id":             false,
-			"components":     false,
-			"units":          false,
-			"description":    true,
-			"name":           true,
-			"pre_requisites": true,
-			"title":          true,
-		})
+			// Search for a word in the cache
+			res, _ = cache.Search("computer science", 100, false, map[string]bool{
+				"id":             false,
+				"components":     false,
+				"units":          false,
+				"description":    true,
+				"name":           true,
+				"pre_requisites": true,
+				"title":          true,
+			})
+		)
 
 		// Print the duration
 		average += time.Since(start).Nanoseconds()
 		total += len(res)
 	}
-	var averageNanos float64 = float64(average) / 100
-	var averageMillis float64 = averageNanos / 1000000
+	var (
+		averageNanos  float64 = float64(average) / 100
+		averageMillis float64 = averageNanos / 1000000
+	)
 	fmt.Println("Hermes: Average time is: ", averageNanos, "ns or", averageMillis, "ms")
 	fmt.Println("Hermes: Results: ", total)
 }

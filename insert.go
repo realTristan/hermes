@@ -40,43 +40,56 @@ func (ft *FullText) insert(data map[string]map[string]interface{}, schema map[st
 				continue
 			}
 
-			// Check if the value is a string
-			if strv, ok := v.(string); ok {
-				// Clean the string value
-				strv = strings.TrimSpace(strv)
-				strv = Utils.RemoveDoubleSpaces(strv)
-				strv = strings.ToLower(strv)
-
-				// Loop through the words
-				for _, word := range strings.Split(strv, " ") {
-					if ft.maxWords > 0 {
-						if len(tempStorage) > ft.maxWords {
-							return fmt.Errorf("full-text cache key limit reached (%d/%d keys). load cancelled", len(tempStorage), ft.maxWords)
-						}
-					}
-					if ft.maxBytes > 0 {
-						if cacheSize, err := Utils.Size(tempStorage); err != nil {
-							return err
-						} else if cacheSize > ft.maxBytes {
-							return fmt.Errorf("full-text cache size limit reached (%d/%d bytes). load cancelled", cacheSize, ft.maxBytes)
-						}
-					}
-					switch {
-					case len(word) <= 1:
-						continue
-					case !Utils.IsAlphaNum(word):
-						word = Utils.RemoveNonAlphaNum(word)
-					}
-					if _, ok := tempStorage[word]; !ok {
-						tempStorage[word] = []int{tempCurrentIndex}
-						continue
-					}
-					if Utils.ContainsInt(tempStorage[word], tempKeys[cacheKey]) {
-						continue
-					}
-					tempStorage[word] = append(tempStorage[word], tempKeys[cacheKey])
-				}
+			// Check if the value is a WFT
+			var strv string
+			if wft, ok := v.(WFT); ok {
+				strv = wft.value
+			} else if _strv := fullTextMap(v); len(_strv) > 0 {
+				strv = _strv
+			} else {
+				continue
 			}
+
+			// Set the key in the provided value to the string wft value
+			cacheValue[k] = strv
+
+			// Clean the string value
+			strv = strings.TrimSpace(strv)
+			strv = Utils.RemoveDoubleSpaces(strv)
+			strv = strings.ToLower(strv)
+
+			// Loop through the words
+			for _, word := range strings.Split(strv, " ") {
+				if ft.maxWords > 0 {
+					if len(tempStorage) > ft.maxWords {
+						return fmt.Errorf("full-text cache key limit reached (%d/%d keys). load cancelled", len(tempStorage), ft.maxWords)
+					}
+				}
+				if ft.maxBytes > 0 {
+					if cacheSize, err := Utils.Size(tempStorage); err != nil {
+						return err
+					} else if cacheSize > ft.maxBytes {
+						return fmt.Errorf("full-text cache size limit reached (%d/%d bytes). load cancelled", cacheSize, ft.maxBytes)
+					}
+				}
+				switch {
+				case len(word) <= 1:
+					continue
+				case !Utils.IsAlphaNum(word):
+					word = Utils.RemoveNonAlphaNum(word)
+				}
+				if _, ok := tempStorage[word]; !ok {
+					tempStorage[word] = []int{tempCurrentIndex}
+					continue
+				}
+				if Utils.ContainsInt(tempStorage[word], tempKeys[cacheKey]) {
+					continue
+				}
+				tempStorage[word] = append(tempStorage[word], tempKeys[cacheKey])
+			}
+
+			// Set the value in the cache data
+			data[cacheKey] = cacheValue
 		}
 	}
 

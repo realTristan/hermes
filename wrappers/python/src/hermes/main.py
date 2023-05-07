@@ -5,15 +5,19 @@ class Hermes:
     def __init__(self, addr: str):
         self.addr = addr
 
+    # With full text
+    def with_ft(self, value: str) -> dict[str, any]:
+        return {"value": value, "$hermes.full_text": True}
+
     # Set a value in the cache
-    def set(self, key: str, value: dict, full_text: bool) -> any:
+    def set(self, key: str, value: dict[str, any]) -> any:
         # convert the value to a json string
         json_value: str = json.dumps(value)
         # base64 encode the value
         b64_value: str = utils.tob64(json_value)
         # send the request
         r: requests.request = requests.post(
-            self.addr + "/set", params={"key": key, "value": b64_value, "ft": full_text})
+            self.addr + "/set", params={"key": key, "value": b64_value})
         return r.json()
     
     # Get a value from the cache
@@ -77,7 +81,7 @@ class Hermes:
         return r.json()
     
     # Search the full text cache
-    def ft_search(self, query: str, strict: bool, limit: int, schema: dict) -> any:
+    def ft_search(self, query: str, strict: bool, limit: int, schema: dict[str, bool]) -> any:
         # convert the schema to a json string
         json_schema: str = json.dumps(schema)
         # base64 encode the schema
@@ -95,7 +99,7 @@ class Hermes:
         return r.json()
     
     # Search value in the full text cache
-    def ft_search_value(self, query: str, limit: int, schema: dict) -> any:
+    def ft_search_value(self, query: str, limit: int, schema: dict[str, bool]) -> any:
         # convert the schema to a json string
         json_schema: str = json.dumps(schema)
         # base64 encode the schema
@@ -144,9 +148,3 @@ class Hermes:
         r: requests.request = requests.get(self.addr + "/ft/isinitialized")
         return r.json()
     
-    # Add to the full text cache
-    def ft_add(self, key: str) -> any:
-        # send the request
-        r: requests.request = requests.post(
-            self.addr + "/ft/add", params={"key": key})
-        return r.json()

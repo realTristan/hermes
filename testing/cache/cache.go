@@ -11,15 +11,15 @@ func main() {
 
 	// Test Set, Get, Delete, Clean, Length, Values, Keys, and Exists
 	var data = map[string]interface{}{
-		"name": "tristan",
+		"name": Hermes.WithFT("Tristan"),
 		"age":  17,
 	}
 
 	// Set data
-	cache.Set("user_id1", data, true)
-	cache.Set("user_id1", data, true)
-	cache.Set("user_id2", data, true)
-	cache.Set("user_id3", data, true)
+	cache.Set("user_id1", data)
+	cache.Set("user_id1", data)
+	cache.Set("user_id2", data)
+	cache.Set("user_id3", data)
 
 	// Get data
 	fmt.Println(cache.Get("user_id1"))

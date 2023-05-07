@@ -24,9 +24,9 @@ func delete() {
 	fmt.Println(cache.InfoForTesting())
 
 	// Set data
-	cache.Set("user_id1", data, true)
-	cache.Set("user_id1", data, true)
-	cache.Set("user_id2", data, true)
+	cache.Set("user_id1", data)
+	cache.Set("user_id1", data)
+	cache.Set("user_id2", data)
 
 	// print cache info
 	fmt.Println(cache.InfoForTesting())
