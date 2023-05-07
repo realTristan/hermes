@@ -4,7 +4,7 @@
 # Import
 ```
 Go: go get github.com/realTristan/Hermes
-Python: See /wrappers/python
+Python: See /wrappers/python/src
 ```
 
 # Example of NoCache Full-Text-Search
