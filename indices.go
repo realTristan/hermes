@@ -5,7 +5,7 @@ package cache
 // cause the cache to use a lot of memory. This function resets the indices
 // to be sequential, starting from 0.
 // This function is thread-safe.
-func (c *Cache) SequenceIndices() {
+func (c *Cache) FTSequenceIndices() {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
 	c.ft.sequenceIndices()
