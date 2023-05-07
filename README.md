@@ -92,7 +92,7 @@ Dataset Map Size: ≈ 2.3MB
 ```
 
 ```json
-Example Dataset (data.json):
+Example Dataset (data.json) [ONLY IF USING cache.FTInitWithJson()]:
 {
     "user_id": {
 		"age": 17,
