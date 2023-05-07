@@ -22,7 +22,7 @@ var ft *Hermes.FullText
 
 // Main function
 func main() {
-	ft, _ = Hermes.InitWithJson("../data/data_array.json", map[string]bool{
+	ft, _ = Hermes.InitWithJson("../../../data/data_array.json", map[string]bool{
 		"id":             false,
 		"components":     false,
 		"units":          false,

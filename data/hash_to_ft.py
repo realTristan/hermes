@@ -1,6 +1,6 @@
 import json
 
-data: dict = json.load(open("data_hash2.json"))
+data: dict = json.load(open("data_hash.json"))
 for k, v in data.items():
     data[k]["description"] = {
         "$hermes.full_text": True,

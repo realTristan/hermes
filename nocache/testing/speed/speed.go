@@ -29,8 +29,17 @@ func BasicSearch() {
 			for _, val := range data {
 				// Iterate over the map
 				for k, v := range val {
+					var data map[string]interface{}
+					if v, ok := v.(map[string]interface{}); !ok {
+						continue
+					} else {
+						data = v
+					}
+					// Get the value
+					var value string = data["value"].(string)
+
 					// Check if the value contains the search term
-					if strings.Contains(strings.ToLower(v), strings.ToLower("computer")) {
+					if strings.Contains(strings.ToLower(value), strings.ToLower("computer")) {
 						var _ = k
 					}
 				}
@@ -85,8 +94,8 @@ func HermesSearch() {
 }
 
 // Read a json file
-func readJson(file string) ([]map[string]string, error) {
-	var v []map[string]string = []map[string]string{}
+func readJson(file string) ([]map[string]interface{}, error) {
+	var v []map[string]interface{} = []map[string]interface{}{}
 
 	// Read the json data
 	if data, err := os.ReadFile(file); err != nil {

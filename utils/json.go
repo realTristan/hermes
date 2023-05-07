@@ -6,8 +6,8 @@ import (
 )
 
 // Read a json file and return the data as a map.
-func ReadSliceJson(file string) ([]map[string]string, error) {
-	var v []map[string]string = []map[string]string{}
+func ReadSliceJson(file string) ([]map[string]interface{}, error) {
+	var v []map[string]interface{} = []map[string]interface{}{}
 
 	// Read the json data
 	if data, err := os.ReadFile(file); err != nil {

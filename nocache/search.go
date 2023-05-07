@@ -29,12 +29,12 @@ Example Usage:
 	results := ft.Search("hello world", 10, false, map[string]bool{"title": true, "content": true})
 	fmt.Println(results)
 */
-func (ft *FullText) Search(query string, limit int, strict bool, schema map[string]bool) ([]map[string]string, error) {
+func (ft *FullText) Search(query string, limit int, strict bool, schema map[string]bool) ([]map[string]interface{}, error) {
 	switch {
 	case len(query) == 0:
-		return []map[string]string{}, errors.New("invalid query")
+		return []map[string]interface{}{}, errors.New("invalid query")
 	case limit < 1:
-		return []map[string]string{}, errors.New("invalid limit")
+		return []map[string]interface{}{}, errors.New("invalid limit")
 	}
 
 	// Convert the query to lowercase
@@ -62,19 +62,19 @@ Parameters:
     then only entries that have that key will be included in the search result. If a key is not present in the map, or its value is false, then that key will be ignored.
 
 Returns:
-  - []map[string]string: An array of maps representing the search results. Each map contains key-value pairs that match the search query and the specified schema.
+  - []map[string]interface{}: An array of maps representing the search results. Each map contains key-value pairs that match the search query and the specified schema.
     If no results are found, an empty array is returned.
 
 Note: The search is case-insensitive.
 
 Example usage:
 
-	ft := &FullText{data: []map[string]string{{"key1": "value1", "key2": "value2"}}, wordCache: map[string][]int{"value1": {0}}
+	ft := &FullText{data: []map[string]interface{}{{"key1": "value1", "key2": "value2"}}, wordCache: map[string][]int{"value1": {0}}
 	schema := map[string]bool{"key1": true}
 	result := ft.search("value1", 10, false, schema)
 	fmt.Println(result) // Output: [{key1:value1 key2:value2}]
 */
-func (ft *FullText) search(query string, limit int, strict bool, schema map[string]bool) ([]map[string]string, error) {
+func (ft *FullText) search(query string, limit int, strict bool, schema map[string]bool) ([]map[string]interface{}, error) {
 	// Split the query into separate words
 	var words []string = strings.Split(strings.TrimSpace(query), " ")
 	if len(words) == 1 {
@@ -83,11 +83,11 @@ func (ft *FullText) search(query string, limit int, strict bool, schema map[stri
 
 	// Check if the query is in the cache
 	if _, ok := ft.wordCache[words[0]]; !ok {
-		return []map[string]string{}, errors.New("invalid query")
+		return []map[string]interface{}{}, errors.New("invalid query")
 	}
 
 	// Define variables
-	var result []map[string]string = []map[string]string{}
+	var result []map[string]interface{} = []map[string]interface{}{}
 
 	// Variables for storing the smallest words array
 	var (
@@ -97,7 +97,7 @@ func (ft *FullText) search(query string, limit int, strict bool, schema map[stri
 
 	// Check if the query is in the cache
 	if v, ok := ft.wordCache[words[0]]; !ok {
-		return []map[string]string{}, errors.New("invalid query")
+		return []map[string]interface{}{}, errors.New("invalid query")
 	} else {
 		smallest = len(v)
 	}
@@ -117,13 +117,17 @@ func (ft *FullText) search(query string, limit int, strict bool, schema map[stri
 	var indices []int = ft.wordCache[words[smallestIndex]]
 	for i := 0; i < len(indices); i++ {
 		for key, value := range ft.data[indices[i]] {
-			switch {
-			// Check if the key is in the schema
-			case !schema[key]:
+			if v, ok := value.(string); !ok {
 				continue
-			// Check if the value contains the query
-			case strings.Contains(strings.ToLower(value), query):
-				result = append(result, ft.data[i])
+			} else {
+				switch {
+				// Check if the key is in the schema
+				case !schema[key]:
+					continue
+				// Check if the value contains the query
+				case strings.Contains(strings.ToLower(v), query):
+					result = append(result, ft.data[i])
+				}
 			}
 		}
 	}
@@ -143,7 +147,7 @@ Parameters:
   - limit (int): The maximum number of search results to return. If the number of matching results exceeds this limit, the excess results will be ignored.
 
 Returns:
-  - []map[string]string: An array of maps representing the search results. Each map contains key-value pairs from the entry
+  - []map[string]interface{}: An array of maps representing the search results. Each map contains key-value pairs from the entry
     in the data that matched the search query. If no results are found, an empty array is returned.
   - error: An error object. If the key is not found in the data, an error will be returned.
 
@@ -155,18 +159,18 @@ write lock is released.
 
 Example usage:
 
-	ft := &FullText{data: []map[string]string{{"key1": `{"name": "John", "age": 30}`, "key2": "value2"}, {"key1": `{"name": "Jane", "age": 25}`, "key2": "value4"}}}
+	ft := &FullText{data: []map[string]interface{}{{"key1": `{"name": "John", "age": 30}`, "key2": "value2"}, {"key1": `{"name": "Jane", "age": 25}`, "key2": "value4"}}}
 	result, err := ft.SearchValuesWithKey("John", "key1", 10)
 	fmt.Println(result) // Output: [{key1:{"name": "John", "age": 30}, key2:value2}]
 */
-func (ft *FullText) SearchValuesWithKey(query string, key string, limit int) ([]map[string]string, error) {
+func (ft *FullText) SearchValuesWithKey(query string, key string, limit int) ([]map[string]interface{}, error) {
 	switch {
 	case len(key) == 0:
-		return []map[string]string{}, errors.New("invalid key")
+		return []map[string]interface{}{}, errors.New("invalid key")
 	case len(query) == 0:
-		return []map[string]string{}, errors.New("invalid query")
+		return []map[string]interface{}{}, errors.New("invalid query")
 	case limit < 1:
-		return []map[string]string{}, errors.New("invalid limit")
+		return []map[string]interface{}{}, errors.New("invalid limit")
 	}
 
 	// Set the query to lowercase
@@ -191,24 +195,28 @@ Parameters:
 
 Returns:
 
-  - []map[string]string: An array of maps representing the search results. Each map contains key-value pairs
+  - []map[string]interface{}: An array of maps representing the search results. Each map contains key-value pairs
     from the entry in the data that matched the search query. If no results are found, an empty array is returned.
 
   - error: An error object. If no error occurs, this will be nil.
 
 Note: The search is case-insensitive.
 */
-func (ft *FullText) searchValuesWithKey(query string, key string, limit int) []map[string]string {
+func (ft *FullText) searchValuesWithKey(query string, key string, limit int) []map[string]interface{} {
 	// Define variables
-	var result []map[string]string = []map[string]string{}
+	var result []map[string]interface{} = []map[string]interface{}{}
 
 	// Iterate over the query result
 	for i := 0; i < len(ft.data); i++ {
-		switch {
-		case len(result) >= limit:
-			return result
-		case strings.Contains(strings.ToLower(ft.data[i][key]), query):
-			result = append(result, ft.data[i])
+		if v, ok := ft.data[i][key].(string); !ok {
+			continue
+		} else {
+			switch {
+			case len(result) >= limit:
+				return result
+			case strings.Contains(strings.ToLower(v), query):
+				result = append(result, ft.data[i])
+			}
 		}
 	}
 
@@ -228,7 +236,7 @@ Parameters:
     Only keys that have a value of true in the schema will be searched. If a key is not present in the schema, it will not be searched.
 
 Returns:
-  - []map[string]string: An array of maps representing the search results. Each map contains key-value pairs from the entry in
+  - []map[string]interface{}: An array of maps representing the search results. Each map contains key-value pairs from the entry in
     the data that matched the search query. If no results are found, an empty array is returned.
   - error: An error object. If no error occurs, this will be nil.
 
@@ -236,17 +244,17 @@ Note: The search is case-insensitive.
 
 Example usage:
 
-	ft := &FullText{data: []map[string]string{{"key1": `{"name": "John", "age": 30}`, "key2": "value2"}, {"key1": `{"name": "Jane", "age": 25}`, "key2": "value4"}}}
+	ft := &FullText{data: []map[string]interface{}{{"key1": `{"name": "John", "age": 30}`, "key2": "value2"}, {"key1": `{"name": "Jane", "age": 25}`, "key2": "value4"}}}
 	schema := map[string]bool{"key1": true, "key2": false}
 	result := ft.SearchValues("John", 10, schema)
 	fmt.Println(result) // Output: [{key1:{"name": "John", "age": 30}, key2:value2}]
 */
-func (ft *FullText) SearchValues(query string, limit int, schema map[string]bool) ([]map[string]string, error) {
+func (ft *FullText) SearchValues(query string, limit int, schema map[string]bool) ([]map[string]interface{}, error) {
 	switch {
 	case len(query) == 0:
-		return []map[string]string{}, errors.New("invalid query")
+		return []map[string]interface{}{}, errors.New("invalid query")
 	case limit < 1:
-		return []map[string]string{}, errors.New("invalid limit")
+		return []map[string]interface{}{}, errors.New("invalid limit")
 	}
 
 	// Set the query to lowercase
@@ -268,26 +276,30 @@ Parameters:
     Only keys that have a value of true in the schema will be searched. If a key is not present in the schema, it will not be searched.
 
 Returns:
-  - []map[string]string: An array of maps representing the search results. Each map contains key-value pairs
+  - []map[string]interface{}: An array of maps representing the search results. Each map contains key-value pairs
     from the entry in the data that matched the search query. If no results are found, an empty array is returned.
 
 Note: The search is case-insensitive.
 */
-func (ft *FullText) searchValues(query string, limit int, schema map[string]bool) []map[string]string {
+func (ft *FullText) searchValues(query string, limit int, schema map[string]bool) []map[string]interface{} {
 	// Define variables
-	var result []map[string]string = []map[string]string{}
+	var result []map[string]interface{} = []map[string]interface{}{}
 
 	// Iterate over the query result
 	for i := 0; i < len(ft.data); i++ {
 		// Iterate over the keys and values for the data
 		for key, value := range ft.data[i] {
-			switch {
-			case len(result) >= limit:
-				return result
-			case !schema[key]:
+			if v, ok := value.(string); !ok {
 				continue
-			case strings.Contains(strings.ToLower(value), query):
-				result = append(result, ft.data[i])
+			} else {
+				switch {
+				case len(result) >= limit:
+					return result
+				case !schema[key]:
+					continue
+				case strings.Contains(strings.ToLower(v), query):
+					result = append(result, ft.data[i])
+				}
 			}
 		}
 	}
@@ -309,7 +321,7 @@ Parameters:
     also return entries where the query appears as a substring in any value.
 
 Returns:
-  - []map[string]string: An array of maps representing the search results. Each map contains key-value pairs
+  - []map[string]interface{}: An array of maps representing the search results. Each map contains key-value pairs
     from the entry in the data that matched the search query. If no results are found, an empty array is returned.
   - error: An error object. If no error occurs, this will be nil.
 
@@ -317,16 +329,16 @@ Note: The search is case-insensitive.
 
 Example usage:
 
-	ft := &FullText{data: []map[string]string{{"key1": "value1", "key2": "value2"}, {"key1": "hello world", "key2": "value4"}}}
+	ft := &FullText{data: []map[string]interface{}{{"key1": "value1", "key2": "value2"}, {"key1": "hello world", "key2": "value4"}}}
 	result := ft.SearchOneWord("hello", 10, false)
 	fmt.Println(result) // Output: [{key1:hello world, key2:value4}]
 */
-func (ft *FullText) SearchOneWord(query string, limit int, strict bool) ([]map[string]string, error) {
+func (ft *FullText) SearchOneWord(query string, limit int, strict bool) ([]map[string]interface{}, error) {
 	switch {
 	case len(query) == 0:
-		return []map[string]string{}, errors.New("invalid query")
+		return []map[string]interface{}{}, errors.New("invalid query")
 	case limit < 1:
-		return []map[string]string{}, errors.New("invalid limit")
+		return []map[string]interface{}{}, errors.New("invalid limit")
 	}
 
 	// Set the query to lowercase
@@ -349,16 +361,16 @@ Parameters:
   - strict (bool): if true, only exact matches will be returned. If false, partial matches will also be returned.
 
 Returns:
-  - []map[string]string: a list of maps, where each map is a row from the data that matches the query.
+  - []map[string]interface{}: a list of maps, where each map is a row from the data that matches the query.
 
 Note:
   - If the query is empty, the function returns an empty list.
   - If strict is true and the query is not found in the data, an empty list is returned.
   - If strict is false and no matches are found, an empty list is returned.
 */
-func (ft *FullText) searchOneWord(query string, limit int, strict bool) []map[string]string {
+func (ft *FullText) searchOneWord(query string, limit int, strict bool) []map[string]interface{} {
 	// Define the result variable
-	var result []map[string]string = []map[string]string{}
+	var result []map[string]interface{} = []map[string]interface{}{}
 
 	// If the user wants a strict search, just return the result
 	// straight from the cache
