@@ -21,6 +21,20 @@ Dataset Map Size: ≈ 2.3MB
 ?q=computer&limit=100&strict=true: 12.102µs
 ```
 
+```json
+Example Dataset (data.json):
+[
+    {
+		"id": 1,
+        "name": {
+            "$hermes.full_text": true,
+            "value": "Tristan Simpson"
+        },
+    },
+]
+
+```
+
 ```go
 package main
 
@@ -75,6 +89,20 @@ Dataset Map Size: ≈ 2.3MB
 ?q=computer&limit=100&strict=false: 263.7µs
 
 ?q=computer&limit=100&strict=true: 40.84µs
+```
+
+```json
+Example Dataset (data.json):
+{
+    "user_id": {
+		"age": 17,
+        "name": {
+            "$hermes.full_text": true,
+            "value": "Tristan Simpson"
+        },
+    },
+}
+
 ```
 
 ```go
