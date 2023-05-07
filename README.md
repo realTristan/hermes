@@ -131,7 +131,8 @@ func main() {
 }
 ```
 
-## App Usage
+# CLI
+## Usage
 ```
 hermes serve -p 6000
 ```
