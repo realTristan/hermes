@@ -131,14 +131,6 @@ func main() {
 }
 ```
 
-# API and CLI App
-## Docker Container
-```
-$ git clone https://github.com/realTristan/Hermes.git
-$ docker build -t hermes .
-$ docker run -p 6000:6000 hermes
-```
-
 ## App Usage
 ```
 hermes serve -p 6000
