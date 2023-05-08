@@ -60,7 +60,7 @@ func main() {
 	// Define variables
 	var (
 		// Initialize the full text
-		ft, _ = Hermes.InitWithJson("data.json", schema)
+		ft, _ = Hermes.InitWithJson("data.json")
 
 		// Track the start time
 		start time.Time = time.Now()
@@ -91,7 +91,7 @@ Dataset Map Size: ≈ 2.3MB
 ```
 
 ```json
-Example Dataset (data.json) [ONLY IF USING cache.FTInitWithJson()]:
+Example Dataset (data.json) [USE WITH cache.FTInitWithJson()]:
 {
     "user_id": {
 	"age": 17,
