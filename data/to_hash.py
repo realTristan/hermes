@@ -4,7 +4,7 @@ import json, hashlib, time
 data = {}
 
 # // Iterate over the data
-for i, v in enumerate(json.load(open("../data/data_original.json", "r"))):
+for i, v in enumerate(json.load(open("../data/data.json", "r"))):
   while hash in data:
     hash: str = hashlib.sha1(str(time.time_ns()).encode("utf-8")).hexdigest()
     data[hash] = v

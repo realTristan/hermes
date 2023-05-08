@@ -16,7 +16,7 @@ func fullTextMap(value interface{}) string {
 	if _, ok := v["$hermes.full_text"]; !ok {
 		return ""
 	}
-	if _, ok := v["value"]; !ok {
+	if _, ok := v["$hermes.value"]; !ok {
 		return ""
 	}
 
@@ -24,7 +24,7 @@ func fullTextMap(value interface{}) string {
 	if _, ok := v["$hermes.full_text"].(bool); !ok {
 		return ""
 	}
-	if _, ok := v["value"].(string); !ok {
+	if _, ok := v["$hermes.value"].(string); !ok {
 		return ""
 	}
 
@@ -34,5 +34,5 @@ func fullTextMap(value interface{}) string {
 	}
 
 	// Return the value
-	return v["value"].(string)
+	return v["$hermes.value"].(string)
 }

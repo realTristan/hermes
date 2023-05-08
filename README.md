@@ -27,7 +27,7 @@ Example Dataset (data.json):
 	"id": 1,
         "name": {
             "$hermes.full_text": true,
-            "value": "Tristan Simpson"
+            "$hermes.value": "Tristan Simpson"
         },
     },
 ]
@@ -97,7 +97,7 @@ Example Dataset (data.json) [ONLY IF USING cache.FTInitWithJson()]:
 	"age": 17,
         "name": {
             "$hermes.full_text": true,
-            "value": "Tristan Simpson"
+            "$hermes.value": "Tristan Simpson"
         },
     },
 }
