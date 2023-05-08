@@ -7,7 +7,7 @@ class Hermes:
 
     # With full text
     def with_ft(self, value: str) -> dict[str, any]:
-        return {"value": value, "$hermes.full_text": True}
+        return {"$hermes.value": value, "$hermes.full_text": True}
 
     # Set a value in the cache
     def set(self, key: str, value: dict[str, any]) -> any:
