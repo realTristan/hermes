@@ -36,18 +36,18 @@ import (
 )
 
 func main() {
+	// Initialize the full-text cache
+	var ft, _ = Hermes.InitWithJson("data.json")
+	
 	// Create a schema. These are the fields that will be searched.
 	var schema = map[string]bool{
 		"name": true,
 		"age": false,
 	}
 
-	// Initialize the full-text cache
-	var ft, _ = Hermes.InitWithJson("data.json")
-
 	// Search for a word in the cache
 	// @params: query, limit, strict
-	var res, _ = ft.Search("computer", 100, false, schema)
+	var res, _ = ft.Search("tristan", 100, false, schema)
 	fmt.Println(res)
 }
 ```
@@ -95,13 +95,6 @@ func main() {
 	// Initialize the full-text cache
 	// MaxWords: 10, MaxBytes: -1 (no limit)
 	cache.FTInit(10, -1)
-
-	// The keys you want to search through in the full-text search
-	var schema map[string]bool = map[string]bool{
-		"name":       true,
-		"age":        false,
-		"expiration": false,
-	}
 	
 	// Set the value in the cache
 	cache.Set("user_id", map[string]interface{}{
@@ -109,6 +102,13 @@ func main() {
 		"age":        17,
 		"expiration": time.Now(),
 	})
+	
+	// The keys you want to search through in the full-text search
+	var schema map[string]bool = map[string]bool{
+		"name":       true,
+		"age":        false,
+		"expiration": false,
+	}
 
 	// Search for a word in the cache and print the result
 	var result, _ = cache.Search("tristan", 100, false, schema)
