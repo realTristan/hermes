@@ -42,7 +42,7 @@ func main() {
 	// Create a schema. These are the fields that will be searched.
 	var schema = map[string]bool{
 		"name": true,
-		"age": false,
+		"id": false,
 	}
 
 	// Search for a word in the cache
