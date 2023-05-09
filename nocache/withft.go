@@ -8,31 +8,21 @@ func fullTextMap(value interface{}) string {
 
 	// Verify that the map has the correct length
 	var v map[string]interface{} = value.(map[string]interface{})
-	if len(v) == 0 || len(v) > 2 {
+	if len(v) != 2 {
 		return ""
 	}
 
 	// Verify that the map has the correct keys
-	if _, ok := v["$hermes.full_text"]; !ok {
-		return ""
+	if ft, ok := v["$hermes.full_text"]; ok {
+		if ft, ok := ft.(bool); ok {
+			if !ft {
+				return ""
+			} else if v, ok := v["$hermes.value"]; ok {
+				if v, ok := v.(string); ok {
+					return v
+				}
+			}
+		}
 	}
-	if _, ok := v["$hermes.value"]; !ok {
-		return ""
-	}
-
-	// Verify that the map has the correct value types
-	if _, ok := v["$hermes.full_text"].(bool); !ok {
-		return ""
-	}
-	if _, ok := v["$hermes.value"].(string); !ok {
-		return ""
-	}
-
-	// Check if the full-text value is true
-	if !v["$hermes.full_text"].(bool) {
-		return ""
-	}
-
-	// Return the value
-	return v["$hermes.value"].(string)
+	return ""
 }

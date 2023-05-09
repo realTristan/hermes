@@ -35,7 +35,7 @@ func BasicSearch() {
 						data = v
 					}
 					// Get the value
-					var value string = data["value"].(string)
+					var value string = data["$hermes.value"].(string)
 
 					if strings.Contains(strings.ToLower(value), strings.ToLower("computer")) {
 						var _ = k
