@@ -146,6 +146,33 @@ Windows:
   $ set PATH=%PATH%;C:\hermes.exe
 ```
 
+## Custom Implementation
+```go
+import (
+	"log"
+	"os"
+	
+	"github.com/gofiber/fiber/v2"
+	Hermes "github.com/realTristan/Hermes"
+	server "github.com/realTristan/Hermes/server"
+)
+
+// Main function
+func main() {
+	// Initialize the cache
+	var cache *Hermes.Cache = Hermes.InitCache()
+
+	// Initialize a new fiber app
+	var app *fiber.App = fiber.New()
+	
+	// Set the Hermes API Routes
+	server.SetRoutes(app, cache)
+
+	// Listen on the port
+	log.Fatal(app.Listen(":6000"))
+}
+```
+
 # API
 ## Cache
 
