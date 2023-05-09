@@ -52,7 +52,7 @@ func main() {
 }
 ```
 
-## Example Dataset (data.json):
+## data.json
 ```json
 [
     {
@@ -116,7 +116,7 @@ func main() {
 }
 ```
 
-## Example Dataset (data.json) [USED WITH cache.FTInitWithJson(fileName)]:
+## data.json => Used with cache.FTInitWithJson()
 ```json
 {
     "user_id": {
