@@ -35,7 +35,6 @@ import (
 	Hermes "github.com/realTristan/Hermes/nocache"
 )
 
-// Main function
 func main() {
 	// Create a schema. These are the fields that will be searched.
 	var schema = map[string]bool{
@@ -157,7 +156,6 @@ import (
 	server "github.com/realTristan/Hermes/server"
 )
 
-// Main function
 func main() {
 	// Initialize the cache
 	var cache *Hermes.Cache = Hermes.InitCache()
