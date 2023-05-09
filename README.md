@@ -116,7 +116,8 @@ func main() {
 }
 ```
 
-## data.json => Used with cache.FTInitWithJson()
+## data.json
+### Used with cache.FTInitWithJson()
 ```json
 {
     "user_id": {
