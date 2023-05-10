@@ -34,29 +34,29 @@ func FTSetMaxBytes(c *Hermes.Cache) func(ctx *fiber.Ctx) error {
 	}
 }
 
-// Set the full-text max words
+// Set the full-text maximum length
 // This is a handler function that returns a fiber context handler function
-func FTSetMaxWords(c *Hermes.Cache) func(ctx *fiber.Ctx) error {
+func FTSetMaxLength(c *Hermes.Cache) func(ctx *fiber.Ctx) error {
 	return func(ctx *fiber.Ctx) error {
 		// Get the value from the query
 		var value int
-		if err := Utils.GetMaxWordsParam(ctx, &value); err != nil {
+		if err := Utils.GetMaxLengthParam(ctx, &value); err != nil {
 			return ctx.Send(Utils.Error(err))
 		}
 
-		// Set the max words
-		if err := c.FTSetMaxWords(value); err != nil {
+		// Set the max length
+		if err := c.FTSetMaxLength(value); err != nil {
 			return ctx.Send(Utils.Error(err))
 		}
 		return ctx.Send(Utils.Success("null"))
 	}
 }
 
-// Get the full-text cache
+// Get the full-text storage
 // This is a handler function that returns a fiber context handler function
-func FTWordCache(c *Hermes.Cache) func(ctx *fiber.Ctx) error {
+func FTStorage(c *Hermes.Cache) func(ctx *fiber.Ctx) error {
 	return func(ctx *fiber.Ctx) error {
-		if data, err := c.FTCache(); err != nil {
+		if data, err := c.FTStorage(); err != nil {
 			return ctx.Send(Utils.Error(err))
 		} else {
 			// Marshal the data
@@ -69,11 +69,23 @@ func FTWordCache(c *Hermes.Cache) func(ctx *fiber.Ctx) error {
 	}
 }
 
-// Get the full-text cache size
+// Get the full-text sotrage length
 // This is a handler function that returns a fiber context handler function
-func FTWordCacheSize(c *Hermes.Cache) func(ctx *fiber.Ctx) error {
+func FTStorageLength(c *Hermes.Cache) func(ctx *fiber.Ctx) error {
 	return func(ctx *fiber.Ctx) error {
-		if size, err := c.FTCacheSize(); err != nil {
+		if length, err := c.FTStorageLength(); err != nil {
+			return ctx.Send(Utils.Error(err))
+		} else {
+			return ctx.Send(Utils.Success(length))
+		}
+	}
+}
+
+// Get the full-text storage size
+// This is a handler function that returns a fiber context handler function
+func FTStorageSize(c *Hermes.Cache) func(ctx *fiber.Ctx) error {
+	return func(ctx *fiber.Ctx) error {
+		if size, err := c.FTStorageSize(); err != nil {
 			return ctx.Send(Utils.Error(err))
 		} else {
 			return ctx.Send(Utils.Success(size))

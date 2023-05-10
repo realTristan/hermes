@@ -13,5 +13,5 @@ func search() {
 	cache.FTInit(-1, -1)
 
 	// print cache info
-	fmt.Println(cache.InfoForTesting())
+	fmt.Println(cache.InfoStringForTesting())
 }

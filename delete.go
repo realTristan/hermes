@@ -23,7 +23,7 @@ func (c *Cache) delete(key string) {
 	delete(c.data, key)
 }
 
-// Delete a key from the full-text cache.
+// Delete a key from the full-text storage.
 // This function is not thread-safe, and should only be called from
 // an exported function.
 func (ft *FullText) delete(key string) {
@@ -39,7 +39,7 @@ func (ft *FullText) delete(key string) {
 			break
 		}
 
-		// If the ft.storage[word] is empty, remove it from the cache
+		// If the ft.storage[word] is empty, remove it from the storage
 		if len(ft.storage[word]) == 0 {
 			delete(ft.storage, word)
 		}

@@ -6,11 +6,11 @@ import (
 	Utils "github.com/realTristan/Hermes/server/utils"
 )
 
-// Get cache info
+// Get cache info in the form of a string
 // This is a handler function that returns a fiber context handler function
 func Info(c *Hermes.Cache) func(ctx *fiber.Ctx) error {
 	return func(ctx *fiber.Ctx) error {
-		if info, err := c.Info(); err != nil {
+		if info, err := c.InfoString(); err != nil {
 			return ctx.Send(Utils.Error(err))
 		} else {
 			return ctx.Send(Utils.Success(info))

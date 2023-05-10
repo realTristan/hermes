@@ -15,7 +15,7 @@ func Clean(c *Hermes.Cache) func(ctx *fiber.Ctx) error {
 	}
 }
 
-// Clean the full-text cache
+// Clean the full-text storage
 // This is a handler function that returns a fiber context handler function
 func FTClean(c *Hermes.Cache) func(ctx *fiber.Ctx) error {
 	return func(ctx *fiber.Ctx) error {

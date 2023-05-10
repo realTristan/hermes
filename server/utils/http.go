@@ -30,15 +30,15 @@ func GetValueParam[T any](ctx *fiber.Ctx, value *T) error {
 	return nil
 }
 
-// Get the maxwords url parameter
-func GetMaxWordsParam(ctx *fiber.Ctx, maxWords *int) error {
-	if maxWordsStr := ctx.Params("maxwords"); len(maxWordsStr) == 0 {
-		return errors.New("invalid maxwords")
+// Get the maxLength url parameter
+func GetMaxLengthParam(ctx *fiber.Ctx, maxLength *int) error {
+	if maxLengthStr := ctx.Params("maxlength"); len(maxLengthStr) == 0 {
+		return errors.New("invalid maxlength")
 	} else {
-		if maxWordsInt, err := strconv.Atoi(maxWordsStr); err != nil {
+		if maxLengthInt, err := strconv.Atoi(maxLengthStr); err != nil {
 			return err
 		} else {
-			*maxWords = maxWordsInt
+			*maxLength = maxLengthInt
 		}
 	}
 	return nil

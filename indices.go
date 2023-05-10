@@ -37,7 +37,7 @@ func (ft *FullText) sequenceIndices() {
 		tempKeys[value] = key
 	}
 
-	// Iterate over the cache
+	// Iterate over the ft storage
 	for word, keys := range ft.storage {
 		for i := 0; i < len(keys); i++ {
 			var index int = keys[i]

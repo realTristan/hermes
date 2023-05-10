@@ -55,16 +55,16 @@ func (ft *FullText) insert(data map[string]map[string]interface{}) error {
 
 			// Loop through the words
 			for _, word := range strings.Split(strv, " ") {
-				if ft.maxWords > 0 {
-					if len(tempStorage) > ft.maxWords {
-						return fmt.Errorf("full-text cache key limit reached (%d/%d keys). load cancelled", len(tempStorage), ft.maxWords)
+				if ft.maxLength > 0 {
+					if len(tempStorage) > ft.maxLength {
+						return fmt.Errorf("full-text storage limit reached (%d/%d keys). load cancelled", len(tempStorage), ft.maxLength)
 					}
 				}
 				if ft.maxBytes > 0 {
 					if cacheSize, err := Utils.Size(tempStorage); err != nil {
 						return err
 					} else if cacheSize > ft.maxBytes {
-						return fmt.Errorf("full-text cache size limit reached (%d/%d bytes). load cancelled", cacheSize, ft.maxBytes)
+						return fmt.Errorf("full-text byte-size limit reached (%d/%d bytes). load cancelled", cacheSize, ft.maxBytes)
 					}
 				}
 				switch {

@@ -123,28 +123,40 @@ class Hermes:
             self.addr + "/ft/maxbytes", params={"maxbytes": max_bytes})
         return r.json()
     
-    # Set the max words of the full text cache
-    def ft_set_max_words(self, max_words: int) -> any:
+    # Set the max length of the full text storage
+    def ft_set_max_length(self, max_length: int) -> any:
         # send the request
         r: requests.request = requests.post(
-            self.addr + "/ft/maxwords", params={"maxwords": max_words})
+            self.addr + "/ft/maxlength", params={"maxlength": max_length})
         return r.json()
     
-    # Get the full text cache
-    def ft_cache(self) -> any:
+    # Get the full text storage
+    def ft_storage(self) -> any:
         # send the request
-        r: requests.request = requests.get(self.addr + "/ft/cache")
+        r: requests.request = requests.get(self.addr + "/ft/storage")
         return r.json()
     
-    # Get the full text cache size
+    # Get the full text storage size
     def ft_size(self) -> any:
         # send the request
-        r: requests.request = requests.get(self.addr + "/ft/cachesize")
+        r: requests.request = requests.get(self.addr + "/ft/storage/size")
+        return r.json()
+    
+    # Get the full text storage length
+    def ft_length(self) -> any:
+        # send the request
+        r: requests.request = requests.get(self.addr + "/ft/storage/length")
         return r.json()
     
     # Get whether the full text cache is initialized
     def ft_initialized(self) -> any:
         # send the request
         r: requests.request = requests.get(self.addr + "/ft/isinitialized")
+        return r.json()
+
+    # Sequence the ft indices
+    def ft_sequence(self) -> any:
+        # send the request
+        r: requests.request = requests.get(self.addr + "/ft/indices/sequence")
         return r.json()
     

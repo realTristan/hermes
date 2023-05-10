@@ -11,22 +11,22 @@ import (
 func FTInit(c *Hermes.Cache) func(ctx *fiber.Ctx) error {
 	return func(ctx *fiber.Ctx) error {
 		var (
-			maxWords int
-			maxBytes int
+			maxLength int
+			maxBytes  int
 		)
 
-		// Convert the max words to an integer
-		if err := Utils.GetMaxWordsParam(ctx, &maxWords); err != nil {
+		// Get the max length parameter
+		if err := Utils.GetMaxLengthParam(ctx, &maxLength); err != nil {
 			return ctx.Send(Utils.Error(err))
 		}
 
-		// Convert the max size bytes to an integer
+		// Get the max bytes parameter
 		if err := Utils.GetMaxBytesParam(ctx, &maxBytes); err != nil {
 			return ctx.Send(Utils.Error(err))
 		}
 
 		// Initialize the full-text cache
-		if err := c.FTInit(maxWords, maxBytes); err != nil {
+		if err := c.FTInit(maxLength, maxBytes); err != nil {
 			return ctx.Send(Utils.Error(err))
 		}
 		return ctx.Send(Utils.Success("null"))
@@ -38,28 +38,28 @@ func FTInit(c *Hermes.Cache) func(ctx *fiber.Ctx) error {
 func FTInitJson(c *Hermes.Cache) func(ctx *fiber.Ctx) error {
 	return func(ctx *fiber.Ctx) error {
 		var (
-			maxWords int
-			maxBytes int
-			json     map[string]map[string]interface{}
+			maxLength int
+			maxBytes  int
+			json      map[string]map[string]interface{}
 		)
 
-		// Convert the max words to an integer
-		if err := Utils.GetMaxWordsParam(ctx, &maxWords); err != nil {
+		// Get the max length from the query
+		if err := Utils.GetMaxLengthParam(ctx, &maxLength); err != nil {
 			return ctx.Send(Utils.Error(err))
 		}
 
-		// Convert the max size bytes to an integer
+		// Get the max bytes from the query
 		if err := Utils.GetMaxBytesParam(ctx, &maxBytes); err != nil {
 			return ctx.Send(Utils.Error(err))
 		}
 
-		// Get the json from the request url
+		// Get the JSON from the query
 		if err := Utils.GetJSONParam(ctx, &json); err != nil {
 			return ctx.Send(Utils.Error(err))
 		}
 
 		// Initialize the full-text cache
-		if err := c.FTInitWithMap(json, maxWords, maxBytes); err != nil {
+		if err := c.FTInitWithMap(json, maxLength, maxBytes); err != nil {
 			return ctx.Send(Utils.Error(err))
 		}
 

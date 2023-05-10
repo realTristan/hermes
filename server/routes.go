@@ -34,8 +34,10 @@ func SetRoutes(app *fiber.App, cache *Hermes.Cache) {
 	app.Get("/ft/searchvalues", handlers.SearchValues(cache))
 	app.Get("/ft/searchvalueswithkey", handlers.SearchValuesWithKey(cache))
 	app.Post("/ft/maxbytes", handlers.FTSetMaxBytes(cache))
-	app.Post("/ft/maxwords", handlers.FTSetMaxWords(cache))
-	app.Get("/ft/cache", handlers.FTWordCache(cache))
-	app.Get("/ft/cachesize", handlers.FTWordCacheSize(cache))
+	app.Post("/ft/maxlength", handlers.FTSetMaxLength(cache))
+	app.Get("/ft/storage", handlers.FTStorage(cache))
+	app.Get("/ft/storage/size", handlers.FTStorageSize(cache))
+	app.Get("/ft/storage/length", handlers.FTStorageLength(cache))
 	app.Get("/ft/isinitialized", handlers.FTIsInitialized(cache))
+	app.Post("/ft/indices/sequence", handlers.FTSequenceIndices(cache))
 }

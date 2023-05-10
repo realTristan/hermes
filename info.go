@@ -10,17 +10,17 @@ import (
 // Return a string with the cache, and full-text info.
 // This method is thread-safe.
 // An error is returned if the full-text index is not initialized.
-func (c *Cache) Info() (string, error) {
+func (c *Cache) InfoString() (string, error) {
 	c.mutex.RLock()
 	defer c.mutex.RUnlock()
-	return c.info()
+	return c.infoString()
 }
 
 // Return a string with the cache, and full-text info.
 // This method is not thread-safe, and should only be called from
 // an exported function.
 // An error is returned if the full-text index is not initialized.
-func (c *Cache) info() (string, error) {
+func (c *Cache) infoString() (string, error) {
 	// The initial cache info string
 	var s string = fmt.Sprintf("Cache Info:\n-----------\nNumber of keys: %d\n", len(c.data))
 
@@ -42,10 +42,19 @@ func (c *Cache) info() (string, error) {
 }
 
 // Return a string with the cache, and full-text info.
+// This method is thread-safe.
+// An error is returned if the full-text index is not initialized.
+func (c *Cache) InfoStringForTesting() (string, error) {
+	c.mutex.RLock()
+	defer c.mutex.RUnlock()
+	return c.infoStringForTesting()
+}
+
+// Return a string with the cache, and full-text info.
 // This method is not thread-safe, and should only be called from
 // an exported function.
 // An error is returned if the full-text index is not initialized.
-func (c *Cache) InfoForTesting() (string, error) {
+func (c *Cache) infoStringForTesting() (string, error) {
 	// The initial cache info string
 	var s string = fmt.Sprintf("Cache Info:\n-----------\nNumber of keys: %d\nData: %v\n", len(c.data), c.data)
 

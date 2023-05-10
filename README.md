@@ -12,7 +12,7 @@ Hermes has two notable algorithms. The first being the with-cache algorithm. Whe
 being a no-cache algorithm that reads data from a map, or json file, and uses and array to store the data. Both of these algorithms provide full-text search query times from 10µs to 300µs.
 
 # Example of NoCache Full-Text-Search
-If you want to use only the full-text-search features, then just import hermes and load it using a .json file. (as shown in /example). Note: For small to medium-sized datasets (like the ones I used in /data), Hermes works great. Although, as the words in the dataset increases, the full-text-search cache will take up significantly more memory. I recommended setting a cache limit and/or a cache keys limit.
+If you want to use only the full-text-search features, then just import hermes and load it using a .json file. (as shown in /example). Note: For small to medium-sized datasets (like the ones I used in /data), Hermes works great. Although, as the words in the dataset increases, the full-text-search cache will take up significantly more memory.
 
 ## Benchmarks
 ```
@@ -93,7 +93,7 @@ func main() {
 	var cache *Hermes.Cache = Hermes.InitCache()
 	
 	// Initialize the full-text cache
-	// MaxWords: 10, MaxBytes: -1 (no limit)
+	// MaxLength: 10, MaxBytes: -1 (no limit)
 	cache.FTInit(10, -1)
 	
 	// Set the value in the cache
@@ -234,7 +234,7 @@ URL Parameters
 [POST /clean](https://github.com/realTristan/Hermes/blob/master/server/handlers/clean.go)
 ```
 About
-➤ Clean all the data in the cache, and full-text cache.
+➤ Clean all the data in the cache, and full-text storage.
 
 URL Parameters
 ➤ None
@@ -243,7 +243,7 @@ URL Parameters
 [GET /info](https://github.com/realTristan/Hermes/blob/master/server/handlers/info.go)
 ```
 About
-➤ Get the cache and full-text cache statistics.
+➤ Get the cache and full-text storage statistics.
 
 URL Parameters
 ➤ None
@@ -267,13 +267,13 @@ About
 
 URL Parameters
 ➤ maxbytes: int
-➤ maxwords: int
+➤ maxlength: int
 ```
 
 [POST /ft/clean](https://github.com/realTristan/Hermes/blob/master/server/handlers/clean.go)
 ```
 About
-➤ Clean all of the data in the full-text cache.
+➤ Clean all of the data in the full-text storage.
 
 URL Parameters
 ➤ None
@@ -282,7 +282,7 @@ URL Parameters
 [GET /ft/search](https://github.com/realTristan/Hermes/blob/master/server/handlers/search.go)
 ```
 About
-➤ Search for a query in the full-text cache.
+➤ Search for a query in the full-text storage.
 
 URL Parameters
 ➤ q: string
@@ -294,7 +294,7 @@ URL Parameters
 [GET /ft/searchoneword](https://github.com/realTristan/Hermes/blob/master/server/handlers/search.go)
 ```
 About
-➤ Search for a single word in the full-text cache.
+➤ Search for a single word in the full-text storage.
 
 URL Parameters
 ➤ q: string
@@ -327,22 +327,22 @@ URL Parameters
 [POST /ft/maxbytes](https://github.com/realTristan/Hermes/blob/master/server/handlers/fulltext.go)
 ```
 About
-➤ Set the maximum full-text cache size in bytes.
+➤ Set the maximum full-text storage size in bytes.
 
 URL Parameters
 ➤ maxbytes: int
 ```
 
-[POST /ft/maxwords](https://github.com/realTristan/Hermes/blob/master/server/handlers/fulltext.go)
+[POST /ft/maxlength](https://github.com/realTristan/Hermes/blob/master/server/handlers/fulltext.go)
 ```
 About
-➤ Set the maximum full-text cache words allowed to be stored.
+➤ Set the maximum full-text storage words allowed to be stored.
 
 URL Parameters
-➤ maxwords: int
+➤ maxlength: int
 ```
 
-[GET /ft/cache](https://github.com/realTristan/Hermes/blob/master/server/handlers/fulltext.go)
+[GET /ft/storage](https://github.com/realTristan/Hermes/blob/master/server/handlers/fulltext.go)
 ```
 About
 ➤ Get the current full-text word cache. Can be used for testing.
@@ -351,10 +351,19 @@ URL Parameters
 ➤ None
 ```
 
-[GET /ft/cachesize](https://github.com/realTristan/Hermes/blob/master/server/handlers/fulltext.go)
+[GET /ft/storage/size](https://github.com/realTristan/Hermes/blob/master/server/handlers/fulltext.go)
 ```
 About
-➤ Get the current full-text cache size.
+➤ Get the current full-text storage size in bytes.
+
+URL Parameters
+➤ None
+```
+
+[GET /ft/storage/length](https://github.com/realTristan/Hermes/blob/master/server/handlers/fulltext.go)
+```
+About
+➤ Get the current full-text storage length.
 
 URL Parameters
 ➤ None
@@ -363,7 +372,16 @@ URL Parameters
 [GET /ft/isinitialized](https://github.com/realTristan/Hermes/blob/master/server/handlers/fulltext.go)
 ```
 About
-➤ Get whether the full-text cache has been initialized.
+➤ Get whether the full-text storage has been initialized.
+
+URL Parameters
+➤ None
+```
+
+[POST /ft/indices/sequence](https://github.com/realTristan/Hermes/blob/master/server/handlers/indices.go)
+```
+About
+➤ Sequence the full-text storage indices.
 
 URL Parameters
 ➤ None

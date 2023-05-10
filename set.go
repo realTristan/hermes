@@ -85,16 +85,16 @@ func (c *Cache) ftSet(key string, value map[string]interface{}) error {
 
 		// Loop through the words
 		for _, word := range strings.Split(strv, " ") {
-			if c.ft.maxWords > 0 {
-				if len(tempStorage) > c.ft.maxWords {
-					return fmt.Errorf("full-text cache key limit reached (%d/%d keys). set cancelled. cache reverted", len(tempStorage), c.ft.maxWords)
+			if c.ft.maxLength > 0 {
+				if len(tempStorage) > c.ft.maxLength {
+					return fmt.Errorf("full-text storage limit reached (%d/%d keys). set cancelled. cache reverted", len(tempStorage), c.ft.maxLength)
 				}
 			}
 			if c.ft.maxBytes > 0 {
 				if cacheSize, err := Utils.Size(tempStorage); err != nil {
 					return err
 				} else if cacheSize > c.ft.maxBytes {
-					return fmt.Errorf("full-text cache size limit reached (%d/%d bytes). set cancelled. cache reverted", cacheSize, c.ft.maxBytes)
+					return fmt.Errorf("full-text byte-size limit reached (%d/%d bytes). set cancelled. cache reverted", cacheSize, c.ft.maxBytes)
 				}
 			}
 			switch {
