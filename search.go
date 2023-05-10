@@ -47,14 +47,14 @@ func (c *Cache) Search(query string, limit int, strict bool, schema map[string]b
 
 	// Check if the FT index is initialized
 	if c.ft == nil {
-		return []map[string]interface{}{}, errors.New("full-text is not initialized")
+		return []map[string]interface{}{}, errors.New("full-text not initialized")
 	}
 
 	// Set the query to lowercase
 	query = strings.ToLower(query)
 
 	// Search for the query
-	return c.search(query, limit, strict, schema)
+	return c.search(query, limit, strict, schema), nil
 }
 
 /*
@@ -69,16 +69,16 @@ Parameters:
 Returns:
   - []map[string]interface{}: An array of maps containing the search results
 */
-func (c *Cache) search(query string, limit int, strict bool, schema map[string]bool) ([]map[string]interface{}, error) {
+func (c *Cache) search(query string, limit int, strict bool, schema map[string]bool) []map[string]interface{} {
 	// Split the query into separate words
 	var words []string = strings.Split(strings.TrimSpace(query), " ")
 	switch {
 	// If the words array is empty
 	case len(words) == 0:
-		return []map[string]interface{}{}, errors.New("invalid query")
+		return []map[string]interface{}{}
 	// Get the search result of the first word
 	case len(words) == 1:
-		return c.searchOneWord(words[0], limit, strict), nil
+		return c.searchOneWord(words[0], limit, strict)
 	}
 
 	// Define variables
@@ -92,7 +92,7 @@ func (c *Cache) search(query string, limit int, strict bool, schema map[string]b
 
 	// Check if the query is in the cache
 	if v, ok := c.ft.storage[words[0]]; !ok {
-		return []map[string]interface{}{}, errors.New("invalid query")
+		return []map[string]interface{}{}
 	} else {
 		smallest = len(v)
 	}
@@ -126,7 +126,7 @@ func (c *Cache) search(query string, limit int, strict bool, schema map[string]b
 	}
 
 	// Return the result
-	return result, nil
+	return result
 }
 
 /*
