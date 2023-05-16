@@ -39,7 +39,7 @@ func (ft *FullText) insert(data map[string]map[string]interface{}) error {
 			var strv string
 			if wft, ok := v.(WFT); ok {
 				strv = wft.value
-			} else if _strv := fullTextMap(v); len(_strv) > 0 {
+			} else if _strv := ftFromMap(v); len(_strv) > 0 {
 				strv = _strv
 			} else {
 				continue

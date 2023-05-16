@@ -1,7 +1,7 @@
 package nocache
 
 // Get the full-text value from a map
-func fullTextMap(value interface{}) string {
+func ftFromMap(value interface{}) string {
 	if _, ok := value.(map[string]interface{}); !ok {
 		return ""
 	}

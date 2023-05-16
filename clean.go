@@ -22,7 +22,7 @@ func (c *Cache) clean() {
 	c.data = map[string]map[string]interface{}{}
 }
 
-// Clear the full-text cache contents.
+// FTClean clears the full-text cache contents.
 // This function is thread-safe.
 func (c *Cache) FTClean() error {
 	c.mutex.Lock()

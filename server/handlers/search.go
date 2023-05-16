@@ -130,7 +130,7 @@ func SearchValues(c *Hermes.Cache) func(ctx *fiber.Ctx) error {
 
 // Search for values
 // This is a handler function that returns a fiber context handler function
-func SearchValuesWithKey(c *Hermes.Cache) func(ctx *fiber.Ctx) error {
+func SearchWithKey(c *Hermes.Cache) func(ctx *fiber.Ctx) error {
 	return func(ctx *fiber.Ctx) error {
 		var (
 			key    string
@@ -160,7 +160,7 @@ func SearchValuesWithKey(c *Hermes.Cache) func(ctx *fiber.Ctx) error {
 		}
 
 		// Search for the query
-		if res, err := c.SearchValuesWithKey(query, key, limit); err != nil {
+		if res, err := c.SearchWithKey(query, key, limit); err != nil {
 			return ctx.Send(Utils.Error(err))
 		} else {
 			if data, err := json.Marshal(res); err != nil {

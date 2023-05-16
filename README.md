@@ -291,7 +291,7 @@ URL Parameters
 ➤ schema: map[string]bool
 ```
 
-[GET /ft/searchoneword](https://github.com/realTristan/Hermes/blob/master/server/handlers/search.go)
+[GET /ft/search/oneword](https://github.com/realTristan/Hermes/blob/master/server/handlers/search.go)
 ```
 About
 ➤ Search for a single word in the full-text storage.
@@ -302,7 +302,7 @@ URL Parameters
 ➤ limit: int
 ```
 
-[GET /ft/searchvalues](https://github.com/realTristan/Hermes/blob/master/server/handlers/search.go)
+[GET /ft/search/values](https://github.com/realTristan/Hermes/blob/master/server/handlers/search.go)
 ```
 About
 ➤ Search in the cache data values. (Slower)
@@ -313,7 +313,7 @@ URL Parameters
 ➤ schema: map[string]bool
 ```
 
-[GET /ft/searchvalueswithkey](https://github.com/realTristan/Hermes/blob/master/server/handlers/search.go)
+[GET /ft/search/withkey](https://github.com/realTristan/Hermes/blob/master/server/handlers/search.go)
 ```
 About
 ➤ Search in the cache data values for a specific key.

@@ -69,7 +69,7 @@ func (c *Cache) ftSet(key string, value map[string]interface{}) error {
 		// Check if the value is a WFT
 		if wft, ok := v.(WFT); ok {
 			strv = wft.value
-		} else if _strv := fullTextMap(v); len(_strv) > 0 {
+		} else if _strv := ftFromMap(v); len(_strv) > 0 {
 			strv = _strv
 		} else {
 			continue
