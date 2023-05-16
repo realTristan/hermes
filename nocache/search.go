@@ -36,7 +36,7 @@ func (ft *FullText) Search(query string, limit int, strict bool, schema map[stri
 	defer ft.mutex.RUnlock()
 
 	// Perform the search
-	return ft.search(query, limit, strict, schema)
+	return ft.search(query, limit, strict, schema), nil
 }
 
 // search searches for all occurrences of the given query string in the FullText object's data.
@@ -54,16 +54,21 @@ func (ft *FullText) Search(query string, limit int, strict bool, schema map[stri
 //   - []map[string]interface{}: A slice of maps where each map represents a data record that matches the given query.
 //     The keys of the map correspond to the column names of the data that were searched and returned in the result.
 //   - error: An error if the query or limit is invalid.
-func (ft *FullText) search(query string, limit int, strict bool, schema map[string]bool) ([]map[string]interface{}, error) {
+func (ft *FullText) search(query string, limit int, strict bool, schema map[string]bool) []map[string]interface{} {
 	// Split the query into separate words
 	var words []string = strings.Split(strings.TrimSpace(query), " ")
-	if len(words) == 1 {
-		return ft.searchOneWord(words[0], limit, strict), nil
+	switch {
+	// If the words array is empty
+	case len(words) == 0:
+		return []map[string]interface{}{}
+	// Get the search result of the first word
+	case len(words) == 1:
+		return ft.searchOneWord(words[0], limit, strict)
 	}
 
 	// Check if the query is in the cache
 	if _, ok := ft.wordCache[words[0]]; !ok {
-		return []map[string]interface{}{}, errors.New("invalid query")
+		return []map[string]interface{}{}
 	}
 
 	// Define variables
@@ -77,7 +82,7 @@ func (ft *FullText) search(query string, limit int, strict bool, schema map[stri
 
 	// Check if the query is in the cache
 	if v, ok := ft.wordCache[words[0]]; !ok {
-		return []map[string]interface{}{}, errors.New("invalid query")
+		return []map[string]interface{}{}
 	} else {
 		smallest = len(v)
 	}
@@ -106,12 +111,12 @@ func (ft *FullText) search(query string, limit int, strict bool, schema map[stri
 					continue
 				// Check if the value contains the query
 				case strings.Contains(strings.ToLower(v), query):
-					result = append(result, ft.data[i])
+					result = append(result, ft.data[indices[i]])
 				}
 			}
 		}
 	}
 
 	// Return the result
-	return result, nil
+	return result
 }
