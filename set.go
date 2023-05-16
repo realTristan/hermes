@@ -7,18 +7,31 @@ import (
 	Utils "github.com/realTristan/Hermes/utils"
 )
 
-// Set a value in the cache for the specified key.
+// Set is a method of the Cache struct that sets a value in the cache for the specified key.
 // This function is thread-safe.
+//
+// Parameters:
+//   - key: A string representing the key to set the value for.
+//   - value: A map[string]interface{} representing the value to set.
+//
+// Returns:
+//   - An error if the full-text cache key already exists. Otherwise, nil.
 func (c *Cache) Set(key string, value map[string]interface{}) error {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
 	return c.set(key, value)
 }
 
-// Set a value in the cache for the specified key.
-// This function is not thread-safe, and should only be called from
-// an exported function.
+// set is a method of the Cache struct that sets a value in the cache for the specified key.
+// This function is not thread-safe, and should only be called from an exported function.
 // If fullText is true, set the value in the full-text cache as well.
+//
+// Parameters:
+//   - key: A string representing the key to set the value for.
+//   - value: A map[string]interface{} representing the value to set.
+//
+// Returns:
+//   - An error if the full-text cache key already exists. Otherwise, nil.
 func (c *Cache) set(key string, value map[string]interface{}) error {
 	if _, ok := c.data[key]; ok {
 		return fmt.Errorf("full-text cache key already exists (%s). please delete it before setting it another value", key)
@@ -39,9 +52,15 @@ func (c *Cache) set(key string, value map[string]interface{}) error {
 	return nil
 }
 
-// Set a value in the full-text cache for the specified key.
-// This function is not thread-safe, and should only be called from
-// an exported function.
+// ftSet is a method of the Cache struct that sets a value in the full-text cache for the specified key.
+// This function is not thread-safe, and should only be called from an exported function.
+//
+// Parameters:
+//   - key: A string representing the key to set the value for.
+//   - value: A map[string]interface{} representing the value to set.
+//
+// Returns:
+//   - An error if the full-text storage limit or byte-size limit is reached. Otherwise, nil.
 func (c *Cache) ftSet(key string, value map[string]interface{}) error {
 	// Create a copy of the existing full-text variables
 	var (

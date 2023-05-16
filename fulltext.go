@@ -6,15 +6,15 @@ import (
 	Utils "github.com/realTristan/Hermes/utils"
 )
 
-/*
-Fields:
-  - storage: a map of words to an array of indices where the word appears in the text
-  - indices: a map of indices to words
-  - currentIndex: the current position in the map of indices to words
-  - maxLength: the maximum number of words in the storage
-  - maxBytes: the maximum size of the text to storage in bytes
-  - initialized: a boolean flag indicating whether the struct has been initialized
-*/
+// FullText is a struct that represents a full-text index for a cache of data.
+// The index is used to enable full-text search on the data in the cache.
+//
+// Fields:
+//   - storage (map[string][]int): A map that stores the indices of the entries in the cache that contain each word in the full-text index. The keys of the map are strings that represent the words in the index, and the values are slices of integers that represent the indices of the entries in the cache that contain the word.
+//   - indices (map[int]string): A map that stores the words in the full-text index. The keys of the map are integers that represent the indices of the words in the index, and the values are strings that represent the words.
+//   - currentIndex (int): An integer that represents the current index of the full-text index. This is used to assign unique indices to new words as they are added to the index.
+//   - maxLength (int): An integer that represents the maximum number of words that can be stored in the full-text index.
+//   - maxBytes (int): An integer that represents the maximum size of the text that can be stored in the full-text index, in bytes.
 type FullText struct {
 	storage      map[string][]int
 	indices      map[int]string
@@ -23,16 +23,32 @@ type FullText struct {
 	maxBytes     int
 }
 
-// Get whether the full-text is initialized
+// FTIsInitialized is a method of the Cache struct that returns a boolean value indicating whether the full-text index is initialized.
+// If the full-text index is initialized, this method returns true. Otherwise, it returns false.
 // This method is thread-safe.
+//
+// Parameters:
+//   - None
+//
+// Returns:
+//   - bool: A boolean value indicating whether the full-text index is initialized. If the full-text index is initialized, this method returns true. Otherwise, it returns false.
 func (c *Cache) FTIsInitialized() bool {
 	c.mutex.RLock()
 	defer c.mutex.RUnlock()
 	return c.ft != nil
 }
 
-// Set the max size in bytes of the full text storage
+// FTSetMaxBytes is a method of the Cache struct that sets the maximum size of the full-text index in bytes.
+// If the full-text index is not initialized, this method returns an error.
+// If the current size of the full-text index is greater than the new maximum size, this method returns an error.
+// Otherwise, the maximum size of the full-text index is set to the specified value, and this method returns nil.
 // This method is thread-safe.
+//
+// Parameters:
+//   - maxBytes (int): An integer that represents the new maximum size of the full-text index, in bytes.
+//
+// Returns:
+//   - error: An error object. If no error occurs, this will be nil.
 func (c *Cache) FTSetMaxBytes(maxBytes int) error {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
@@ -56,8 +72,17 @@ func (c *Cache) FTSetMaxBytes(maxBytes int) error {
 	return nil
 }
 
-// Set the maximum number of words in the full text storage
+// FTSetMaxLength is a method of the Cache struct that sets the maximum number of words in the full-text index.
+// If the full-text index is not initialized, this method returns an error.
+// If the current size of the full-text index is greater than the new maximum size, this method returns an error.
+// Otherwise, the maximum number of words in the full-text index is set to the specified value, and this method returns nil.
 // This method is thread-safe.
+//
+// Parameters:
+//   - maxLength (int): An integer that represents the new maximum number of words in the full-text index.
+//
+// Returns:
+//   - error: An error object. If no error occurs, this will be nil.
 func (c *Cache) FTSetMaxLength(maxLength int) error {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
@@ -79,8 +104,14 @@ func (c *Cache) FTSetMaxLength(maxLength int) error {
 	return nil
 }
 
-// Get the full text storage
+// FTStorage is a method of the Cache struct that returns a copy of the full-text index storage map.
+// If the full-text index is not initialized, this method returns an error.
+// Otherwise, a copy of the full-text index storage map is returned, and this method returns nil.
 // This method is thread-safe.
+//
+// Returns:
+//   - map[string][]int: A copy of the full-text index storage map.
+//   - error: An error object. If no error occurs, this will be nil.
 func (c *Cache) FTStorage() (map[string][]int, error) {
 	c.mutex.RLock()
 	defer c.mutex.RUnlock()
@@ -97,8 +128,14 @@ func (c *Cache) FTStorage() (map[string][]int, error) {
 	return copy, nil
 }
 
-// Get the full-text storage size in bytes
+// FTStorageSize is a method of the Cache struct that returns the size of the full-text index storage in bytes.
+// If the full-text index is not initialized, this method returns an error.
+// Otherwise, the size of the full-text index storage is returned as an integer, and this method returns nil.
 // This method is thread-safe.
+//
+// Returns:
+//   - int: An integer that represents the size of the full-text index storage in bytes.
+//   - error: An error object. If no error occurs, this will be nil.
 func (c *Cache) FTStorageSize() (int, error) {
 	c.mutex.RLock()
 	defer c.mutex.RUnlock()
@@ -112,8 +149,14 @@ func (c *Cache) FTStorageSize() (int, error) {
 	return Utils.Size(c.ft.storage)
 }
 
-// Get the full-text storage length
+// FTStorageLength is a method of the Cache struct that returns the number of words in the full-text index storage.
+// If the full-text index is not initialized, this method returns an error.
+// Otherwise, the number of words in the full-text index storage is returned as an integer, and this method returns nil.
 // This method is thread-safe.
+//
+// Returns:
+//   - int: An integer that represents the number of words in the full-text index storage.
+//   - error: An error object. If no error occurs, this will be nil.
 func (c *Cache) FTStorageLength() (int, error) {
 	c.mutex.RLock()
 	defer c.mutex.RUnlock()

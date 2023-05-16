@@ -2,19 +2,30 @@ package cache
 
 import "errors"
 
-// Clear the cache contents.
-// This function is thread-safe.
-// If the full-text index is initialized, clear it as well.
+// Clean is a method of the Cache struct that clears the cache contents.
+// If the full-text index is initialized, it is also cleared.
+// This method is thread-safe.
+//
+// Parameters:
+//   - None
+//
+// Returns:
+//   - None
 func (c *Cache) Clean() {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
 	c.clean()
 }
 
-// Clear the cache contents.
-// This function is not thread-safe, and should only be called from
-// an exported function.
-// If the full-text index is initialized, clear it as well.
+// clean is a method of the Cache struct that clears the cache contents.
+// If the full-text index is initialized, it is also cleared.
+// This method is not thread-safe and should only be called from an exported function.
+//
+// Parameters:
+//   - None
+//
+// Returns:
+//   - None
 func (c *Cache) clean() {
 	if c.ft != nil {
 		c.ft.clean()
@@ -22,8 +33,13 @@ func (c *Cache) clean() {
 	c.data = map[string]map[string]interface{}{}
 }
 
-// FTClean clears the full-text cache contents.
-// This function is thread-safe.
+// FTClean is a method of the Cache struct that clears the full-text cache contents.
+// If the full-text index is not initialized, this method returns an error.
+// Otherwise, the full-text index storage and indices are cleared, and this method returns nil.
+// This method is thread-safe.
+//
+// Returns:
+//   - error: An error object. If no error occurs, this will be nil.
 func (c *Cache) FTClean() error {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
@@ -40,9 +56,14 @@ func (c *Cache) FTClean() error {
 	return nil
 }
 
-// Clear the full-text cache contents.
-// This function is not thread-safe, and should only be called from
-// an exported function.
+// clean is a method of the FullText struct that clears the full-text index storage and indices.
+// This method initializes a new empty storage map and indices map with the maximum length specified in the FullText struct.
+//
+// Parameters:
+//   - None
+//
+// Returns:
+//   - None
 func (ft *FullText) clean() {
 	ft.storage = make(map[string][]int, ft.maxLength)
 	ft.indices = make(map[int]string)

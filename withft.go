@@ -1,16 +1,28 @@
 package cache
 
-// Set a value in the cache and in the full-text cache.
+// WFT is a struct that represents a value to be set in the cache and in the full-text cache.
 type WFT struct {
 	value string
 }
 
-// Function to set a value in the cache and in the full-text cache.
+// WithFT is a function that creates a new WFT struct with the specified value.
+//
+// Parameters:
+//   - value: A string representing the value to set in the cache and in the full-text cache.
+//
+// Returns:
+//   - A WFT struct with the specified value.
 func WithFT(value string) WFT {
 	return WFT{value}
 }
 
-// Get the full-text value from a map
+// ftFromMap is a function that gets the full-text value from a map.
+//
+// Parameters:
+//   - value: An interface{} representing the value to get the full-text value from.
+//
+// Returns:
+//   - A string representing the full-text value, or an empty string if the value is not a map or does not contain the correct keys.
 func ftFromMap(value interface{}) string {
 	if _, ok := value.(map[string]interface{}); !ok {
 		return ""

@@ -8,7 +8,10 @@ import (
 	Utils "github.com/realTristan/Hermes/utils"
 )
 
-// InitCache initializes a new Cache struct and returns a pointer to it.
+// InitCache is a function that initializes a new Cache struct and returns a pointer to it.
+//
+// Returns:
+//   - A pointer to a new Cache struct.
 func InitCache() *Cache {
 	return &Cache{
 		data:  make(map[string]map[string]interface{}),

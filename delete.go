@@ -1,18 +1,29 @@
 package cache
 
-// Delete a key from the cache. If the key exists in the full-text cache,
-// delete it from there as well.
-// This function is thread-safe.
+// Delete is a method of the Cache struct that removes a key from the cache.
+// If the full-text index is initialized, it is also removed from there.
+// This method is thread-safe.
+//
+// Parameters:
+//   - key: A string representing the key to remove from the cache.
+//
+// Returns:
+//   - None
 func (c *Cache) Delete(key string) {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
 	c.delete(key)
 }
 
-// Delete a key from the cache. If the key exists in the full-text cache,
-// delete it from there as well.
-// This function is not thread-safe, and should only be called from
-// an exported function.
+// delete is a method of the Cache struct that removes a key from the cache.
+// If the full-text index is initialized, it is also removed from there.
+// This method is not thread-safe and should only be called from an exported function.
+//
+// Parameters:
+//   - key: A string representing the key to remove from the cache.
+//
+// Returns:
+//   - None
 func (c *Cache) delete(key string) {
 	// Delete the key from the FT cache
 	if c.ft != nil {
@@ -23,9 +34,14 @@ func (c *Cache) delete(key string) {
 	delete(c.data, key)
 }
 
-// Delete a key from the full-text storage.
-// This function is not thread-safe, and should only be called from
-// an exported function.
+// delete is a method of the FullText struct that removes a key from the full-text storage.
+// This function is not thread-safe and should only be called from an exported function.
+//
+// Parameters:
+//   - key: A string representing the key to remove from the full-text storage.
+//
+// Returns:
+//   - None
 func (ft *FullText) delete(key string) {
 	// Remove the key from the ft.storage
 	for word, keys := range ft.storage {

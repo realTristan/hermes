@@ -7,9 +7,14 @@ import (
 	Utils "github.com/realTristan/Hermes/utils"
 )
 
-// Insert a value in the full-text cache for the specified key.
-// This function is not thread-safe, and should only be called from
-// an exported function.
+// insert is a method of the FullText struct that inserts a value in the full-text cache for the specified key.
+// This function is not thread-safe and should only be called from an exported function.
+//
+// Parameters:
+//   - data: A map of maps containing the data to be inserted.
+//
+// Returns:
+//   - An error if the full-text storage limit or byte-size limit is reached.
 func (ft *FullText) insert(data map[string]map[string]interface{}) error {
 	// Create a copy of the existing full-text variables
 	var (
