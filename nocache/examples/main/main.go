@@ -42,7 +42,7 @@ func main() {
 		start2 time.Time = time.Now()
 
 		// Search for a word in the cache
-		res2, _ = ft.SearchValuesWithKey("CS", "title", 100)
+		res2, _ = ft.SearchWithKey("CS", "title", 100)
 	)
 
 	// Print the duration
