@@ -2,5 +2,5 @@ go 1.20
 
 use (
 	./
-	./cloud/app
+	./cloud/app/server
 )
