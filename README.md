@@ -160,12 +160,15 @@ func main() {
 # Websocket API
 ## Cache
 
-[cache.set](https://github.com/realTristan/Hermes/blob/master/socket/handlers/set.go)
-```
-About
-➤ Set a value in the cache with the corresponding key.
+### [cache.set](https://github.com/realTristan/Hermes/blob/master/socket/handlers/set.go)
 
-Example Request
+### About
+```
+Set a value in the cache with the corresponding key.
+```
+
+### Example Request
+```
 {
 	"function": "cache.set",
 	"key": "user_id",
@@ -173,15 +176,17 @@ Example Request
 		"name": "tristan"
 	}
 }
+```
 
-Response
+### Response
+```
 {
 	"success": true/false, 
 	"data": nil
 }
 ```
 
-[cache.delete](https://github.com/realTristan/Hermes/blob/master/socket/handlers/delete.go)
+### [cache.delete](https://github.com/realTristan/Hermes/blob/master/socket/handlers/delete.go)
 ```
 About
 ➤ Delete the provided key, and the data correlated to it from the cache.
@@ -199,7 +204,7 @@ Response
 }
 ```
 
-[cache.get](https://github.com/realTristan/Hermes/blob/master/socket/handlers/get.go)
+### [cache.get](https://github.com/realTristan/Hermes/blob/master/socket/handlers/get.go)
 ```
 About
 ➤ Get data from the cache using a key.
@@ -234,7 +239,7 @@ Response
 }
 ```
 
-[cache.values](https://github.com/realTristan/Hermes/blob/master/socket/handlers/values.go)
+### [cache.values](https://github.com/realTristan/Hermes/blob/master/socket/handlers/values.go)
 ```
 About
 ➤ Get all of the values in the cache.
@@ -251,7 +256,7 @@ Response
 }
 ```
 
-[cache.length](https://github.com/realTristan/Hermes/blob/master/socket/handlers/length.go)
+### [cache.length](https://github.com/realTristan/Hermes/blob/master/socket/handlers/length.go)
 ```
 About
 ➤ Get the amount of keys stored in the cache.
@@ -268,7 +273,7 @@ Response
 }
 ```
 
-[cache.clean](https://github.com/realTristan/Hermes/blob/master/socket/handlers/clean.go)
+### [cache.clean](https://github.com/realTristan/Hermes/blob/master/socket/handlers/clean.go)
 ```
 About
 ➤ Clean all the data in the cache, and full-text storage.
@@ -285,7 +290,7 @@ Response
 }
 ```
 
-[cache.info](https://github.com/realTristan/Hermes/blob/master/socket/handlers/info.go)
+### [cache.info](https://github.com/realTristan/Hermes/blob/master/socket/handlers/info.go)
 ```
 About
 ➤ Get the cache and full-text storage statistics.
@@ -302,7 +307,7 @@ Response
 }
 ```
 
-[cache.exists](https://github.com/realTristan/Hermes/blob/master/socket/handlers/exists.go)
+### [cache.exists](https://github.com/realTristan/Hermes/blob/master/socket/handlers/exists.go)
 ```
 About
 ➤ Get whether a key exists in the cache.
@@ -322,7 +327,7 @@ Response
 
 ## Full-Text
 
-[ft.init](https://github.com/realTristan/Hermes/blob/master/socket/handlers/init.go)
+### [ft.init](https://github.com/realTristan/Hermes/blob/master/socket/handlers/init.go)
 ```
 About
 ➤ Intialize the full text cache.
@@ -341,7 +346,7 @@ Response
 }
 ```
 
-[ft.clean](https://github.com/realTristan/Hermes/blob/master/socket/handlers/clean.go)
+### [ft.clean](https://github.com/realTristan/Hermes/blob/master/socket/handlers/clean.go)
 ```
 About
 ➤ Clean all of the data in the full-text storage.
@@ -358,7 +363,7 @@ Response
 }
 ```
 
-[ft.search](https://github.com/realTristan/Hermes/blob/master/socket/handlers/search.go)
+### [ft.search](https://github.com/realTristan/Hermes/blob/master/socket/handlers/search.go)
 ```
 About
 ➤ Search for a query in the full-text storage.
@@ -381,7 +386,7 @@ Response
 }
 ```
 
-[ft.search.oneword](https://github.com/realTristan/Hermes/blob/master/socket/handlers/search.go)
+### [ft.search.oneword](https://github.com/realTristan/Hermes/blob/master/socket/handlers/search.go)
 ```
 About
 ➤ Search for a single word in the full-text storage.
@@ -401,7 +406,7 @@ Response
 }
 ```
 
-[ft.search.values](https://github.com/realTristan/Hermes/blob/master/socket/handlers/search.go)
+### [ft.search.values](https://github.com/realTristan/Hermes/blob/master/socket/handlers/search.go)
 ```
 About
 ➤ Search in the cache data values. (Slower)
@@ -423,7 +428,7 @@ Response
 }
 ```
 
-[ft.search.withkey](https://github.com/realTristan/Hermes/blob/master/socket/handlers/search.go)
+### [ft.search.withkey](https://github.com/realTristan/Hermes/blob/master/socket/handlers/search.go)
 ```
 About
 ➤ Search in the cache data values for a specific key.
@@ -443,7 +448,7 @@ Response
 }
 ```
 
-[ft.maxbytes.set](https://github.com/realTristan/Hermes/blob/master/socket/handlers/fulltext.go)
+### [ft.maxbytes.set](https://github.com/realTristan/Hermes/blob/master/socket/handlers/fulltext.go)
 ```
 About
 ➤ Set the maximum full-text storage size in bytes.
@@ -461,7 +466,7 @@ Response
 }
 ```
 
-[ft.maxlength.set](https://github.com/realTristan/Hermes/blob/master/socket/handlers/fulltext.go)
+### [ft.maxlength.set](https://github.com/realTristan/Hermes/blob/master/socket/handlers/fulltext.go)
 ```
 About
 ➤ Set the maximum full-text storage words allowed to be stored.
@@ -479,7 +484,7 @@ Response
 }
 ```
 
-[ft.storage](https://github.com/realTristan/Hermes/blob/master/socket/handlers/fulltext.go)
+### [ft.storage](https://github.com/realTristan/Hermes/blob/master/socket/handlers/fulltext.go)
 ```
 About
 ➤ Get the current full-text word cache. Can be used for testing.
@@ -496,7 +501,7 @@ Response
 }
 ```
 
-[ft.storage.size](https://github.com/realTristan/Hermes/blob/master/socket/handlers/fulltext.go)
+### [ft.storage.size](https://github.com/realTristan/Hermes/blob/master/socket/handlers/fulltext.go)
 ```
 About
 ➤ Get the current full-text storage size in bytes.
@@ -513,7 +518,7 @@ Response
 }
 ```
 
-[ft.storage.length](https://github.com/realTristan/Hermes/blob/master/socket/handlers/fulltext.go)
+### [ft.storage.length](https://github.com/realTristan/Hermes/blob/master/socket/handlers/fulltext.go)
 ```
 About
 ➤ Get the current full-text storage length.
@@ -530,7 +535,7 @@ Response
 }
 ```
 
-[ft.isinitialized](https://github.com/realTristan/Hermes/blob/master/socket/handlers/fulltext.go)
+### [ft.isinitialized](https://github.com/realTristan/Hermes/blob/master/socket/handlers/fulltext.go)
 ```
 About
 ➤ Get whether the full-text storage has been initialized.
@@ -547,7 +552,7 @@ Response
 }
 ```
 
-[ft.indices.sequence](https://github.com/realTristan/Hermes/blob/master/socket/handlers/indices.go)
+### [ft.indices.sequence](https://github.com/realTristan/Hermes/blob/master/socket/handlers/indices.go)
 ```
 About
 ➤ Sequence the full-text storage indices.
