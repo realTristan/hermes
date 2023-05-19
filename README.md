@@ -168,7 +168,7 @@ Set a value in the cache with the corresponding key.
 ```
 
 ### Example Request
-```
+```json
 {
 	"function": "cache.set",
 	"key": "user_id",
@@ -179,7 +179,7 @@ Set a value in the cache with the corresponding key.
 ```
 
 ### Response
-```
+```json
 {
 	"success": true/false, 
 	"data": nil
@@ -559,13 +559,13 @@ About
 
 Example Request
 {
-	"function": "ft.indices.sequence"
+  "function": "ft.indices.sequence"
 }
 
 Response
 {
-	"success": true/false, 
-	"data": nil
+  "success": true/false, 
+  "data": nil
 }
 ```
 
