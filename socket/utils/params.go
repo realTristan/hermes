@@ -28,7 +28,7 @@ func (p *Params) Get(key string) interface{} {
 
 // Get the function parameter
 func (p *Params) GetFunction() (string, error) {
-	if f, ok := p.values["function"].(string); !ok {
+	if f, ok := p.Get("function").(string); !ok {
 		return "", errors.New("no function provided")
 	} else {
 		return f, nil
@@ -37,7 +37,7 @@ func (p *Params) GetFunction() (string, error) {
 
 // Get the key parameter
 func GetKeyParam(p *Params) (string, error) {
-	if k, ok := p.values["key"].(string); !ok || len(k) == 0 {
+	if k, ok := p.Get("key").(string); !ok || len(k) == 0 {
 		return "", errors.New("no key provided")
 	} else {
 		return k, nil
@@ -46,7 +46,7 @@ func GetKeyParam(p *Params) (string, error) {
 
 // Get the query parameter
 func GetQueryParam(p *Params) (string, error) {
-	if q, ok := p.values["query"].(string); !ok || len(q) == 0 {
+	if q, ok := p.Get("query").(string); !ok || len(q) == 0 {
 		return "", errors.New("no query provided")
 	} else {
 		return q, nil
@@ -67,20 +67,20 @@ func GetValueParam[T any](p *Params, value *T) error {
 
 // Get the maxLength parameter
 func GetMaxLengthParam(p *Params, maxLength *int) error {
-	if i, ok := p.Get("maxlength").(int); !ok {
+	if i, ok := p.Get("maxlength").(float64); !ok {
 		return errors.New("invalid maxlength")
 	} else {
-		*maxLength = i
+		*maxLength = int(i)
 	}
 	return nil
 }
 
 // Get the maxbytes parameter
 func GetMaxBytesParam(p *Params, maxBytes *int) error {
-	if i, ok := p.Get("maxbytes").(int); !ok {
+	if i, ok := p.Get("maxbytes").(float64); !ok {
 		return errors.New("invalid maxbytes")
 	} else {
-		*maxBytes = i
+		*maxBytes = int(i)
 	}
 	return nil
 }
@@ -117,10 +117,10 @@ func GetSchemaParam(p *Params, schema *map[string]bool) error {
 
 // Get the limit parameter
 func GetLimitParam(p *Params, limit *int) error {
-	if i, ok := p.Get("limit").(int); !ok {
+	if i, ok := p.Get("limit").(float64); !ok {
 		return errors.New("invalid limit")
 	} else {
-		*limit = i
+		*limit = int(i)
 	}
 	return nil
 }

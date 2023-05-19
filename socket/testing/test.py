@@ -8,7 +8,10 @@ def decode(value):
 
 def test_set():
     value = {
-        "test": "test"
+        "test": {
+            "$hermes.value": "test",
+            "$hermes.full_text": True
+        }
     }
     return json.dumps({
         "function": "set",
@@ -23,22 +26,48 @@ def test_get():
         "key": "test"
     })
 
+def test_search():
+    return json.dumps({
+        "function": "ft.search",
+        "query": "test",
+        "limit": 100,
+        "strict": False,
+        "schema": encode(json.dumps({
+            "test": True
+        }))
+    })
+
+def test_ft_init():
+    return json.dumps({
+        "function": "ft.init",
+        "maxlength": -1,
+        "maxbytes": -1,
+    })
+
 # connect to wss://127.0.0.1:3000/ws/hermes/cache
 async def test():
     async with websockets.connect("ws://127.0.0.1:3000/ws/hermes/cache") as websocket:
-        # track start time
-        start = time.time()
+        # test ft init
+        await websocket.send(test_ft_init())
+        print(await websocket.recv())
 
         # test set
         await websocket.send(test_set())
         print(await websocket.recv())
 
-        # print time taken
-        print("Time taken: " + str(time.time() - start))
-
         # test get
         await websocket.send(test_get())
         print(await websocket.recv())
+
+        # track start time
+        start = time.time()
+
+        # test search
+        await websocket.send(test_search())
+        print(f"Search results: {await websocket.recv()}")
+
+        # print time taken
+        print("Time taken: " + str(time.time() - start))
 
         # close socket
         await websocket.close()
