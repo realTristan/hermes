@@ -28,10 +28,11 @@ func (p *Params) Get(key string) interface{} {
 
 // Get the function parameter
 func (p *Params) GetFunction() (string, error) {
-	if _, ok := p.values["function"].(string); !ok {
+	if f, ok := p.values["function"].(string); !ok {
 		return "", errors.New("no function provided")
+	} else {
+		return f, nil
 	}
-	return p.values["function"].(string), nil
 }
 
 // Get the key parameter
