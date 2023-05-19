@@ -1,10 +1,13 @@
-import requests, json, typing
+import requests, json, typing, socket
 from . import utils
 
 # Wrapper for the Hermes cache
 class Hermes:
     def __init__(self, addr: str):
         self.addr = addr
+
+        # connect to the address
+        self.connection = None
 
     # With full text
     def with_ft(self, value: str) -> dict[str, typing.Any]:

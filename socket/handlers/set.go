@@ -12,11 +12,12 @@ func Set(p *Utils.Params, c *Hermes.Cache, ws *websocket.Conn) error {
 	var (
 		key   string
 		ft    bool
+		err   error
 		value map[string]interface{}
 	)
 
 	// Get the key from the query
-	if key = p.Get("key"); len(key) == 0 {
+	if key, err = Utils.GetKeyParam(p); err != nil {
 		return ws.WriteMessage(websocket.TextMessage, Utils.Error("invalid key"))
 	}
 

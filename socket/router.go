@@ -62,16 +62,24 @@ func SetRouter(app *fiber.App, cache *Hermes.Cache) {
 				break
 			}
 
-			// Get the url parameters
-			var (
-				params   *Utils.Params = Utils.GetParams(string(msg))
-				function string        = Utils.GetFunction(string(msg))
-			)
+			// Get the data
+			var p *Utils.Params
+			if p, err = Utils.ParseParams(msg); err != nil {
+				log.Println("parse:", err)
+				break
+			}
+
+			// Get the function
+			var function string
+			if function, err = p.GetFunction(); err != nil {
+				log.Println("function:", err)
+				break
+			}
 
 			// Check if the function exists
 			if fn, ok := functions[function]; !ok {
 				c.WriteMessage(websocket.TextMessage, []byte("Function not found"))
-			} else if err = fn(params, cache, c); err != nil {
+			} else if err = fn(p, cache, c); err != nil {
 				log.Println("function:", err)
 				break
 			}
