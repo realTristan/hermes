@@ -1,19 +1,21 @@
 package handlers
 
 import (
+	"encoding/json"
+
 	"github.com/gofiber/fiber/v2"
 	Hermes "github.com/realTristan/Hermes"
-	Utils "github.com/realTristan/Hermes/server/utils"
+	Utils "github.com/realTristan/Hermes/server/api/utils"
 )
 
-// Get cache info in the form of a string
+// Get Keys from cache
 // This is a handler function that returns a fiber context handler function
-func Info(c *Hermes.Cache) func(ctx *fiber.Ctx) error {
+func Keys(c *Hermes.Cache) func(ctx *fiber.Ctx) error {
 	return func(ctx *fiber.Ctx) error {
-		if info, err := c.InfoString(); err != nil {
+		if keys, err := json.Marshal(c.Keys()); err != nil {
 			return ctx.Send(Utils.Error(err))
 		} else {
-			return ctx.Send(Utils.Success(info))
+			return ctx.Send(keys)
 		}
 	}
 }

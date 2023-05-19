@@ -5,7 +5,7 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	Hermes "github.com/realTristan/Hermes"
-	Utils "github.com/realTristan/Hermes/server/utils"
+	Utils "github.com/realTristan/Hermes/server/api/utils"
 )
 
 // Search for something in the cache

@@ -3,7 +3,7 @@ package server
 import (
 	"github.com/gofiber/fiber/v2"
 	Hermes "github.com/realTristan/Hermes"
-	"github.com/realTristan/Hermes/server/handlers"
+	"github.com/realTristan/Hermes/server/api/handlers"
 )
 
 // Set the routes
