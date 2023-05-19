@@ -95,16 +95,6 @@ func GetJSONParam[T any](p *Params, json *T) error {
 	return nil
 }
 
-// Get the full-text parameter
-func GetFTParam(p *Params, ft *bool) error {
-	if b, ok := p.Get("ft").(bool); !ok {
-		return errors.New("invalid ft")
-	} else {
-		*ft = b
-	}
-	return nil
-}
-
 // Get the schema parameter
 func GetSchemaParam(p *Params, schema *map[string]bool) error {
 	if s, ok := p.Get("schema").(string); !ok || len(s) == 0 {

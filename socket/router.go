@@ -49,7 +49,7 @@ func SetRouter(app *fiber.App, cache *Hermes.Cache) {
 	})
 
 	// Main websocket handler
-	app.Get("/ws/hermes/cache", websocket.New(func(c *websocket.Conn) {
+	app.Get("/ws/hermes", websocket.New(func(c *websocket.Conn) {
 		for {
 			var (
 				msg []byte

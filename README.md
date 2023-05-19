@@ -120,13 +120,13 @@ func main() {
 ### Used with cache.FTInitWithJson()
 ```json
 {
-    "user_id": {
-	"age": 17,
-        "name": {
-            "$hermes.full_text": true,
-            "$hermes.value": "Tristan Simpson"
-        },
+  "user_id": {
+    "age": 17,
+    "name": {
+      "$hermes.full_text": true,
+      "$hermes.value": "Tristan Simpson"
     },
+  },
 }
 ```
 

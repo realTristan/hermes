@@ -8,16 +8,15 @@ def decode(value):
 
 def test_set():
     value = {
-        "test": {
-            "$hermes.value": "test",
+        "name": {
+            "$hermes.value": "tristan",
             "$hermes.full_text": True
         }
     }
     return json.dumps({
         "function": "cache.set",
-        "key": "test",
-        "value": encode(json.dumps(value)),
-        "ft": False
+        "key": "user_id",
+        "value": encode(json.dumps(value))
     })
 
 def test_get():
@@ -44,9 +43,9 @@ def test_ft_init():
         "maxbytes": -1,
     })
 
-# connect to wss://127.0.0.1:3000/ws/hermes/cache
+# connect to wss://127.0.0.1:3000/ws/hermes
 async def test():
-    async with websockets.connect("ws://127.0.0.1:3000/ws/hermes/cache") as websocket:
+    async with websockets.connect("ws://127.0.0.1:3000/ws/hermes") as websocket:
         # test ft init
         await websocket.send(test_ft_init())
         print(await websocket.recv())

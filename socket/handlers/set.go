@@ -11,7 +11,6 @@ import (
 func Set(p *Utils.Params, c *Hermes.Cache, ws *websocket.Conn) error {
 	var (
 		key   string
-		ft    bool
 		err   error
 		value map[string]interface{}
 	)
@@ -23,11 +22,6 @@ func Set(p *Utils.Params, c *Hermes.Cache, ws *websocket.Conn) error {
 
 	// Get the value from the query
 	if err := Utils.GetValueParam(p, &value); err != nil {
-		return ws.WriteMessage(websocket.TextMessage, Utils.Error(err))
-	}
-
-	// Get whether or not to store the full-text
-	if err := Utils.GetFTParam(p, &ft); err != nil {
 		return ws.WriteMessage(websocket.TextMessage, Utils.Error(err))
 	}
 
