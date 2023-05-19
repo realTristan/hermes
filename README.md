@@ -131,6 +131,10 @@ func main() {
 ```
 
 # Hermes Cloud App
+## Install
+```
+Coming Soon
+```
 
 ## Custom Implementation
 ```go
@@ -156,7 +160,7 @@ func main() {
 # Websocket API
 ## Cache
 
-[POST /set](https://github.com/realTristan/Hermes/blob/master/server/handlers/set.go)
+[SEND /set](https://github.com/realTristan/Hermes/blob/master/socket/handlers/set.go)
 ```
 About
 ➤ Set a value in the cache with the corresponding key.
@@ -165,83 +169,110 @@ URL Parameters
 ➤ key: string
 ➤ value: base64(map[string]map[string]interface{})
 ➤ ft: bool
+
+Response
+➤ None (Success)
 ```
 
-[DELETE /delete](https://github.com/realTristan/Hermes/blob/master/server/handlers/delete.go)
+[SEND /delete](https://github.com/realTristan/Hermes/blob/master/socket/handlers/delete.go)
 ```
 About
 ➤ Delete the provided key, and the data correlated to it from the cache.
 
 URL Parameters
 ➤ key: string
+
+Response
+➤ None (Success)
 ```
 
-[GET /get](https://github.com/realTristan/Hermes/blob/master/server/handlers/get.go)
+[SEND /get](https://github.com/realTristan/Hermes/blob/master/socket/handlers/get.go)
 ```
 About
 ➤ Get data from the cache using a key.
 
 URL Parameters
 ➤ key: string
+
+Response
+➤ value: map[string]interface{}
 ```
 
-[GET /keys](https://github.com/realTristan/Hermes/blob/master/server/handlers/keys.go)
+[SEND /keys](https://github.com/realTristan/Hermes/blob/master/socket/handlers/keys.go)
 ```
 About
 ➤ Get all of the keys in the cache.
 
 URL Parameters
 ➤ None
+
+Response
+➤ keys: []string
 ```
 
-[GET /values](https://github.com/realTristan/Hermes/blob/master/server/handlers/values.go)
+[SEND /values](https://github.com/realTristan/Hermes/blob/master/socket/handlers/values.go)
 ```
 About
 ➤ Get all of the values in the cache.
 
 URL Parameters
 ➤ None
+
+Response
+➤ values: []map[string]interface{}
 ```
 
-[GET /length](https://github.com/realTristan/Hermes/blob/master/server/handlers/length.go)
+[SEND /length](https://github.com/realTristan/Hermes/blob/master/socket/handlers/length.go)
 ```
 About
 ➤ Get the amount of keys stored in the cache.
 
 URL Parameters
 ➤ None
+
+Response
+➤ length: int
 ```
 
-[POST /clean](https://github.com/realTristan/Hermes/blob/master/server/handlers/clean.go)
+[SEND /clean](https://github.com/realTristan/Hermes/blob/master/socket/handlers/clean.go)
 ```
 About
 ➤ Clean all the data in the cache, and full-text storage.
 
 URL Parameters
 ➤ None
+
+Response
+➤ None (Success)
 ```
 
-[GET /info](https://github.com/realTristan/Hermes/blob/master/server/handlers/info.go)
+[SEND /info](https://github.com/realTristan/Hermes/blob/master/socket/handlers/info.go)
 ```
 About
 ➤ Get the cache and full-text storage statistics.
 
 URL Parameters
 ➤ None
+
+Response
+➤ info: string
 ```
 
-[GET /exists](https://github.com/realTristan/Hermes/blob/master/server/handlers/exists.go)
+[SEND /exists](https://github.com/realTristan/Hermes/blob/master/socket/handlers/exists.go)
 ```
 About
 ➤ Get whether a key exists in the cache.
 
 URL Parameters
 ➤ key: string
+
+Response
+➤ exists: bool
 ```
 
 ## Full-Text
 
-[POST /ft/init](https://github.com/realTristan/Hermes/blob/master/server/handlers/init.go)
+[SEND /ft.init](https://github.com/realTristan/Hermes/blob/master/socket/handlers/init.go)
 ```
 About
 ➤ Intialize the full text cache.
@@ -249,18 +280,24 @@ About
 URL Parameters
 ➤ maxbytes: int
 ➤ maxlength: int
+
+Response
+➤ None (Success)
 ```
 
-[POST /ft/clean](https://github.com/realTristan/Hermes/blob/master/server/handlers/clean.go)
+[SEND /ft.clean](https://github.com/realTristan/Hermes/blob/master/socket/handlers/clean.go)
 ```
 About
 ➤ Clean all of the data in the full-text storage.
 
 URL Parameters
 ➤ None
+
+Response
+➤ None (Success)
 ```
 
-[GET /ft/search](https://github.com/realTristan/Hermes/blob/master/server/handlers/search.go)
+[SEND /ft.search](https://github.com/realTristan/Hermes/blob/master/socket/handlers/search.go)
 ```
 About
 ➤ Search for a query in the full-text storage.
@@ -270,9 +307,12 @@ URL Parameters
 ➤ strict: bool
 ➤ limit: int
 ➤ schema: map[string]bool
+
+Response
+➤ results: map[string]interface{}
 ```
 
-[GET /ft/search/oneword](https://github.com/realTristan/Hermes/blob/master/server/handlers/search.go)
+[SEND /ft.search.oneword](https://github.com/realTristan/Hermes/blob/master/socket/handlers/search.go)
 ```
 About
 ➤ Search for a single word in the full-text storage.
@@ -281,9 +321,12 @@ URL Parameters
 ➤ q: string
 ➤ strict: bool
 ➤ limit: int
+
+Response
+➤ results: map[string]interface{}
 ```
 
-[GET /ft/search/values](https://github.com/realTristan/Hermes/blob/master/server/handlers/search.go)
+[SEND /ft.search.values](https://github.com/realTristan/Hermes/blob/master/socket/handlers/search.go)
 ```
 About
 ➤ Search in the cache data values. (Slower)
@@ -292,9 +335,12 @@ URL Parameters
 ➤ q: string
 ➤ limit: int
 ➤ schema: map[string]bool
+
+Response
+➤ results: map[string]interface{}
 ```
 
-[GET /ft/search/withkey](https://github.com/realTristan/Hermes/blob/master/server/handlers/search.go)
+[SEND /ft.search.withkey](https://github.com/realTristan/Hermes/blob/master/socket/handlers/search.go)
 ```
 About
 ➤ Search in the cache data values for a specific key.
@@ -303,69 +349,93 @@ URL Parameters
 ➤ q: string
 ➤ limit: int
 ➤ key: string
+
+Response
+➤ results: map[string]interface{}
 ```
 
-[POST /ft/maxbytes](https://github.com/realTristan/Hermes/blob/master/server/handlers/fulltext.go)
+[SEND /ft.maxbytes.set](https://github.com/realTristan/Hermes/blob/master/socket/handlers/fulltext.go)
 ```
 About
 ➤ Set the maximum full-text storage size in bytes.
 
 URL Parameters
 ➤ maxbytes: int
+
+Response
+➤ None (Success)
 ```
 
-[POST /ft/maxlength](https://github.com/realTristan/Hermes/blob/master/server/handlers/fulltext.go)
+[SEND /ft.maxlength.set](https://github.com/realTristan/Hermes/blob/master/socket/handlers/fulltext.go)
 ```
 About
 ➤ Set the maximum full-text storage words allowed to be stored.
 
 URL Parameters
 ➤ maxlength: int
+
+Response
+➤ None (Success)
 ```
 
-[GET /ft/storage](https://github.com/realTristan/Hermes/blob/master/server/handlers/fulltext.go)
+[SEND /ft.storage](https://github.com/realTristan/Hermes/blob/master/socket/handlers/fulltext.go)
 ```
 About
 ➤ Get the current full-text word cache. Can be used for testing.
 
 URL Parameters
 ➤ None
+
+Response
+➤ storage: map[string][]int
 ```
 
-[GET /ft/storage/size](https://github.com/realTristan/Hermes/blob/master/server/handlers/fulltext.go)
+[SEND /ft.storage.size](https://github.com/realTristan/Hermes/blob/master/socket/handlers/fulltext.go)
 ```
 About
 ➤ Get the current full-text storage size in bytes.
 
 URL Parameters
 ➤ None
+
+Response
+➤ size: int
 ```
 
-[GET /ft/storage/length](https://github.com/realTristan/Hermes/blob/master/server/handlers/fulltext.go)
+[SEND /ft.storage.length](https://github.com/realTristan/Hermes/blob/master/socket/handlers/fulltext.go)
 ```
 About
 ➤ Get the current full-text storage length.
 
 URL Parameters
 ➤ None
+
+Response
+➤ length: int
 ```
 
-[GET /ft/isinitialized](https://github.com/realTristan/Hermes/blob/master/server/handlers/fulltext.go)
+[SEND /ft.isinitialized](https://github.com/realTristan/Hermes/blob/master/socket/handlers/fulltext.go)
 ```
 About
 ➤ Get whether the full-text storage has been initialized.
 
 URL Parameters
 ➤ None
+
+Response
+➤ isInitialized: bool
 ```
 
-[POST /ft/indices/sequence](https://github.com/realTristan/Hermes/blob/master/server/handlers/indices.go)
+[SEND /ft.indices.sequence](https://github.com/realTristan/Hermes/blob/master/socket/handlers/indices.go)
 ```
 About
 ➤ Sequence the full-text storage indices.
 
 URL Parameters
 ➤ None
+
+Response
+➤ None (Success)
 ```
 
 # To-do
