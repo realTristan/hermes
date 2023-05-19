@@ -1,18 +1,3 @@
-Metadata-Version: 2.1
-Name: hermescloud
-Version: 0.0.2
-Summary: Extremely fast full-text-search algorithm and caching system
-Home-page: https://github.com/realTristan/Hermes/cloud/wrappers/python
-Author: Tristan Simpson
-Author-email: heytristaann@gmail.com
-Project-URL: Bug Tracker, https://github.com/realTristan/Hermes/issues
-Classifier: Programming Language :: Python :: 3
-Classifier: License :: OSI Approved :: MIT License
-Classifier: Operating System :: OS Independent
-Requires-Python: >=3.6
-Description-Content-Type: text/markdown
-License-File: LICENSE
-
 # Hermes ![Stars](https://img.shields.io/github/stars/realTristan/Hermes?color=brightgreen) ![Watchers](https://img.shields.io/github/watchers/realTristan/Hermes?label=Watchers)
 ![banner](https://user-images.githubusercontent.com/75189508/230987049-665418b1-3576-49b7-861e-29036859ad8a.png)
 
