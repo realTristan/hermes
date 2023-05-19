@@ -168,7 +168,7 @@ Set a value in the cache with the corresponding key.
 ```
 
 #### Example Request
-```rust
+```go
 {
 	"function": "cache.set",
 	"key": "user_id",
@@ -177,8 +177,9 @@ Set a value in the cache with the corresponding key.
 	}
 }
 ```
+
 #### Response
-```rust
+```go
 {
 	"success": true/false, 
 	"data": nil
@@ -186,123 +187,161 @@ Set a value in the cache with the corresponding key.
 ```
 
 ### [cache.delete](https://github.com/realTristan/Hermes/blob/master/socket/handlers/delete.go)
+
+#### About
 ```
-About
-➤ Delete the provided key, and the data correlated to it from the cache.
+Delete the provided key, and the data correlated to it from the cache.
+```
 
-Example Request
+#### Example Request
+```go
 {
-	"function": "cache.delete",
-	"key": "user_id"
-}
-
-Response
-{
-	"success": true/false, 
-	"data": nil
+  "function": "cache.delete",
+  "key": "user_id"
 }
 ```
+
+#### Response
+```go
+{
+  "success": true/false, 
+  "data": nil
+}
+```
+
 
 ### [cache.get](https://github.com/realTristan/Hermes/blob/master/socket/handlers/get.go)
+
+
+#### About
 ```
-About
-➤ Get data from the cache using a key.
+Get data from the cache using a key.
+```
 
-Example Request
+#### Example Request
+```go
 {
-	"function": "cache.get",
-	"key": "user_id"
+  "function": "cache.get",
+  "key": "user_id"
 }
+```
 
-Response
+#### Response
+```go
 {
-	"success": true/false, 
-	"data": map[string]any
+  "success": true/false, 
+  "data": map[string]any
 }
 ```
 
 ### [cache.keys](https://github.com/realTristan/Hermes/blob/master/socket/handlers/keys.go)
+
+#### About
 ```
-About
-➤ Get all of the keys in the cache.
+Get all of the keys in the cache.
+```
 
-Example Request
+#### Example Request
+```go
 {
-	"function": "cache.keys"
+  "function": "cache.keys"
 }
+```
 
-Response
+#### Response
+```go
 {
-	"success": true/false, 
-	"data": []string
+  "success": true/false, 
+  "data": []string
 }
 ```
 
 ### [cache.values](https://github.com/realTristan/Hermes/blob/master/socket/handlers/values.go)
+
+#### About
 ```
-About
-➤ Get all of the values in the cache.
+Get all of the values in the cache.
+```
 
-Example Request
+#### Example Request
+```go
 {
-	"function": "cache.values"
+  "function": "cache.values"
 }
+```
 
-Response
+#### Response
+```go
 {
-	"success": true/false, 
-	"data": []map[string]any
+  "success": true/false, 
+  "data": []map[string]any
 }
 ```
 
 ### [cache.length](https://github.com/realTristan/Hermes/blob/master/socket/handlers/length.go)
+
+#### About
 ```
-About
-➤ Get the amount of keys stored in the cache.
+Get the amount of keys stored in the cache.
+```
 
-Example Request
+#### Example Request
+```go
 {
-	"function": "cache.length"
+  "function": "cache.length"
 }
+```
 
-Response
+#### Response
+```go
 {
-	"success": true/false, 
-	"data": int
+  "success": true/false, 
+  "data": int
 }
 ```
 
 ### [cache.clean](https://github.com/realTristan/Hermes/blob/master/socket/handlers/clean.go)
+
+
+#### About
 ```
-About
-➤ Clean all the data in the cache, and full-text storage.
+Clean all the data in the cache, and full-text storage.
+```
 
-Example Request
+#### Example Request
+```go
 {
-	"function": "cache.clean"
+  "function": "cache.clean"
 }
+```
 
-Response
+#### Response
+```go
 {
-	"success": true/false, 
-	"data": nil
+  "success": true/false, 
+  "data": nil
 }
 ```
 
 ### [cache.info](https://github.com/realTristan/Hermes/blob/master/socket/handlers/info.go)
+
+#### About
 ```
-About
-➤ Get the cache and full-text storage statistics.
+Get the cache and full-text storage statistics.
+```
 
-Example Request
+#### Example Request
+```go
 {
-	"function": "cache.info"
+  "function": "cache.info"
 }
+```
 
-Response
+#### Response
+```go
 {
-	"success": true/false, 
-	"data": string
+  "success": true/false, 
+  "data": string
 }
 ```
 
