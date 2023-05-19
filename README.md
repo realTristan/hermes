@@ -170,19 +170,19 @@ Set a value in the cache with the corresponding key.
 #### Example Request
 ```go
 {
-	"function": "cache.set",
-	"key": "user_id",
-	"value": base64{
-		"name": "tristan"
-	}
+  "function": "cache.set",
+  "key": "user_id",
+  "value": base64{
+    "name": "tristan"
+  }
 }
 ```
 
 #### Response
 ```go
 {
-	"success": true/false, 
-	"data": nil
+  "success": true/false, 
+  "data": nil
 }
 ```
 
@@ -209,9 +209,7 @@ Delete the provided key, and the data correlated to it from the cache.
 }
 ```
 
-
 ### [cache.get](https://github.com/realTristan/Hermes/blob/master/socket/handlers/get.go)
-
 
 #### About
 ```
@@ -302,7 +300,6 @@ Get the amount of keys stored in the cache.
 
 ### [cache.clean](https://github.com/realTristan/Hermes/blob/master/socket/handlers/clean.go)
 
-
 #### About
 ```
 Clean all the data in the cache, and full-text storage.
@@ -346,261 +343,331 @@ Get the cache and full-text storage statistics.
 ```
 
 ### [cache.exists](https://github.com/realTristan/Hermes/blob/master/socket/handlers/exists.go)
+
+#### About
 ```
-About
-➤ Get whether a key exists in the cache.
+Get whether a key exists in the cache.
+```
 
-Example Request
+#### Example Request
+```go
 {
-	"function": "cache.exists",
-	"key": "user_id"
+  "function": "cache.exists",
+  "key": "user_id"
 }
+```
 
-Response
+#### Response
+```go
 {
-	"success": true/false, 
-	"data": bool
+  "success": true/false, 
+  "data": bool
 }
 ```
 
 ## Full-Text
 
 ### [ft.init](https://github.com/realTristan/Hermes/blob/master/socket/handlers/init.go)
+
+#### About
 ```
-About
-➤ Intialize the full text cache.
+Intialize the full text cache.
+```
 
-Example Request
+#### Example Request
+```go
 {
-	"function": "ft.init",
-	"maxbytes": -1,
-	"maxlength": -1
+  "function": "ft.init",
+  "maxbytes": -1,
+  "maxlength": -1
 }
+```
 
-Response
+#### Response
+```go
 {
-	"success": true/false, 
-	"data": nil
+  "success": true/false, 
+  "data": nil
 }
 ```
 
 ### [ft.clean](https://github.com/realTristan/Hermes/blob/master/socket/handlers/clean.go)
+
+#### About
 ```
-About
-➤ Clean all of the data in the full-text storage.
+Clean all of the data in the full-text storage.
+```
 
-Example Request
+#### Example Request
+```go
 {
-	"function": "ft.clean"
+  "function": "ft.clean"
 }
+```
 
-Response
+#### Response
+```go
 {
-	"success": true/false, 
-	"data": nil
+  "success": true/false, 
+  "data": nil
 }
 ```
 
 ### [ft.search](https://github.com/realTristan/Hermes/blob/master/socket/handlers/search.go)
+
+#### About
 ```
-About
-➤ Search for a query in the full-text storage.
+Search for a query in the full-text storage.
+```
 
-Example Request
+#### Example Request
+```go
 {
-	"function": "ft.search",
-	"query": "tristan",
-	"strict": false,
-	"limit": 10,
-	"schema": {
-		"key": true
-	}
+  "function": "ft.search",
+  "query": "tristan",
+  "strict": false,
+  "limit": 10,
+  "schema": {
+    "key": true
+  }
 }
+```
 
-Response
+#### Response
+```go
 {
-	"success": true/false, 
-	"data": []map[string]any
+  "success": true/false, 
+  "data": []map[string]any
 }
 ```
 
 ### [ft.search.oneword](https://github.com/realTristan/Hermes/blob/master/socket/handlers/search.go)
+
+#### About
 ```
-About
-➤ Search for a single word in the full-text storage.
+Search for a single word in the full-text storage.
+```
 
-Example Request
+#### Example Request
+```go
 {
-	"function": "ft.search.oneword",
-	"query": "tristan",
-	"strict": false,
-	"limit": 10
+  "function": "ft.search.oneword",
+  "query": "tristan",
+  "strict": false,
+  "limit": 10
 }
+```
 
-Response
+#### Response
+```go
 {
-	"success": true/false, 
-	"data": []map[string]any
+  "success": true/false, 
+  "data": []map[string]any
 }
 ```
 
 ### [ft.search.values](https://github.com/realTristan/Hermes/blob/master/socket/handlers/search.go)
+
+#### About
 ```
-About
-➤ Search in the cache data values. (Slower)
+Search in the cache data values. (Slower)
+```
 
-Example Request
+#### Example Request
+```go
 {
-	"function": "ft.search.values",
-	"query": "tristan",
-	"limit": 10,
-	"schema": {
-		"key": true
-	}
+  "function": "ft.search.values",
+  "query": "tristan",
+  "limit": 10,
+  "schema": {
+    "key": true
+  }
 }
+```
 
-Response
+#### Response
+```go
 {
-	"success": true/false, 
-	"data": []map[string]any
+  "success": true/false, 
+  "data": []map[string]any
 }
 ```
 
 ### [ft.search.withkey](https://github.com/realTristan/Hermes/blob/master/socket/handlers/search.go)
+
+#### About
 ```
-About
-➤ Search in the cache data values for a specific key.
+Search in the cache data values for a specific key.
+```
 
-Example Request
+#### Example Request
+```go
 {
-	"function": "ft.search.withkey",
-	"query": "tristan",
-	"key": "user_id",
-	"limit": 10
+  "function": "ft.search.withkey",
+  "query": "tristan",
+  "key": "user_id",
+  "limit": 10
 }
+```
 
-Response
+#### Response
+```go
 {
-	"success": true/false, 
-	"data": []map[string]any
+  "success": true/false, 
+  "data": []map[string]any
 }
 ```
 
 ### [ft.maxbytes.set](https://github.com/realTristan/Hermes/blob/master/socket/handlers/fulltext.go)
+
+#### About
 ```
-About
-➤ Set the maximum full-text storage size in bytes.
+Set the maximum full-text storage size in bytes.
+```
 
-Example Request
+#### Example Request
+```go
 {
-	"function": "ft.maxbytes.set",
-	"maxbytes": -1
+  "function": "ft.maxbytes.set",
+  "maxbytes": -1
 }
+```
 
-Response
+#### Response
+```go
 {
-	"success": true/false, 
-	"data": nil
+  "success": true/false, 
+  "data": nil
 }
 ```
 
 ### [ft.maxlength.set](https://github.com/realTristan/Hermes/blob/master/socket/handlers/fulltext.go)
+
+#### About
 ```
-About
-➤ Set the maximum full-text storage words allowed to be stored.
+Set the maximum full-text storage words allowed to be stored.
+```
 
-Example Request
+#### Example Request
+```go
 {
-	"function": "ft.maxlength.set",
-	"maxlength": -1
+  "function": "ft.maxlength.set",
+  "maxlength": -1
 }
+```
 
-Response
+#### Response
+```go
 {
-	"success": true/false, 
-	"data": nil
+  "success": true/false, 
+  "data": nil
 }
 ```
 
 ### [ft.storage](https://github.com/realTristan/Hermes/blob/master/socket/handlers/fulltext.go)
+
+#### About
 ```
-About
-➤ Get the current full-text word cache. Can be used for testing.
+Get the current full-text storage.
+```
 
-Example Request
+#### Example Request
+```go
 {
-	"function": "ft.storage"
+  "function": "ft.storage"
 }
+```
 
-Response
+#### Response
+```go
 {
-	"success": true/false, 
-	"data": map[string][]int
+  "success": true/false, 
+  "data": map[string][]int
 }
 ```
 
 ### [ft.storage.size](https://github.com/realTristan/Hermes/blob/master/socket/handlers/fulltext.go)
+
+#### About
 ```
-About
-➤ Get the current full-text storage size in bytes.
+Get the current full-text storage size in bytes.
+```
 
-Example Request
+#### Example Request
+```go
 {
-	"function": "ft.storage.size"
+  "function": "ft.storage.size"
 }
+```
 
-Response
+#### Response
+```go
 {
-	"success": true/false, 
-	"data": int
+  "success": true/false, 
+  "data": int
 }
 ```
 
 ### [ft.storage.length](https://github.com/realTristan/Hermes/blob/master/socket/handlers/fulltext.go)
+
+#### About
 ```
-About
-➤ Get the current full-text storage length.
+Get the current full-text storage length.
+```
 
-Example Request
+#### Example Request
+```go
 {
-	"function": "ft.storage.length"
+  "function": "ft.storage.length"
 }
+```
 
-Response
+#### Response
+```go
 {
-	"success": true/false, 
-	"data": int
+  "success": true/false, 
+  "data": int
 }
 ```
 
 ### [ft.isinitialized](https://github.com/realTristan/Hermes/blob/master/socket/handlers/fulltext.go)
+
+#### About
 ```
-About
-➤ Get whether the full-text storage has been initialized.
+Get whether the full-text storage has been initialized.
+```
 
-Example Request
+#### Example Request
+```go
 {
-	"function": "ft.isinitialized"
+  "function": "ft.isinitialized"
 }
+```
 
-Response
+#### Response
+```go
 {
-	"success": true/false, 
-	"data": bool
+  "success": true/false, 
+  "data": bool
 }
 ```
 
 ### [ft.indices.sequence](https://github.com/realTristan/Hermes/blob/master/socket/handlers/indices.go)
-```
-About
-➤ Sequence the full-text storage indices.
 
-Example Request
+#### About
+```
+Sequence the full-text storage indices.
+```
+
+#### Example Request
+```go
 {
   "function": "ft.indices.sequence"
 }
+```
 
-Response
+#### Response
+```go
 {
   "success": true/false, 
   "data": nil
