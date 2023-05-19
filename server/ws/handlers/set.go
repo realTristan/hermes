@@ -8,24 +8,25 @@ import (
 
 // Set a value in the cache
 // This is a handler function that returns a fiber context handler function
-func Set(c *Hermes.Cache, ws *websocket.Conn) error {
+func Set(p *Utils.Params, c *Hermes.Cache, ws *websocket.Conn) error {
 	var (
 		key   string
 		ft    bool
 		value map[string]interface{}
 	)
+
 	// Get the key from the query
-	if key = ws.Query("key"); len(key) == 0 {
+	if key = p.Get("key"); len(key) == 0 {
 		return ws.WriteMessage(websocket.TextMessage, Utils.Error("invalid key"))
 	}
 
 	// Get the value from the query
-	if err := Utils.GetValueParam(ws, &value); err != nil {
+	if err := Utils.GetValueParam(p, &value); err != nil {
 		return ws.WriteMessage(websocket.TextMessage, Utils.Error(err))
 	}
 
 	// Get whether or not to store the full-text
-	if err := Utils.GetFTParam(ws, &ft); err != nil {
+	if err := Utils.GetFTParam(p, &ft); err != nil {
 		return ws.WriteMessage(websocket.TextMessage, Utils.Error(err))
 	}
 

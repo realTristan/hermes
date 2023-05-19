@@ -1,14 +1,17 @@
 package ws
 
 import (
+	"log"
+
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/websocket/v2"
 	Hermes "github.com/realTristan/Hermes"
 	"github.com/realTristan/Hermes/server/ws/handlers"
+	Utils "github.com/realTristan/Hermes/server/ws/utils"
 )
 
 // Map of functions that can be called from the client
-var functions = map[string]func(*Hermes.Cache, *websocket.Conn) error{
+var functions = map[string]func(*Utils.Params, *Hermes.Cache, *websocket.Conn) error{
 	"length":              handlers.Length,
 	"clean":               handlers.Clean,
 	"set":                 handlers.Set,
@@ -48,14 +51,29 @@ func SetRouter(app *fiber.App, cache *Hermes.Cache) {
 	// Main websocket handler
 	app.Get("/ws/hermes/cache", websocket.New(func(c *websocket.Conn) {
 		for {
-			if _, msg, err := c.ReadMessage(); err != nil {
-				c.WriteMessage(websocket.TextMessage, []byte(err.Error()))
-			} else if fn, ok := functions[string(msg)]; !ok {
+			var (
+				msg []byte
+				err error
+			)
+
+			// Read the message
+			if _, msg, err = c.ReadMessage(); err != nil {
+				log.Println("read:", err)
+				break
+			}
+
+			// Get the url parameters
+			var (
+				params   *Utils.Params = Utils.GetParams(string(msg))
+				function string        = Utils.GetFunction(string(msg))
+			)
+
+			// Check if the function exists
+			if fn, ok := functions[function]; !ok {
 				c.WriteMessage(websocket.TextMessage, []byte("Function not found"))
-			} else if err := fn(cache, c); err != nil {
-				c.WriteMessage(websocket.TextMessage, []byte(err.Error()))
-			} else {
-				c.WriteMessage(websocket.TextMessage, []byte("Success"))
+			} else if err = fn(params, cache, c); err != nil {
+				log.Println("function:", err)
+				break
 			}
 		}
 	}))

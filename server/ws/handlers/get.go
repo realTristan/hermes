@@ -10,10 +10,10 @@ import (
 
 // Get a key from the cache
 // This is a handler function that returns a fiber context handler function
-func Get(c *Hermes.Cache, ws *websocket.Conn) error {
+func Get(p *Utils.Params, c *Hermes.Cache, ws *websocket.Conn) error {
 	// Get the key from the query
 	var key string
-	if key = ws.Query("key"); len(key) == 0 {
+	if key = p.Get("key"); len(key) == 0 {
 		return ws.WriteMessage(websocket.TextMessage, Utils.Error("key not provided"))
 	}
 
@@ -27,6 +27,6 @@ func Get(c *Hermes.Cache, ws *websocket.Conn) error {
 
 // Get all the data from the cache
 // This is a handler function that returns a fiber context handler function
-func GetAll(c *Hermes.Cache, ws *websocket.Conn) error {
+func GetAll(p *Utils.Params, c *Hermes.Cache, ws *websocket.Conn) error {
 	return nil
 }

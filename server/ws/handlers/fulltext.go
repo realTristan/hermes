@@ -10,16 +10,16 @@ import (
 
 // Check if full-text is initialized
 // This is a handler function that returns a fiber context handler function
-func FTIsInitialized(c *Hermes.Cache, ws *websocket.Conn) error {
+func FTIsInitialized(p *Utils.Params, c *Hermes.Cache, ws *websocket.Conn) error {
 	return ws.WriteMessage(websocket.TextMessage, Utils.Success(c.FTIsInitialized()))
 }
 
 // Set the full-text max bytes
 // This is a handler function that returns a fiber context handler function
-func FTSetMaxBytes(c *Hermes.Cache, ws *websocket.Conn) error {
+func FTSetMaxBytes(p *Utils.Params, c *Hermes.Cache, ws *websocket.Conn) error {
 	// Get the value from the query
 	var value int
-	if err := Utils.GetMaxBytesParam(ws, &value); err != nil {
+	if err := Utils.GetMaxBytesParam(p, &value); err != nil {
 		return ws.WriteMessage(websocket.TextMessage, Utils.Error(err))
 	}
 
@@ -32,10 +32,10 @@ func FTSetMaxBytes(c *Hermes.Cache, ws *websocket.Conn) error {
 
 // Set the full-text maximum length
 // This is a handler function that returns a fiber context handler function
-func FTSetMaxLength(c *Hermes.Cache, ws *websocket.Conn) error {
+func FTSetMaxLength(p *Utils.Params, c *Hermes.Cache, ws *websocket.Conn) error {
 	// Get the value from the query
 	var value int
-	if err := Utils.GetMaxLengthParam(ws, &value); err != nil {
+	if err := Utils.GetMaxLengthParam(p, &value); err != nil {
 		return ws.WriteMessage(websocket.TextMessage, Utils.Error(err))
 	}
 
@@ -48,7 +48,7 @@ func FTSetMaxLength(c *Hermes.Cache, ws *websocket.Conn) error {
 
 // Get the full-text storage
 // This is a handler function that returns a fiber context handler function
-func FTStorage(c *Hermes.Cache, ws *websocket.Conn) error {
+func FTStorage(p *Utils.Params, c *Hermes.Cache, ws *websocket.Conn) error {
 	if data, err := c.FTStorage(); err != nil {
 		return ws.WriteMessage(websocket.TextMessage, Utils.Error(err))
 	} else {
@@ -63,7 +63,7 @@ func FTStorage(c *Hermes.Cache, ws *websocket.Conn) error {
 
 // Get the full-text sotrage length
 // This is a handler function that returns a fiber context handler function
-func FTStorageLength(c *Hermes.Cache, ws *websocket.Conn) error {
+func FTStorageLength(p *Utils.Params, c *Hermes.Cache, ws *websocket.Conn) error {
 	if length, err := c.FTStorageLength(); err != nil {
 		return ws.WriteMessage(websocket.TextMessage, Utils.Error(err))
 	} else {
@@ -73,7 +73,7 @@ func FTStorageLength(c *Hermes.Cache, ws *websocket.Conn) error {
 
 // Get the full-text storage size
 // This is a handler function that returns a fiber context handler function
-func FTStorageSize(c *Hermes.Cache, ws *websocket.Conn) error {
+func FTStorageSize(p *Utils.Params, c *Hermes.Cache, ws *websocket.Conn) error {
 	if size, err := c.FTStorageSize(); err != nil {
 		return ws.WriteMessage(websocket.TextMessage, Utils.Error(err))
 	} else {

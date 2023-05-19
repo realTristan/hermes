@@ -10,7 +10,7 @@ import (
 
 // Get Keys from cache
 // This is a handler function that returns a fiber context handler function
-func Keys(c *Hermes.Cache, ws *websocket.Conn) error {
+func Keys(p *Utils.Params, c *Hermes.Cache, ws *websocket.Conn) error {
 	if keys, err := json.Marshal(c.Keys()); err != nil {
 		return ws.WriteMessage(websocket.TextMessage, Utils.Error(err))
 	} else {

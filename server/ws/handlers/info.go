@@ -8,7 +8,7 @@ import (
 
 // Get cache info in the form of a string
 // This is a handler function that returns a fiber context handler function
-func Info(c *Hermes.Cache, ws *websocket.Conn) error {
+func Info(p *Utils.Params, c *Hermes.Cache, ws *websocket.Conn) error {
 	if info, err := c.InfoString(); err != nil {
 		return ws.WriteMessage(websocket.TextMessage, Utils.Error(err))
 	} else {

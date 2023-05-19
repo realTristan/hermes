@@ -8,6 +8,6 @@ import (
 
 // Get the cache length
 // This is a handler function that returns a fiber context handler function
-func Length(c *Hermes.Cache, ws *websocket.Conn) error {
+func Length(p *Utils.Params, c *Hermes.Cache, ws *websocket.Conn) error {
 	return ws.WriteMessage(websocket.TextMessage, Utils.Success(c.Length()))
 }

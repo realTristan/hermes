@@ -10,7 +10,7 @@ import (
 
 // Get Values from cache
 // This is a handler function that returns a fiber context handler function
-func Values(c *Hermes.Cache, ws *websocket.Conn) error {
+func Values(p *Utils.Params, c *Hermes.Cache, ws *websocket.Conn) error {
 	if values, err := json.Marshal(c.Values()); err != nil {
 		return ws.WriteMessage(websocket.TextMessage, Utils.Error(err))
 	} else {

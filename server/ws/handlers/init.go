@@ -8,19 +8,19 @@ import (
 
 // Initialize the full-text search cache
 // This is a handler function that returns a fiber context handler function
-func FTInit(c *Hermes.Cache, ws *websocket.Conn) error {
+func FTInit(p *Utils.Params, c *Hermes.Cache, ws *websocket.Conn) error {
 	var (
 		maxLength int
 		maxBytes  int
 	)
 
 	// Get the max length parameter
-	if err := Utils.GetMaxLengthParam(ws, &maxLength); err != nil {
+	if err := Utils.GetMaxLengthParam(p, &maxLength); err != nil {
 		return ws.WriteMessage(websocket.TextMessage, Utils.Error(err))
 	}
 
 	// Get the max bytes parameter
-	if err := Utils.GetMaxBytesParam(ws, &maxBytes); err != nil {
+	if err := Utils.GetMaxBytesParam(p, &maxBytes); err != nil {
 		return ws.WriteMessage(websocket.TextMessage, Utils.Error(err))
 	}
 
@@ -33,7 +33,7 @@ func FTInit(c *Hermes.Cache, ws *websocket.Conn) error {
 
 // Initialize the full-text search cache
 // This is a handler function that returns a fiber context handler function
-func FTInitJson(c *Hermes.Cache, ws *websocket.Conn) error {
+func FTInitJson(p *Utils.Params, c *Hermes.Cache, ws *websocket.Conn) error {
 	var (
 		maxLength int
 		maxBytes  int
@@ -41,17 +41,17 @@ func FTInitJson(c *Hermes.Cache, ws *websocket.Conn) error {
 	)
 
 	// Get the max length from the query
-	if err := Utils.GetMaxLengthParam(ws, &maxLength); err != nil {
+	if err := Utils.GetMaxLengthParam(p, &maxLength); err != nil {
 		return ws.WriteMessage(websocket.TextMessage, Utils.Error(err))
 	}
 
 	// Get the max bytes from the query
-	if err := Utils.GetMaxBytesParam(ws, &maxBytes); err != nil {
+	if err := Utils.GetMaxBytesParam(p, &maxBytes); err != nil {
 		return ws.WriteMessage(websocket.TextMessage, Utils.Error(err))
 	}
 
 	// Get the JSON from the query
-	if err := Utils.GetJSONParam(ws, &json); err != nil {
+	if err := Utils.GetJSONParam(p, &json); err != nil {
 		return ws.WriteMessage(websocket.TextMessage, Utils.Error(err))
 	}
 

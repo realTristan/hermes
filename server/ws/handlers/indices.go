@@ -7,7 +7,7 @@ import (
 )
 
 // Sequence the ft storage indices
-func FTSequenceIndices(c *Hermes.Cache, ws *websocket.Conn) error {
+func FTSequenceIndices(p *Utils.Params, c *Hermes.Cache, ws *websocket.Conn) error {
 	c.FTSequenceIndices()
 	return ws.WriteMessage(websocket.TextMessage, Utils.Success("null"))
 }
