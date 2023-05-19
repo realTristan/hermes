@@ -17,5 +17,3 @@ func main() {
 	// Listen on port 3000
 	app.Listen(":3000")
 }
-
-// python3 test.py

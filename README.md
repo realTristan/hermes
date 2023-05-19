@@ -160,282 +160,342 @@ func main() {
 # Websocket API
 ## Cache
 
-[SEND /set](https://github.com/realTristan/Hermes/blob/master/socket/handlers/set.go)
+[cache.set](https://github.com/realTristan/Hermes/blob/master/socket/handlers/set.go)
 ```
 About
 ➤ Set a value in the cache with the corresponding key.
 
-URL Parameters
-➤ key: string
-➤ value: base64(map[string]map[string]interface{})
-➤ ft: bool
+Example Request
+➤ {
+	"function": "cache.set",
+	"key": "user_id",
+	"value": base64{
+		"name": "tristan"
+	}
+}
 
 Response
-➤ None (Success)
+➤ {"success": true/false, "data": nil}
 ```
 
-[SEND /delete](https://github.com/realTristan/Hermes/blob/master/socket/handlers/delete.go)
+[cache.delete](https://github.com/realTristan/Hermes/blob/master/socket/handlers/delete.go)
 ```
 About
 ➤ Delete the provided key, and the data correlated to it from the cache.
 
-URL Parameters
-➤ key: string
+Example Request
+➤ {
+	"function": "cache.delete",
+	"key": "user_id"
+}
 
 Response
-➤ None (Success)
+➤ {"success": true/false, "data": nil}
 ```
 
-[SEND /get](https://github.com/realTristan/Hermes/blob/master/socket/handlers/get.go)
+[cache.get](https://github.com/realTristan/Hermes/blob/master/socket/handlers/get.go)
 ```
 About
 ➤ Get data from the cache using a key.
 
-URL Parameters
-➤ key: string
+Example Request
+➤ {
+	"function": "cache.get",
+	"key": "user_id"
+}
 
 Response
-➤ value: map[string]interface{}
+➤ {"success": true/false, "data": map[string]interface{}}
 ```
 
-[SEND /keys](https://github.com/realTristan/Hermes/blob/master/socket/handlers/keys.go)
+[cache.keys](https://github.com/realTristan/Hermes/blob/master/socket/handlers/keys.go)
 ```
 About
 ➤ Get all of the keys in the cache.
 
-URL Parameters
-➤ None
+Example Request
+➤ {
+	"function": "cache.keys"
+}
 
 Response
-➤ keys: []string
+➤ {"success": true/false, "data": []string}
 ```
 
-[SEND /values](https://github.com/realTristan/Hermes/blob/master/socket/handlers/values.go)
+[cache.values](https://github.com/realTristan/Hermes/blob/master/socket/handlers/values.go)
 ```
 About
 ➤ Get all of the values in the cache.
 
-URL Parameters
-➤ None
+Example Request
+➤ {
+	"function": "cache.values"
+}
 
 Response
-➤ values: []map[string]interface{}
+➤ {"success": true/false, "data": []map[string]interface{}}
 ```
 
-[SEND /length](https://github.com/realTristan/Hermes/blob/master/socket/handlers/length.go)
+[cache.length](https://github.com/realTristan/Hermes/blob/master/socket/handlers/length.go)
 ```
 About
 ➤ Get the amount of keys stored in the cache.
 
-URL Parameters
-➤ None
+Example Request
+➤ {
+	"function": "cache.length"
+}
 
 Response
-➤ length: int
+➤ {"success": true/false, "data": int}
 ```
 
-[SEND /clean](https://github.com/realTristan/Hermes/blob/master/socket/handlers/clean.go)
+[cache.clean](https://github.com/realTristan/Hermes/blob/master/socket/handlers/clean.go)
 ```
 About
 ➤ Clean all the data in the cache, and full-text storage.
 
-URL Parameters
-➤ None
+Example Request
+➤ {
+	"function": "cache.clean"
+}
 
 Response
-➤ None (Success)
+➤ {"success": true/false, "data": nil}
 ```
 
-[SEND /info](https://github.com/realTristan/Hermes/blob/master/socket/handlers/info.go)
+[cache.info](https://github.com/realTristan/Hermes/blob/master/socket/handlers/info.go)
 ```
 About
 ➤ Get the cache and full-text storage statistics.
 
-URL Parameters
-➤ None
+Example Request
+➤ {
+	"function": "cache.info"
+}
 
 Response
-➤ info: string
+➤ {"success": true/false, "data": string}
 ```
 
-[SEND /exists](https://github.com/realTristan/Hermes/blob/master/socket/handlers/exists.go)
+[cache.exists](https://github.com/realTristan/Hermes/blob/master/socket/handlers/exists.go)
 ```
 About
 ➤ Get whether a key exists in the cache.
 
-URL Parameters
-➤ key: string
+Example Request
+➤ {
+	"function": "cache.exists",
+	"key": "user_id"
+}
 
 Response
-➤ exists: bool
+➤ {"success": true/false, "data": bool}
 ```
 
 ## Full-Text
 
-[SEND /ft.init](https://github.com/realTristan/Hermes/blob/master/socket/handlers/init.go)
+[ft.init](https://github.com/realTristan/Hermes/blob/master/socket/handlers/init.go)
 ```
 About
 ➤ Intialize the full text cache.
 
-URL Parameters
-➤ maxbytes: int
-➤ maxlength: int
+Example Request
+➤ {
+	"function": "ft.init",
+	"maxbytes": -1,
+	"maxlength": -1
+}
 
 Response
-➤ None (Success)
+➤ {"success": true/false, "data": nil}
 ```
 
-[SEND /ft.clean](https://github.com/realTristan/Hermes/blob/master/socket/handlers/clean.go)
+[ft.clean](https://github.com/realTristan/Hermes/blob/master/socket/handlers/clean.go)
 ```
 About
 ➤ Clean all of the data in the full-text storage.
 
-URL Parameters
-➤ None
+Example Request
+➤ {
+	"function": "ft.clean"
+}
 
 Response
-➤ None (Success)
+➤ {"success": true/false, "data": nil}
 ```
 
-[SEND /ft.search](https://github.com/realTristan/Hermes/blob/master/socket/handlers/search.go)
+[ft.search](https://github.com/realTristan/Hermes/blob/master/socket/handlers/search.go)
 ```
 About
 ➤ Search for a query in the full-text storage.
 
-URL Parameters
-➤ q: string
-➤ strict: bool
-➤ limit: int
-➤ schema: map[string]bool
+Example Request
+➤ {
+	"function": "ft.search",
+	"query": "tristan",
+	"strict": false,
+	"limit": 10,
+	"schema": {
+		"key": true
+	}
+}
 
 Response
-➤ results: map[string]interface{}
+➤ {"success": true/false, "data": []map[string]interface{}}
 ```
 
-[SEND /ft.search.oneword](https://github.com/realTristan/Hermes/blob/master/socket/handlers/search.go)
+[ft.search.oneword](https://github.com/realTristan/Hermes/blob/master/socket/handlers/search.go)
 ```
 About
 ➤ Search for a single word in the full-text storage.
 
-URL Parameters
-➤ q: string
-➤ strict: bool
-➤ limit: int
+Example Request
+➤ {
+	"function": "ft.search.oneword",
+	"query": "tristan",
+	"strict": false,
+	"limit": 10
+}
 
 Response
-➤ results: map[string]interface{}
+➤ {"success": true/false, "data": []map[string]interface{}}
 ```
 
-[SEND /ft.search.values](https://github.com/realTristan/Hermes/blob/master/socket/handlers/search.go)
+[ft.search.values](https://github.com/realTristan/Hermes/blob/master/socket/handlers/search.go)
 ```
 About
 ➤ Search in the cache data values. (Slower)
 
-URL Parameters
-➤ q: string
-➤ limit: int
-➤ schema: map[string]bool
+Example Request
+➤ {
+	"function": "ft.search.values",
+	"query": "tristan",
+	"limit": 10,
+	"schema": {
+		"key": true
+	}
+}
 
 Response
-➤ results: map[string]interface{}
+➤ {"success": true/false, "data": []map[string]interface{}}
 ```
 
-[SEND /ft.search.withkey](https://github.com/realTristan/Hermes/blob/master/socket/handlers/search.go)
+[ft.search.withkey](https://github.com/realTristan/Hermes/blob/master/socket/handlers/search.go)
 ```
 About
 ➤ Search in the cache data values for a specific key.
 
-URL Parameters
-➤ q: string
-➤ limit: int
-➤ key: string
+Example Request
+➤ {
+	"function": "ft.search.withkey",
+	"query": "tristan",
+	"key": "user_id",
+	"limit": 10
+}
 
 Response
-➤ results: map[string]interface{}
+➤ {"success": true/false, "data": []map[string]interface{}}
 ```
 
-[SEND /ft.maxbytes.set](https://github.com/realTristan/Hermes/blob/master/socket/handlers/fulltext.go)
+[ft.maxbytes.set](https://github.com/realTristan/Hermes/blob/master/socket/handlers/fulltext.go)
 ```
 About
 ➤ Set the maximum full-text storage size in bytes.
 
-URL Parameters
-➤ maxbytes: int
+Example Request
+➤ {
+	"function": "ft.maxbytes.set",
+	"maxbytes": -1
+}
 
 Response
-➤ None (Success)
+➤ {"success": true/false, "data": nil}
 ```
 
-[SEND /ft.maxlength.set](https://github.com/realTristan/Hermes/blob/master/socket/handlers/fulltext.go)
+[ft.maxlength.set](https://github.com/realTristan/Hermes/blob/master/socket/handlers/fulltext.go)
 ```
 About
 ➤ Set the maximum full-text storage words allowed to be stored.
 
-URL Parameters
-➤ maxlength: int
+Example Request
+➤ {
+	"function": "ft.maxlength.set",
+	"maxlength": -1
+}
 
 Response
-➤ None (Success)
+➤ {"success": true/false, "data": nil}
 ```
 
-[SEND /ft.storage](https://github.com/realTristan/Hermes/blob/master/socket/handlers/fulltext.go)
+[ft.storage](https://github.com/realTristan/Hermes/blob/master/socket/handlers/fulltext.go)
 ```
 About
 ➤ Get the current full-text word cache. Can be used for testing.
 
-URL Parameters
-➤ None
+Example Request
+➤ {
+	"function": "ft.storage"
+}
 
 Response
-➤ storage: map[string][]int
+➤ {"success": true/false, "data": map[string][]int}
 ```
 
-[SEND /ft.storage.size](https://github.com/realTristan/Hermes/blob/master/socket/handlers/fulltext.go)
+[ft.storage.size](https://github.com/realTristan/Hermes/blob/master/socket/handlers/fulltext.go)
 ```
 About
 ➤ Get the current full-text storage size in bytes.
 
-URL Parameters
-➤ None
+Example Request
+➤ {
+	"function": "ft.storage.size"
+}
 
 Response
-➤ size: int
+➤ {"success": true/false, "data": int}
 ```
 
-[SEND /ft.storage.length](https://github.com/realTristan/Hermes/blob/master/socket/handlers/fulltext.go)
+[ft.storage.length](https://github.com/realTristan/Hermes/blob/master/socket/handlers/fulltext.go)
 ```
 About
 ➤ Get the current full-text storage length.
 
-URL Parameters
-➤ None
+Example Request
+➤ {
+	"function": "ft.storage.length"
+}
 
 Response
-➤ length: int
+➤ {"success": true/false, "data": int}
 ```
 
-[SEND /ft.isinitialized](https://github.com/realTristan/Hermes/blob/master/socket/handlers/fulltext.go)
+[ft.isinitialized](https://github.com/realTristan/Hermes/blob/master/socket/handlers/fulltext.go)
 ```
 About
 ➤ Get whether the full-text storage has been initialized.
 
-URL Parameters
-➤ None
+Example Request
+➤ {
+	"function": "ft.isinitialized"
+}
 
 Response
-➤ isInitialized: bool
+➤ {"success": true/false, "data": bool}
 ```
 
-[SEND /ft.indices.sequence](https://github.com/realTristan/Hermes/blob/master/socket/handlers/indices.go)
+[ft.indices.sequence](https://github.com/realTristan/Hermes/blob/master/socket/handlers/indices.go)
 ```
 About
 ➤ Sequence the full-text storage indices.
 
-URL Parameters
-➤ None
+Example Request
+➤ {
+	"function": "ft.indices.sequence"
+}
 
 Response
-➤ None (Success)
+➤ {"success": true/false, "data": nil}
 ```
 
 # To-do

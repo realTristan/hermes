@@ -14,7 +14,7 @@ def test_set():
         }
     }
     return json.dumps({
-        "function": "set",
+        "function": "cache.set",
         "key": "test",
         "value": encode(json.dumps(value)),
         "ft": False
@@ -22,7 +22,7 @@ def test_set():
 
 def test_get():
     return json.dumps({
-        "function": "get",
+        "function": "cache.get",
         "key": "test"
     })
 
