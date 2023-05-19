@@ -1,12 +1,14 @@
 # Hermes ![Stars](https://img.shields.io/github/stars/realTristan/Hermes?color=brightgreen) ![Watchers](https://img.shields.io/github/watchers/realTristan/Hermes?label=Watchers)
 ![banner](https://user-images.githubusercontent.com/75189508/230987049-665418b1-3576-49b7-861e-29036859ad8a.png)
 
-# Go Install
+# Hermes Go
+## Import
 ```
 go get github.com/realTristan/Hermes
 ```
 
-# Python Install
+# Hermes Cloud
+## Python Install
 ```
 pip install hermescloud
 ```
