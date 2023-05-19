@@ -162,13 +162,13 @@ func main() {
 
 ### [cache.set](https://github.com/realTristan/Hermes/blob/master/socket/handlers/set.go)
 
-### About
+#### About
 ```
 Set a value in the cache with the corresponding key.
 ```
 
-### Example Request
-```json
+#### Example Request
+```rust
 {
 	"function": "cache.set",
 	"key": "user_id",
@@ -178,8 +178,8 @@ Set a value in the cache with the corresponding key.
 }
 ```
 
-### Response
-```json
+#### Response
+```rust
 {
 	"success": true/false, 
 	"data": nil
