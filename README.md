@@ -177,7 +177,6 @@ Set a value in the cache with the corresponding key.
 	}
 }
 ```
-
 #### Response
 ```rust
 {
