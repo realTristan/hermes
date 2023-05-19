@@ -20,6 +20,7 @@ var functions = map[string]func(*Utils.Params, *Hermes.Cache, *websocket.Conn) e
 	"cache.get.all":       handlers.GetAll,
 	"cache.keys":          handlers.Keys,
 	"cache.info":          handlers.Info,
+	"cache.info.testing":  handlers.InfoForTesting,
 	"cache.exists":        handlers.Exists,
 	"ft.init":             handlers.FTInit,
 	"ft.init.json":        handlers.FTInitJson,

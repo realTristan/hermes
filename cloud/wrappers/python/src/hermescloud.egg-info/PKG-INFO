@@ -1,6 +1,6 @@
 Metadata-Version: 2.1
 Name: hermescloud
-Version: 0.0.2
+Version: 0.0.3
 Summary: Extremely fast full-text-search algorithm and caching system
 Home-page: https://github.com/realTristan/Hermes/cloud/wrappers/python
 Author: Tristan Simpson

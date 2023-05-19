@@ -12,6 +12,16 @@ func Info(p *Utils.Params, c *Hermes.Cache, ws *websocket.Conn) error {
 	if info, err := c.InfoString(); err != nil {
 		return ws.WriteMessage(websocket.TextMessage, Utils.Error(err))
 	} else {
-		return ws.WriteMessage(websocket.TextMessage, Utils.Success(info))
+		return ws.WriteMessage(websocket.TextMessage, []byte(info))
+	}
+}
+
+// Get cache info for testing in the form of a string
+// This is a handler function that returns a fiber context handler function
+func InfoForTesting(p *Utils.Params, c *Hermes.Cache, ws *websocket.Conn) error {
+	if info, err := c.InfoStringForTesting(); err != nil {
+		return ws.WriteMessage(websocket.TextMessage, Utils.Error(err))
+	} else {
+		return ws.WriteMessage(websocket.TextMessage, []byte(info))
 	}
 }
