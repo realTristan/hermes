@@ -27,7 +27,7 @@ def main():
         "name": True
     }))
 
-    # Print the duration
+    # Print the duration (average: 0.0006s)
     print(f"Duration: {time.time() - start_time}s")
 
     # Delete a value
