@@ -9,7 +9,7 @@ go get github.com/realTristan/Hermes
 ```
 
 # Hermes Cloud
-Access the hermes functions via websocket.
+Access the hermes cache functions via websocket.
 ## Python Install
 ```
 pip install hermescloud
