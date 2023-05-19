@@ -2,12 +2,14 @@
 ![banner](https://user-images.githubusercontent.com/75189508/230987049-665418b1-3576-49b7-861e-29036859ad8a.png)
 
 # Hermes Go
+Direct access to the hermes cache/nocache functions.
 ## Import
 ```
 go get github.com/realTristan/Hermes
 ```
 
 # Hermes Cloud
+Access the hermes functions via websocket.
 ## Python Install
 ```
 pip install hermescloud
