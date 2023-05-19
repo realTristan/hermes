@@ -5,7 +5,7 @@ import (
 
 	"github.com/gofiber/websocket/v2"
 	Hermes "github.com/realTristan/Hermes"
-	Utils "github.com/realTristan/Hermes/server/ws/utils"
+	Utils "github.com/realTristan/Hermes/socket/utils"
 )
 
 // Check if full-text is initialized

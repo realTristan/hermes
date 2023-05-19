@@ -5,15 +5,15 @@ import (
 
 	"github.com/gofiber/websocket/v2"
 	Hermes "github.com/realTristan/Hermes"
-	Utils "github.com/realTristan/Hermes/server/ws/utils"
+	Utils "github.com/realTristan/Hermes/socket/utils"
 )
 
-// Get Keys from cache
+// Get Values from cache
 // This is a handler function that returns a fiber context handler function
-func Keys(p *Utils.Params, c *Hermes.Cache, ws *websocket.Conn) error {
-	if keys, err := json.Marshal(c.Keys()); err != nil {
+func Values(p *Utils.Params, c *Hermes.Cache, ws *websocket.Conn) error {
+	if values, err := json.Marshal(c.Values()); err != nil {
 		return ws.WriteMessage(websocket.TextMessage, Utils.Error(err))
 	} else {
-		return ws.WriteMessage(websocket.TextMessage, keys)
+		return ws.WriteMessage(websocket.TextMessage, values)
 	}
 }

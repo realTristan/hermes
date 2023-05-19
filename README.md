@@ -130,49 +130,30 @@ func main() {
 }
 ```
 
-# CLI
-## Usage
-```
-hermes serve -p 6000
-```
-
-## Install
-```
-MacOS:
-  $ curl "https://github.com/realTristan/Hermes/raw/master/cli/hermes" -o /usr/local/bin/hermes
-  
-Windows:
-  $ curl "https://github.com/realTristan/Hermes/raw/master/cli/hermes.exe" -o C:\hermes.exe
-  $ set PATH=%PATH%;C:\hermes.exe
-```
+# Hermes Cloud App
 
 ## Custom Implementation
 ```go
 import (
-	"log"
-	"os"
-	
 	"github.com/gofiber/fiber/v2"
 	Hermes "github.com/realTristan/Hermes"
-	server "github.com/realTristan/Hermes/server"
+	Socket "github.com/realTristan/Hermes/socket"
 )
 
 func main() {
-	// Initialize the cache
-	var cache *Hermes.Cache = Hermes.InitCache()
+	// Cache and fiber app
+	cache := Hermes.InitCache()
+	app := fiber.New()
 
-	// Initialize a new fiber app
-	var app *fiber.App = fiber.New()
-	
-	// Set the Hermes API Routes
-	server.SetRoutes(app, cache)
+	// Set the router
+	Socket.SetRouter(app, cache)
 
-	// Listen on the port
-	log.Fatal(app.Listen(":6000"))
+	// Listen on port 3000
+	app.Listen(":3000")
 }
 ```
 
-# API
+# Websocket API
 ## Cache
 
 [POST /set](https://github.com/realTristan/Hermes/blob/master/server/handlers/set.go)

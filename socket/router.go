@@ -6,8 +6,8 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/websocket/v2"
 	Hermes "github.com/realTristan/Hermes"
-	"github.com/realTristan/Hermes/server/ws/handlers"
-	Utils "github.com/realTristan/Hermes/server/ws/utils"
+	"github.com/realTristan/Hermes/socket/handlers"
+	Utils "github.com/realTristan/Hermes/socket/utils"
 )
 
 // Map of functions that can be called from the client
