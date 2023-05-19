@@ -166,7 +166,7 @@ About
 ➤ Set a value in the cache with the corresponding key.
 
 Example Request
-➤ {
+{
 	"function": "cache.set",
 	"key": "user_id",
 	"value": base64{
@@ -175,7 +175,10 @@ Example Request
 }
 
 Response
-➤ {"success": true/false, "data": nil}
+{
+	"success": true/false, 
+	"data": nil
+}
 ```
 
 [cache.delete](https://github.com/realTristan/Hermes/blob/master/socket/handlers/delete.go)
@@ -184,13 +187,16 @@ About
 ➤ Delete the provided key, and the data correlated to it from the cache.
 
 Example Request
-➤ {
+{
 	"function": "cache.delete",
 	"key": "user_id"
 }
 
 Response
-➤ {"success": true/false, "data": nil}
+{
+	"success": true/false, 
+	"data": nil
+}
 ```
 
 [cache.get](https://github.com/realTristan/Hermes/blob/master/socket/handlers/get.go)
@@ -199,27 +205,33 @@ About
 ➤ Get data from the cache using a key.
 
 Example Request
-➤ {
+{
 	"function": "cache.get",
 	"key": "user_id"
 }
 
 Response
-➤ {"success": true/false, "data": map[string]interface{}}
+{
+	"success": true/false, 
+	"data": map[string]any
+}
 ```
 
-[cache.keys](https://github.com/realTristan/Hermes/blob/master/socket/handlers/keys.go)
+### [cache.keys](https://github.com/realTristan/Hermes/blob/master/socket/handlers/keys.go)
 ```
 About
 ➤ Get all of the keys in the cache.
 
 Example Request
-➤ {
+{
 	"function": "cache.keys"
 }
 
 Response
-➤ {"success": true/false, "data": []string}
+{
+	"success": true/false, 
+	"data": []string
+}
 ```
 
 [cache.values](https://github.com/realTristan/Hermes/blob/master/socket/handlers/values.go)
@@ -228,12 +240,15 @@ About
 ➤ Get all of the values in the cache.
 
 Example Request
-➤ {
+{
 	"function": "cache.values"
 }
 
 Response
-➤ {"success": true/false, "data": []map[string]interface{}}
+{
+	"success": true/false, 
+	"data": []map[string]any
+}
 ```
 
 [cache.length](https://github.com/realTristan/Hermes/blob/master/socket/handlers/length.go)
@@ -242,12 +257,15 @@ About
 ➤ Get the amount of keys stored in the cache.
 
 Example Request
-➤ {
+{
 	"function": "cache.length"
 }
 
 Response
-➤ {"success": true/false, "data": int}
+{
+	"success": true/false, 
+	"data": int
+}
 ```
 
 [cache.clean](https://github.com/realTristan/Hermes/blob/master/socket/handlers/clean.go)
@@ -256,12 +274,15 @@ About
 ➤ Clean all the data in the cache, and full-text storage.
 
 Example Request
-➤ {
+{
 	"function": "cache.clean"
 }
 
 Response
-➤ {"success": true/false, "data": nil}
+{
+	"success": true/false, 
+	"data": nil
+}
 ```
 
 [cache.info](https://github.com/realTristan/Hermes/blob/master/socket/handlers/info.go)
@@ -270,12 +291,15 @@ About
 ➤ Get the cache and full-text storage statistics.
 
 Example Request
-➤ {
+{
 	"function": "cache.info"
 }
 
 Response
-➤ {"success": true/false, "data": string}
+{
+	"success": true/false, 
+	"data": string
+}
 ```
 
 [cache.exists](https://github.com/realTristan/Hermes/blob/master/socket/handlers/exists.go)
@@ -284,13 +308,16 @@ About
 ➤ Get whether a key exists in the cache.
 
 Example Request
-➤ {
+{
 	"function": "cache.exists",
 	"key": "user_id"
 }
 
 Response
-➤ {"success": true/false, "data": bool}
+{
+	"success": true/false, 
+	"data": bool
+}
 ```
 
 ## Full-Text
@@ -301,14 +328,17 @@ About
 ➤ Intialize the full text cache.
 
 Example Request
-➤ {
+{
 	"function": "ft.init",
 	"maxbytes": -1,
 	"maxlength": -1
 }
 
 Response
-➤ {"success": true/false, "data": nil}
+{
+	"success": true/false, 
+	"data": nil
+}
 ```
 
 [ft.clean](https://github.com/realTristan/Hermes/blob/master/socket/handlers/clean.go)
@@ -317,12 +347,15 @@ About
 ➤ Clean all of the data in the full-text storage.
 
 Example Request
-➤ {
+{
 	"function": "ft.clean"
 }
 
 Response
-➤ {"success": true/false, "data": nil}
+{
+	"success": true/false, 
+	"data": nil
+}
 ```
 
 [ft.search](https://github.com/realTristan/Hermes/blob/master/socket/handlers/search.go)
@@ -331,7 +364,7 @@ About
 ➤ Search for a query in the full-text storage.
 
 Example Request
-➤ {
+{
 	"function": "ft.search",
 	"query": "tristan",
 	"strict": false,
@@ -342,7 +375,10 @@ Example Request
 }
 
 Response
-➤ {"success": true/false, "data": []map[string]interface{}}
+{
+	"success": true/false, 
+	"data": []map[string]any
+}
 ```
 
 [ft.search.oneword](https://github.com/realTristan/Hermes/blob/master/socket/handlers/search.go)
@@ -351,7 +387,7 @@ About
 ➤ Search for a single word in the full-text storage.
 
 Example Request
-➤ {
+{
 	"function": "ft.search.oneword",
 	"query": "tristan",
 	"strict": false,
@@ -359,7 +395,10 @@ Example Request
 }
 
 Response
-➤ {"success": true/false, "data": []map[string]interface{}}
+{
+	"success": true/false, 
+	"data": []map[string]any
+}
 ```
 
 [ft.search.values](https://github.com/realTristan/Hermes/blob/master/socket/handlers/search.go)
@@ -368,7 +407,7 @@ About
 ➤ Search in the cache data values. (Slower)
 
 Example Request
-➤ {
+{
 	"function": "ft.search.values",
 	"query": "tristan",
 	"limit": 10,
@@ -378,7 +417,10 @@ Example Request
 }
 
 Response
-➤ {"success": true/false, "data": []map[string]interface{}}
+{
+	"success": true/false, 
+	"data": []map[string]any
+}
 ```
 
 [ft.search.withkey](https://github.com/realTristan/Hermes/blob/master/socket/handlers/search.go)
@@ -387,7 +429,7 @@ About
 ➤ Search in the cache data values for a specific key.
 
 Example Request
-➤ {
+{
 	"function": "ft.search.withkey",
 	"query": "tristan",
 	"key": "user_id",
@@ -395,7 +437,10 @@ Example Request
 }
 
 Response
-➤ {"success": true/false, "data": []map[string]interface{}}
+{
+	"success": true/false, 
+	"data": []map[string]any
+}
 ```
 
 [ft.maxbytes.set](https://github.com/realTristan/Hermes/blob/master/socket/handlers/fulltext.go)
@@ -404,13 +449,16 @@ About
 ➤ Set the maximum full-text storage size in bytes.
 
 Example Request
-➤ {
+{
 	"function": "ft.maxbytes.set",
 	"maxbytes": -1
 }
 
 Response
-➤ {"success": true/false, "data": nil}
+{
+	"success": true/false, 
+	"data": nil
+}
 ```
 
 [ft.maxlength.set](https://github.com/realTristan/Hermes/blob/master/socket/handlers/fulltext.go)
@@ -419,13 +467,16 @@ About
 ➤ Set the maximum full-text storage words allowed to be stored.
 
 Example Request
-➤ {
+{
 	"function": "ft.maxlength.set",
 	"maxlength": -1
 }
 
 Response
-➤ {"success": true/false, "data": nil}
+{
+	"success": true/false, 
+	"data": nil
+}
 ```
 
 [ft.storage](https://github.com/realTristan/Hermes/blob/master/socket/handlers/fulltext.go)
@@ -434,12 +485,15 @@ About
 ➤ Get the current full-text word cache. Can be used for testing.
 
 Example Request
-➤ {
+{
 	"function": "ft.storage"
 }
 
 Response
-➤ {"success": true/false, "data": map[string][]int}
+{
+	"success": true/false, 
+	"data": map[string][]int
+}
 ```
 
 [ft.storage.size](https://github.com/realTristan/Hermes/blob/master/socket/handlers/fulltext.go)
@@ -448,12 +502,15 @@ About
 ➤ Get the current full-text storage size in bytes.
 
 Example Request
-➤ {
+{
 	"function": "ft.storage.size"
 }
 
 Response
-➤ {"success": true/false, "data": int}
+{
+	"success": true/false, 
+	"data": int
+}
 ```
 
 [ft.storage.length](https://github.com/realTristan/Hermes/blob/master/socket/handlers/fulltext.go)
@@ -462,12 +519,15 @@ About
 ➤ Get the current full-text storage length.
 
 Example Request
-➤ {
+{
 	"function": "ft.storage.length"
 }
 
 Response
-➤ {"success": true/false, "data": int}
+{
+	"success": true/false, 
+	"data": int
+}
 ```
 
 [ft.isinitialized](https://github.com/realTristan/Hermes/blob/master/socket/handlers/fulltext.go)
@@ -476,12 +536,15 @@ About
 ➤ Get whether the full-text storage has been initialized.
 
 Example Request
-➤ {
+{
 	"function": "ft.isinitialized"
 }
 
 Response
-➤ {"success": true/false, "data": bool}
+{
+	"success": true/false, 
+	"data": bool
+}
 ```
 
 [ft.indices.sequence](https://github.com/realTristan/Hermes/blob/master/socket/handlers/indices.go)
@@ -490,12 +553,15 @@ About
 ➤ Sequence the full-text storage indices.
 
 Example Request
-➤ {
+{
 	"function": "ft.indices.sequence"
 }
 
 Response
-➤ {"success": true/false, "data": nil}
+{
+	"success": true/false, 
+	"data": nil
+}
 ```
 
 # To-do
