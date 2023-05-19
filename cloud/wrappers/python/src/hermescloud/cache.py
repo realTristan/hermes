@@ -3,10 +3,9 @@ from .utils import Utils
 from websocket import create_connection
 
 # Wrapper for the Hermes cache
-class Hermes:
+class Cache:
     def __init__(self, addr: str):
-        self.addr = addr
-        self.ws = create_connection(f"ws://{self.addr}/ws/hermes")
+        self.ws = create_connection(f"ws://{addr}/ws/hermes")
 
     # With full text
     def with_ft(self, value: str) -> dict[str, typing.Any]:

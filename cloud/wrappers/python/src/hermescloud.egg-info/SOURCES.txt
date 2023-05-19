@@ -3,7 +3,7 @@ README.md
 pyproject.toml
 setup.cfg
 src/hermescloud/__init__.py
-src/hermescloud/hermes.py
+src/hermescloud/cache.py
 src/hermescloud/utils.py
 src/hermescloud.egg-info/PKG-INFO
 src/hermescloud.egg-info/SOURCES.txt
