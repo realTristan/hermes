@@ -1,8 +1,0 @@
-LICENSE
-README.md
-pyproject.toml
-setup.cfg
-src/hermes.egg-info/PKG-INFO
-src/hermes.egg-info/SOURCES.txt
-src/hermes.egg-info/dependency_links.txt
-src/hermes.egg-info/top_level.txt
