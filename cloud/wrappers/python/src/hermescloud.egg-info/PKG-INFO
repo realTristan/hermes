@@ -1,6 +1,6 @@
 Metadata-Version: 2.1
 Name: hermescloud
-Version: 0.0.5
+Version: 0.0.6
 Summary: Extremely fast full-text-search algorithm and caching system
 Home-page: https://github.com/realTristan/Hermes
 Author: Tristan Simpson
