@@ -10,10 +10,10 @@ import (
 // This function is thread safe.
 func InitWithMap(data []map[string]interface{}) (*FullText, error) {
 	var ft *FullText = &FullText{
-		mutex:     &sync.RWMutex{},
-		wordCache: make(map[string][]int),
-		words:     []string{},
-		data:      []map[string]interface{}{},
+		mutex:   &sync.RWMutex{},
+		storage: make(map[string][]int),
+		words:   []string{},
+		data:    []map[string]interface{}{},
 	}
 
 	// Load the cache data

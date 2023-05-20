@@ -1,13 +1,64 @@
 package utils
 
 import (
-	"regexp"
 	"strings"
 )
 
+// Check if a char is alphanumeric.
+func IsAlphaNumChar(c byte) bool {
+	return (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z')
+}
+
 // Check  if a string consists entirely of alphanumeric characters.
 func IsAlphaNum(s string) bool {
-	return regexp.MustCompile(`^[a-zA-Z0-9]*$`).MatchString(s)
+	for _, c := range s {
+		if !IsAlphaNumChar(byte(c)) {
+			return false
+		}
+	}
+	return true
+}
+
+// Trim non alphanumeric characters from the beginning and end of a string.
+func TrimNonAlphaNum(s string) string {
+	if len(s) == 0 {
+		return s
+	}
+	for !IsAlphaNumChar(s[0]) {
+		if len(s) < 2 {
+			return ""
+		}
+		s = s[1:]
+	}
+	for !IsAlphaNumChar(s[len(s)-1]) {
+		if len(s) < 2 {
+			return ""
+		}
+		s = s[:len(s)-1]
+	}
+	return s
+}
+
+// Split by alphanumeric characters.
+func SplitByAlphaNum(s string) []string {
+	var (
+		word  string   = ""
+		words []string = make([]string, 0)
+	)
+	for i := 0; i < len(s); i++ {
+		if s[i] == '-' || s[i] == '.' || IsAlphaNumChar(s[i]) {
+			word += string(s[i])
+		} else {
+			if len(word) > 0 {
+				words = append(words, word)
+				word = ""
+			}
+		}
+	}
+	if len(word) > 0 {
+		words = append(words, word)
+	}
+	return words
 }
 
 // Remove double spaces from a string and return the modified string.
@@ -38,9 +89,4 @@ func Contains(s1 string, s2 string) bool {
 		}
 	}
 	return false
-}
-
-// Remove all non-alphanumeric characters from a string.
-func RemoveNonAlphaNum(s string) string {
-	return regexp.MustCompile(`[^a-zA-Z0-9]+`).ReplaceAllString(s, "")
 }

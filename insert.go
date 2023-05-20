@@ -60,6 +60,10 @@ func (ft *FullText) insert(data map[string]map[string]interface{}) error {
 
 			// Loop through the words
 			for _, word := range strings.Split(strv, " ") {
+				if len(word) == 0 {
+					continue
+				}
+				// Check if the storage limit has been reached
 				if ft.maxLength > 0 {
 					if len(tempStorage) > ft.maxLength {
 						return fmt.Errorf("full-text storage limit reached (%d/%d keys). load cancelled", len(tempStorage), ft.maxLength)
@@ -72,20 +76,26 @@ func (ft *FullText) insert(data map[string]map[string]interface{}) error {
 						return fmt.Errorf("full-text byte-size limit reached (%d/%d bytes). load cancelled", cacheSize, ft.maxBytes)
 					}
 				}
-				switch {
-				case len(word) <= 1:
-					continue
-				case !Utils.IsAlphaNum(word):
-					word = Utils.RemoveNonAlphaNum(word)
+
+				// Trim the word
+				word = Utils.TrimNonAlphaNum(word)
+				var words []string = Utils.SplitByAlphaNum(word)
+
+				// Loop through the words
+				for i := 0; i < len(words); i++ {
+					// Check if the word is valid
+					if len(words[i]) <= 3 {
+						continue
+					}
+					if _, ok := tempStorage[words[i]]; !ok {
+						tempStorage[words[i]] = []int{tempCurrentIndex}
+						continue
+					}
+					if Utils.ContainsInt(tempStorage[words[i]], tempKeys[cacheKey]) {
+						continue
+					}
+					tempStorage[words[i]] = append(tempStorage[words[i]], tempKeys[cacheKey])
 				}
-				if _, ok := tempStorage[word]; !ok {
-					tempStorage[word] = []int{tempCurrentIndex}
-					continue
-				}
-				if Utils.ContainsInt(tempStorage[word], tempKeys[cacheKey]) {
-					continue
-				}
-				tempStorage[word] = append(tempStorage[word], tempKeys[cacheKey])
 			}
 
 			// Set the value in the cache data

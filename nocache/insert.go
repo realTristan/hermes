@@ -33,21 +33,29 @@ func (ft *FullText) insert(data []map[string]interface{}) error {
 
 			// Loop through the words
 			for _, word := range strings.Split(strv, " ") {
-				switch {
-				case len(word) <= 1:
-					continue
-				case !Utils.IsAlphaNum(word):
-					word = Utils.RemoveNonAlphaNum(word)
-				}
-				if _, ok := ft.wordCache[word]; !ok {
-					ft.wordCache[word] = []int{i}
-					ft.words = append(ft.words, word)
+				if len(word) == 0 {
 					continue
 				}
-				if Utils.ContainsInt(ft.wordCache[word], i) {
-					continue
+
+				// Trim the word
+				word = Utils.TrimNonAlphaNum(word)
+				var words []string = Utils.SplitByAlphaNum(word)
+
+				// Loop through the words
+				for j := 0; j < len(words); j++ {
+					if len(words[j]) <= 3 {
+						continue
+					}
+					if _, ok := ft.storage[words[j]]; !ok {
+						ft.storage[words[j]] = []int{i}
+						ft.words = append(ft.words, words[j])
+						continue
+					}
+					if Utils.ContainsInt(ft.storage[words[j]], i) {
+						continue
+					}
+					ft.storage[words[j]] = append(ft.storage[words[j]], i)
 				}
-				ft.wordCache[word] = append(ft.wordCache[word], i)
 			}
 
 			// Set the value

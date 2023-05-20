@@ -67,7 +67,7 @@ func (ft *FullText) search(query string, limit int, strict bool, schema map[stri
 	}
 
 	// Check if the query is in the cache
-	if _, ok := ft.wordCache[words[0]]; !ok {
+	if _, ok := ft.storage[words[0]]; !ok {
 		return []map[string]interface{}{}
 	}
 
@@ -81,7 +81,7 @@ func (ft *FullText) search(query string, limit int, strict bool, schema map[stri
 	)
 
 	// Check if the query is in the cache
-	if v, ok := ft.wordCache[words[0]]; !ok {
+	if v, ok := ft.storage[words[0]]; !ok {
 		return []map[string]interface{}{}
 	} else {
 		smallest = len(v)
@@ -90,7 +90,7 @@ func (ft *FullText) search(query string, limit int, strict bool, schema map[stri
 	// Find the smallest words array
 	// Don't include the first or last words from the query
 	for i := 1; i < len(words)-1; i++ {
-		if v, ok := ft.wordCache[words[i]]; ok {
+		if v, ok := ft.storage[words[i]]; ok {
 			if len(v) < smallest {
 				smallest = len(v)
 				smallestIndex = i
@@ -99,7 +99,7 @@ func (ft *FullText) search(query string, limit int, strict bool, schema map[stri
 	}
 
 	// Loop through the indices
-	var indices []int = ft.wordCache[words[smallestIndex]]
+	var indices []int = ft.storage[words[smallestIndex]]
 	for i := 0; i < len(indices); i++ {
 		for key, value := range ft.data[indices[i]] {
 			if v, ok := value.(string); !ok {

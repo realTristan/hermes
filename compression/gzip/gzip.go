@@ -18,12 +18,12 @@ import (
 // Example usage:
 //
 //	compressed, err := Compress("value") // compressed == []byte{...}, err == nil
-func Compress(v string) ([]byte, error) {
+func Compress(v []byte) ([]byte, error) {
 	var (
 		b  *bytes.Buffer = new(bytes.Buffer)
 		gz *gzip.Writer  = gzip.NewWriter(b)
 	)
-	if _, err := gz.Write([]byte(v)); err != nil {
+	if _, err := gz.Write(v); err != nil {
 		return nil, err
 	}
 	if err := gz.Close(); err != nil {
