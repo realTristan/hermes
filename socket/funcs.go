@@ -1,14 +1,13 @@
 package ws
 
 import (
-	"github.com/gofiber/websocket/v2"
 	Hermes "github.com/realTristan/Hermes"
 	"github.com/realTristan/Hermes/socket/handlers"
 	Utils "github.com/realTristan/Hermes/socket/utils"
 )
 
 // Map of functions that can be called from the client
-var Functions = map[string]func(*Utils.Params, *Hermes.Cache, *websocket.Conn) error{
+var Functions = map[string]func(*Utils.Params, *Hermes.Cache) []byte{
 	"cache.length":        handlers.Length,
 	"cache.clean":         handlers.Clean,
 	"cache.set":           handlers.Set,

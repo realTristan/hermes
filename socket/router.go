@@ -75,11 +75,11 @@ func SetRouter(app *fiber.App, cache *Hermes.Cache) {
 
 			// Check if the function exists
 			if fn, ok := Functions[function]; !ok {
-				if err = c.WriteMessage(websocket.TextMessage, []byte("Function not found")); err != nil {
+				if c.WriteMessage(websocket.TextMessage, []byte("Function not found")) != nil {
 					log.Println("write:", err)
 					break
 				}
-			} else if err = fn(p, cache, c); err != nil {
+			} else if c.WriteMessage(websocket.TextMessage, fn(p, cache)) != nil {
 				log.Println("function:", err)
 				break
 			}
