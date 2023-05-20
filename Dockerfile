@@ -1,28 +1,33 @@
-# syntax=docker/dockerfile:1
-FROM golang:1.20
+# Use the offical golang image to create a binary.
+# This is based on Debian and sets the GOPATH to /go.
+# https://hub.docker.com/_/golang
+FROM golang:1.20-buster as builder
 
-# copy destination
+# Create and change to the app directory.
 WORKDIR /app
 
-# Copy Go modules
-COPY app/go.mod .
-COPY app/go.sum .
+# Retrieve application dependencies.
+# This allows the container build to reuse cached dependencies.
+# Expecting to copy go.mod and if present go.sum.
+COPY /cloud/app/server/go.* ./
 RUN go mod download
 
-# Copy files and folders
-COPY app/utils ./utils
-COPY app/main.go .
+# Copy local code to the container image.
+COPY . ./
 
-# Build the application
-RUN go build .
+# Build the binary.
+RUN go build -v -o server
 
-# To bind to a TCP port, runtime parameters must be supplied to the docker command.
-# But we can (optionally) document in the Dockerfile what ports
-# the application is going to listen on by default.
-EXPOSE 6000
+# Use the official Debian slim image for a lean production container.
+# https://hub.docker.com/_/debian
+# https://docs.docker.com/develop/develop-images/multistage-build/#use-multi-stage-builds
+FROM debian:buster-slim
+RUN set -x && apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
+    ca-certificates && \
+    rm -rf /var/lib/apt/lists/*
 
-# Run the application
-CMD ["./app -p 6000"]
-CMD tail -f /dev/null
-# docker build --tag hermes .
-# docker run -p 6000:6000 hermes
+# Copy the binary to the production image from the builder stage.
+COPY --from=builder /app/server /app/server
+
+# Run the web service on container startup.
+CMD ["/app/server serve -p 3000"]

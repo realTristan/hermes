@@ -4,7 +4,7 @@ import (
 	"log"
 	"os"
 
-	Utils "app/utils"
+	Utils "hermes/utils"
 
 	"github.com/gofiber/fiber/v2"
 	Hermes "github.com/realTristan/Hermes"
