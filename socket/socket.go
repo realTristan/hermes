@@ -2,15 +2,12 @@ package ws
 
 import (
 	"sync"
-
-	"github.com/gofiber/fiber/v2"
 )
 
 // Socket struct for storing the socket state and fiber app
 type Socket struct {
 	mutex  *sync.Mutex
 	active bool
-	app    *fiber.App
 }
 
 // Set the socket to active

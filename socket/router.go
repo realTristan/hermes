@@ -15,12 +15,11 @@ func SetRouter(app *fiber.App, cache *Hermes.Cache) {
 	// Init a new socket
 	var socket *Socket = &Socket{
 		active: false,
-		app:    app,
 		mutex:  &sync.Mutex{},
 	}
 
 	// Middleware
-	socket.app.Use("/ws", func(c *fiber.Ctx) error {
+	app.Use("/ws", func(c *fiber.Ctx) error {
 		// Check if the socket is active
 		if socket.IsActive() {
 			return fiber.ErrLocked
@@ -43,7 +42,7 @@ func SetRouter(app *fiber.App, cache *Hermes.Cache) {
 	})
 
 	// Main websocket handler
-	socket.app.Get("/ws/hermes", websocket.New(func(c *websocket.Conn) {
+	app.Get("/ws/hermes", websocket.New(func(c *websocket.Conn) {
 		for {
 			var (
 				msg []byte
