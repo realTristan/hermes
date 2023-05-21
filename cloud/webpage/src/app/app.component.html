@@ -1,10 +1,25 @@
+<!-- Navbar -->
+<app-navbar></app-navbar>
+
+<!-- Hero -->
+<div class="flex justify-center items-center mt-20">
+  <h2 class="text-5xl font-black text-slate-800 px-24 md:px-40 tracking-wide leading-normal text-center">
+    Full-text caching framework written in Go.
+  </h2>
+</div>
+<div class="flex justify-center items-center">
+  <p class="font-normal px-1 text-xl">The speed you need.</p>
+</div>
 
 <!-- Hermes Go Install -->
-<div class="terminal">
-  <pre>$ go get -u github.com/realTristan/Hermes</pre>
+<div class="flex justify-center items-center m-10">
+  <app-terminal text="go get -u github.com/realTristan/Hermes"></app-terminal>
 </div>
 
 <!-- Hermes CLI -->
-<div class="terminal">
-  <pre>$ hermes serve -p 3000</pre>
+<div class="flex justify-center items-center">
+  <app-terminal text="hermes serve -port 3000"></app-terminal>
 </div>
+
+<!-- Spacer -->
+<div class="mt-16"></div>
