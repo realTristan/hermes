@@ -8,7 +8,7 @@ def base64_encode(value):
 cache = hermescloud.Cache("localhost:3000")
 
 # Initialize the full-text search engine
-print(cache.ft_init(-1, -1))
+#print(cache.ft_init(-1, -1))
 
 # open the data/data_hash.json file
 def set_data():
@@ -22,7 +22,7 @@ def set_data():
             cache.set(key, data[key])
 
 # set the data
-# set_data()
+#set_data()
 
 # Track the start time
 start_time = time.time()
@@ -39,7 +39,7 @@ r = cache.ft_search("computer", False, 100, {
 })
 
 # Print the duration
-print(f"Duration: {time.time() - start_time}s")
+print(time.time() - start_time)
 
 # print the results
-print(r[0])
+#print(r[0])

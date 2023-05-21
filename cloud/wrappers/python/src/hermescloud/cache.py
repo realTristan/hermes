@@ -1,4 +1,4 @@
-import json, typing, threading, asyncio
+import json, typing, threading
 from .utils import Utils
 from websocket import create_connection
 
