@@ -1,5 +1,5 @@
 # Hermes ![Stars](https://img.shields.io/github/stars/realTristan/Hermes?color=brightgreen) ![Watchers](https://img.shields.io/github/watchers/realTristan/Hermes?label=Watchers)
-![Untitled design](https://github.com/realTristan/Hermes/assets/75189508/05ba52c9-de3f-43e5-897c-c8e24cae7a68)
+![banner](https://user-images.githubusercontent.com/75189508/230987049-665418b1-3576-49b7-861e-29036859ad8a.png)
 
 # Hermes Go
 Direct access to the hermes cache/nocache functions.
