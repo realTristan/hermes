@@ -2,13 +2,13 @@
 <app-navbar></app-navbar>
 
 <!-- Hero -->
-<div class="flex justify-center items-center mt-20">
+<div class="flex justify-center items-center mt-16">
   <h2 class="text-5xl font-black text-slate-800 px-24 md:px-40 tracking-wide leading-normal text-center">
-    Full-text caching framework written in Go.
+    Full-text cache framework written in Go.
   </h2>
 </div>
 <div class="flex justify-center items-center">
-  <p class="font-normal px-1 text-xl">The speed you need.</p>
+  <p class="font-normal text-xl px-24 md:px-56 text-center"><strong>The speed you need.</strong> Perform <strong>lightning fast</strong> full-text searches with ease. <strong>Easily accessible</strong> data with caching. <strong>API</strong> and <strong>Socket</strong> implementation already provided. Develop with <strong>Python, Go, Typescript, or Rust.</strong></p>
 </div>
 
 <!-- Hermes Go Install -->
@@ -16,10 +16,16 @@
   <app-terminal text="go get -u github.com/realTristan/Hermes"></app-terminal>
 </div>
 
-<!-- Hermes CLI -->
+<!-- Hermes CLI 
 <div class="flex justify-center items-center">
   <app-terminal text="hermes serve -port 3000"></app-terminal>
 </div>
+-->
 
 <!-- Spacer -->
 <div class="mt-16"></div>
+
+<!-- 
+  ng build --base-href "https://realTristan.github.io/Hermes/" 
+  npx angular-cli-ghpages --dir=dist/hermescloud
+-->
