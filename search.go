@@ -88,9 +88,9 @@ func (c *Cache) search(query string, limit int, strict bool, schema map[string]b
 	// Don't include the first or last words from the query
 	for i := 1; i < len(words)-1; i++ {
 		if indices, ok := c.ft.storage[words[i]]; ok {
-			if t, ok := indices.(int); ok {
+			if index, ok := indices.(int); ok {
 				return []map[string]interface{}{
-					c.data[c.ft.indices[t]],
+					c.data[c.ft.indices[index]],
 				}
 			}
 			if l := len(indices.([]int)); l < smallest {

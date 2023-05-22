@@ -84,9 +84,9 @@ func (ft *FullText) search(query string, limit int, strict bool, schema map[stri
 	if v, ok := ft.storage[words[0]]; !ok {
 		return []map[string]interface{}{}
 	} else {
-		if t, ok := v.(int); ok {
+		if index, ok := v.(int); ok {
 			return []map[string]interface{}{
-				ft.data[t],
+				ft.data[index],
 			}
 		}
 		smallest = len(v.([]int))

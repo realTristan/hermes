@@ -19,7 +19,7 @@ func main() {
 // Basic Search
 func BasicSearch() {
 	// read the json data
-	if data, err := readJson("../../../data/data_array.json"); err != nil {
+	if data, err := readJson("../../../testing/data/data_array.json"); err != nil {
 		panic(err)
 	} else {
 		var average int64 = 0

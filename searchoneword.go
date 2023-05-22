@@ -17,7 +17,7 @@ import (
 //   - []map[string]interface{}: A slice of maps where each map represents a data record that matches the given query.
 //     The keys of the map correspond to the column names of the data that were searched and returned in the result.
 //   - error: An error if the query or limit is invalid or if the full-text is not initialized.
-func (c *Cache) SearchOneWord(query string, limit int, strict bool) ([]map[string]interface{}, error) {
+func (c Cache) SearchOneWord(query string, limit int, strict bool) ([]map[string]interface{}, error) {
 	switch {
 	case len(query) == 0:
 		return []map[string]interface{}{}, errors.New("invalid query")
