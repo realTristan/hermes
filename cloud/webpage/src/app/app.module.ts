@@ -7,6 +7,7 @@ import { TerminalComponent } from './terminal/terminal.component';
 import { NavbarComponent } from './navbar/navbar.component';
 import { NavbarButtonComponent } from './navbar-button/navbar-button.component';
 import { CodeExampleComponent } from './code-example/code-example.component';
+import { LaptopComponent } from './laptop/laptop.component';
 
 @NgModule({
   declarations: [
@@ -15,6 +16,7 @@ import { CodeExampleComponent } from './code-example/code-example.component';
     NavbarComponent,
     NavbarButtonComponent,
     CodeExampleComponent,
+    LaptopComponent,
   ],
   imports: [
     BrowserModule,

@@ -8,4 +8,6 @@ import { Component, Input } from '@angular/core';
 export class NavbarButtonComponent {
   @Input()
   text: any;
+  @Input()
+  href: any;
 }
