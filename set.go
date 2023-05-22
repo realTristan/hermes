@@ -137,7 +137,7 @@ func (c *Cache) ftSet(key string, value map[string]interface{}) error {
 					if indices, ok := temp.([]int); !ok {
 						tempStorage[words[i]] = []int{temp.(int), tempKeys[key]}
 					} else {
-						if Utils.ContainsInt(indices, tempKeys[key]) {
+						if Utils.SliceContains(indices, tempKeys[key]) {
 							continue
 						}
 						tempStorage[words[i]] = append(indices, tempKeys[key])

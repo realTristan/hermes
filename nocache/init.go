@@ -32,7 +32,7 @@ func InitWithMap(data []map[string]interface{}) (*FullText, error) {
 // This function is thread safe.
 func InitWithJson(file string) (*FullText, error) {
 	// Read the json data
-	if data, err := Utils.ReadSliceJson(file); err != nil {
+	if data, err := Utils.ReadJson[[]map[string]interface{}](file); err != nil {
 		return nil, err
 	} else {
 		return InitWithMap(data)

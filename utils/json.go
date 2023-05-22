@@ -6,31 +6,16 @@ import (
 )
 
 // Read a json file and return the data as a map.
-func ReadSliceJson(file string) ([]map[string]interface{}, error) {
-	var v []map[string]interface{} = []map[string]interface{}{}
+// map[string]map[string]interface{}
+// []map[string]interface{}
+func ReadJson[T any](file string) (T, error) {
+	var v T
 
 	// Read the json data
 	if data, err := os.ReadFile(file); err != nil {
-		return nil, err
-	} else {
-		if err := json.Unmarshal(data, &v); err != nil {
-			return nil, err
-		}
-	}
-	return v, nil
-}
-
-// Read a json file and return the data as a map.
-func ReadMapJson(file string) (map[string]map[string]interface{}, error) {
-	var v map[string]map[string]interface{} = map[string]map[string]interface{}{}
-
-	// Read the json data
-	if data, err := os.ReadFile(file); err != nil {
-		return nil, err
-	} else {
-		if err := json.Unmarshal(data, &v); err != nil {
-			return nil, err
-		}
+		return *new(T), err
+	} else if err := json.Unmarshal(data, &v); err != nil {
+		return *new(T), err
 	}
 	return v, nil
 }

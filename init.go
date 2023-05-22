@@ -174,7 +174,7 @@ func (c *Cache) FTInitWithJson(file string, maxLength int, maxBytes int) error {
 // Returns:
 // - error: Json file read error, or init with map error.
 func (c *Cache) ftInitWithJson(file string, maxLength int, maxBytes int) error {
-	if data, err := Utils.ReadMapJson(file); err != nil {
+	if data, err := Utils.ReadJson[map[string]map[string]interface{}](file); err != nil {
 		return err
 	} else {
 		return c.ftInitWithMap(data, maxLength, maxBytes)

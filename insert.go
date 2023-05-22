@@ -93,7 +93,7 @@ func (ft *FullText) insert(data map[string]map[string]interface{}) error {
 						if v, ok := temp.([]int); !ok {
 							tempStorage[words[i]] = []int{temp.(int), tempKeys[cacheKey]}
 						} else {
-							if Utils.ContainsInt(v, tempKeys[cacheKey]) {
+							if Utils.SliceContains(v, tempKeys[cacheKey]) {
 								continue
 							}
 							tempStorage[words[i]] = append(v, tempKeys[cacheKey])

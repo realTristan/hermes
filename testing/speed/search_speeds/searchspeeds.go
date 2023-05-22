@@ -19,7 +19,7 @@ func main() {
 // Basic Search
 func BasicSearch() {
 	// read the json data
-	if data, err := readJson("../../../data/data_hash.json"); err != nil {
+	if data, err := readJson("../../data/data_hash.json"); err != nil {
 		panic(err)
 	} else {
 		var average int64 = 0
@@ -58,7 +58,7 @@ func HermesSearch() {
 	var cache *Hermes.Cache = Hermes.InitCache()
 
 	// Initialize the FT cache with a json file
-	cache.FTInitWithJson("../../../data/data_hash.json", -1, -1)
+	cache.FTInitWithJson("../../data/data_hash.json", -1, -1)
 	var (
 		average int64 = 0
 		total   int   = 0
@@ -99,10 +99,8 @@ func readJson(file string) (map[string]map[string]interface{}, error) {
 	// Read the json data
 	if data, err := os.ReadFile(file); err != nil {
 		return nil, err
-	} else {
-		if err := json.Unmarshal(data, &v); err != nil {
-			return nil, err
-		}
+	} else if err := json.Unmarshal(data, &v); err != nil {
+		return nil, err
 	}
 	return v, nil
 }

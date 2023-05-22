@@ -23,7 +23,7 @@ var cache *Hermes.Cache
 // Main function
 func main() {
 	cache = Hermes.InitCache()
-	cache.FTInitWithJson("../../data/data_hash.json", -1, -1)
+	cache.FTInitWithJson("../../testing/data/data_hash.json", -1, -1)
 
 	// Print host
 	fmt.Println(" >> Listening on: http://localhost:8000/")

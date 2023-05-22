@@ -15,7 +15,7 @@ func IsCloseError(err error) bool {
 
 // Check whether the error is a close error using websocket
 // error codes and IsCloseError function.
-func _IsCloseError(err error) bool {
+func IsSocketCloseError(err error) bool {
 	return websocket.IsCloseError(
 		err,
 		websocket.CloseNormalClosure,

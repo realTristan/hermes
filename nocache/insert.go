@@ -53,7 +53,7 @@ func (ft *FullText) insert(data []map[string]interface{}) error {
 						if indices, ok := temp.([]int); !ok {
 							ft.storage[words[j]] = []int{temp.(int), i}
 						} else {
-							if Utils.ContainsInt(indices, i) {
+							if Utils.SliceContains(indices, i) {
 								continue
 							}
 							ft.storage[words[j]] = append(indices, i)
