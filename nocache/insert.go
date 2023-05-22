@@ -51,13 +51,13 @@ func (ft *FullText) insert(data []map[string]interface{}) error {
 						ft.words = append(ft.words, words[j])
 						continue
 					}
-					if _, ok := ft.storage[words[j]].([]int); ok {
-						if Utils.ContainsInt(ft.storage[words[j]].([]int), i) {
+					if v, ok := ft.storage[words[j]].([]int); !ok {
+						ft.storage[words[j]] = []int{ft.storage[words[j]].(int), i}
+					} else {
+						if Utils.ContainsInt(v, i) {
 							continue
 						}
-						ft.storage[words[j]] = append(ft.storage[words[j]].([]int), i)
-					} else {
-						ft.storage[words[j]] = []int{ft.storage[words[j]].(int), i}
+						ft.storage[words[j]] = append(v, i)
 					}
 				}
 			}

@@ -76,9 +76,9 @@ func (c *Cache) search(query string, limit int, strict bool, schema map[string]b
 	if v, ok := c.ft.storage[words[0]]; !ok {
 		return []map[string]interface{}{}
 	} else {
-		if t, ok := v.(int); ok {
+		if temp, ok := v.(int); ok {
 			return []map[string]interface{}{
-				c.data[c.ft.indices[t]],
+				c.data[c.ft.indices[temp]],
 			}
 		}
 		smallest = len(v.([]int))
@@ -93,8 +93,8 @@ func (c *Cache) search(query string, limit int, strict bool, schema map[string]b
 					c.data[c.ft.indices[t]],
 				}
 			}
-			if len(v.([]int)) < smallest {
-				smallest = len(v.([]int))
+			if l := len(v.([]int)); l < smallest {
+				smallest = l
 				smallestIndex = i
 			}
 		}

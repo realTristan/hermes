@@ -91,13 +91,13 @@ func (ft *FullText) insert(data map[string]map[string]interface{}) error {
 						tempStorage[words[i]] = []int{tempCurrentIndex}
 						continue
 					}
-					if _, ok := tempStorage[words[i]].([]int); ok {
-						if Utils.ContainsInt(tempStorage[words[i]].([]int), tempKeys[cacheKey]) {
+					if v, ok := tempStorage[words[i]].([]int); !ok {
+						tempStorage[words[i]] = []int{tempStorage[words[i]].(int), tempKeys[cacheKey]}
+					} else {
+						if Utils.ContainsInt(v, tempKeys[cacheKey]) {
 							continue
 						}
-						tempStorage[words[i]] = append(tempStorage[words[i]].([]int), tempKeys[cacheKey])
-					} else {
-						tempStorage[words[i]] = []int{tempStorage[words[i]].(int), tempKeys[cacheKey]}
+						tempStorage[words[i]] = append(v, tempKeys[cacheKey])
 					}
 				}
 			}

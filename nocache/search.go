@@ -96,13 +96,13 @@ func (ft *FullText) search(query string, limit int, strict bool, schema map[stri
 	// Don't include the first or last words from the query
 	for i := 1; i < len(words)-1; i++ {
 		if v, ok := ft.storage[words[i]]; ok {
-			if t, ok := v.(int); ok {
+			if v, ok := v.(int); ok {
 				return []map[string]interface{}{
-					ft.data[t],
+					ft.data[v],
 				}
 			}
-			if len(v.([]int)) < smallest {
-				smallest = len(v.([]int))
+			if l := len(v.([]int)); l < smallest {
+				smallest = l
 				smallestIndex = i
 			}
 		}

@@ -57,30 +57,7 @@ func (c *Cache) searchOneWord(query string, limit int, strict bool) []map[string
 	// If the user wants a strict search, just return the result
 	// straight from the cache
 	if strict {
-		// Check if the query is in the cache
-		if _, ok := c.ft.storage[query]; !ok {
-			return result
-		}
-
-		// If there's only one result
-		if v, ok := c.ft.storage[query].(int); ok {
-			return []map[string]interface{}{c.data[c.ft.indices[v]]}
-		}
-
-		// Loop through the indices
-		for i := 0; i < len(c.ft.storage[query].([]int)); i++ {
-			if len(result) >= limit {
-				return result
-			}
-			var (
-				index int    = c.ft.storage[query].([]int)[i]
-				key   string = c.ft.indices[index]
-			)
-			result = append(result, c.data[key])
-		}
-
-		// Return the result
-		return result
+		return c.searchOneWordStrict(result, query, limit)
 	}
 
 	// Define a map to store the indices that have already been added
@@ -105,15 +82,53 @@ func (c *Cache) searchOneWord(query string, limit int, strict bool) []map[string
 			continue
 		}
 
-		for j := 0; j < len(v.([]int)); j++ {
-			if _, ok := alreadyAdded[v.([]int)[j]]; ok {
+		var indices []int = v.([]int)
+		for j := 0; j < len(indices); j++ {
+			if _, ok := alreadyAdded[indices[j]]; ok {
 				continue
 			}
 
 			// Else, append the index to the result
-			result = append(result, c.data[c.ft.indices[v.([]int)[j]]])
-			alreadyAdded[v.([]int)[j]] = 0
+			result = append(result, c.data[c.ft.indices[indices[j]]])
+			alreadyAdded[indices[j]] = 0
 		}
+	}
+
+	// Return the result
+	return result
+}
+
+// searchOneWordStrict is a method of the Cache struct that searches for a single word in the cache and returns the results.
+// This function is thread-safe.
+//
+// Parameters:
+//   - result: A slice of map[string]interface{} representing the current search results.
+//   - query: A string representing the word to search for.
+//   - limit: An integer representing the maximum number of results to return.
+//
+// Returns:
+//   - A slice of map[string]interface{} representing the search results.
+func (c *Cache) searchOneWordStrict(result []map[string]interface{}, query string, limit int) []map[string]interface{} {
+	// Check if the query is in the cache
+	if _, ok := c.ft.storage[query]; !ok {
+		return result
+	}
+
+	// If there's only one result
+	if v, ok := c.ft.storage[query].(int); ok {
+		return []map[string]interface{}{c.data[c.ft.indices[v]]}
+	}
+
+	// Loop through the indices
+	for i := 0; i < len(c.ft.storage[query].([]int)); i++ {
+		if len(result) >= limit {
+			return result
+		}
+		var (
+			index int    = c.ft.storage[query].([]int)[i]
+			key   string = c.ft.indices[index]
+		)
+		result = append(result, c.data[key])
 	}
 
 	// Return the result

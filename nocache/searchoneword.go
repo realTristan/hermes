@@ -58,27 +58,7 @@ func (ft *FullText) searchOneWord(query string, limit int, strict bool) []map[st
 	// If the user wants a strict search, just return the result
 	// straight from the cache
 	if strict {
-		// Check if the query is in the cache
-		if _, ok := ft.storage[query]; !ok {
-			return result
-		}
-
-		// Check if the cache value is an integer
-		if _, ok := ft.storage[query].(int); ok {
-			return []map[string]interface{}{ft.data[ft.storage[query].(int)]}
-		}
-
-		// Loop through the indices
-		var indices []int = ft.storage[query].([]int)
-		for i := 0; i < len(indices); i++ {
-			if len(result) >= limit {
-				return result
-			}
-			result = append(result, ft.data[indices[i]])
-		}
-
-		// Return the result
-		return result
+		return ft.searchOneWordStrict(result, query, limit)
 	}
 
 	// true for already checked
@@ -103,14 +83,47 @@ func (ft *FullText) searchOneWord(query string, limit int, strict bool) []map[st
 			continue
 		}
 
-		for j := 0; j < len(ft.storage[ft.words[i]].([]int)); j++ {
-			var index int = ft.storage[ft.words[i]].([]int)[j]
-			if _, ok := alreadyAdded[index]; ok {
+		var indices []int = ft.storage[ft.words[i]].([]int)
+		for j := 0; j < len(indices); j++ {
+			if _, ok := alreadyAdded[indices[j]]; ok {
 				continue
 			}
-			result = append(result, ft.data[index])
-			alreadyAdded[index] = 0
+			result = append(result, ft.data[indices[j]])
+			alreadyAdded[indices[j]] = 0
 		}
+	}
+
+	// Return the result
+	return result
+}
+
+// searchOneWordStrict is a method of the FullText struct that searches for a single word in the full-text cache and returns the results.
+//
+// Parameters:
+//   - result: A slice of map[string]interface{} representing the current search results.
+//   - query: A string representing the word to search for.
+//   - limit: An integer representing the maximum number of results to return.
+//
+// Returns:
+//   - A slice of map[string]interface{} representing the search results.
+func (ft *FullText) searchOneWordStrict(result []map[string]interface{}, query string, limit int) []map[string]interface{} {
+	// Check if the query is in the cache
+	if _, ok := ft.storage[query]; !ok {
+		return result
+	}
+
+	// Check if the cache value is an integer
+	if v, ok := ft.storage[query].(int); ok {
+		return []map[string]interface{}{ft.data[v]}
+	}
+
+	// Loop through the indices
+	var indices []int = ft.storage[query].([]int)
+	for i := 0; i < len(indices); i++ {
+		if len(result) >= limit {
+			return result
+		}
+		result = append(result, ft.data[indices[i]])
 	}
 
 	// Return the result

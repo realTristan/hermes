@@ -135,13 +135,13 @@ func (c *Cache) ftSet(key string, value map[string]interface{}) error {
 					tempStorage[words[i]] = []int{tempCurrentIndex}
 					continue
 				}
-				if _, ok := tempStorage[words[i]].([]int); ok {
-					if Utils.ContainsInt(tempStorage[words[i]].([]int), tempKeys[key]) {
+				if v, ok := tempStorage[words[i]].([]int); !ok {
+					tempStorage[words[i]] = []int{tempStorage[words[i]].(int), tempKeys[key]}
+				} else {
+					if Utils.ContainsInt(v, tempKeys[key]) {
 						continue
 					}
-					tempStorage[words[i]] = append(tempStorage[words[i]].([]int), tempKeys[key])
-				} else {
-					tempStorage[words[i]] = []int{tempStorage[words[i]].(int), tempKeys[key]}
+					tempStorage[words[i]] = append(v, tempKeys[key])
 				}
 			}
 		}
