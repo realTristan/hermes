@@ -73,12 +73,12 @@ func (c *Cache) searchOneWord(query string, limit int, strict bool) []map[string
 		}
 
 		// Loop through the cache indices
-		if v, ok := v.(int); ok {
-			if _, ok := alreadyAdded[v]; ok {
+		if index, ok := v.(int); ok {
+			if _, ok := alreadyAdded[index]; ok {
 				continue
 			}
-			result = append(result, c.data[c.ft.indices[v]])
-			alreadyAdded[v] = 0
+			result = append(result, c.data[c.ft.indices[index]])
+			alreadyAdded[index] = 0
 			continue
 		}
 

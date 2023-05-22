@@ -87,17 +87,18 @@ func (ft *FullText) insert(data map[string]map[string]interface{}) error {
 					if len(words[i]) <= 3 {
 						continue
 					}
-					if _, ok := tempStorage[words[i]]; !ok {
+					if tempData, ok := tempStorage[words[i]]; !ok {
 						tempStorage[words[i]] = []int{tempCurrentIndex}
 						continue
-					}
-					if v, ok := tempStorage[words[i]].([]int); !ok {
-						tempStorage[words[i]] = []int{tempStorage[words[i]].(int), tempKeys[cacheKey]}
 					} else {
-						if Utils.ContainsInt(v, tempKeys[cacheKey]) {
-							continue
+						if v, ok := tempData.([]int); !ok {
+							tempStorage[words[i]] = []int{tempData.(int), tempKeys[cacheKey]}
+						} else {
+							if Utils.ContainsInt(v, tempKeys[cacheKey]) {
+								continue
+							}
+							tempStorage[words[i]] = append(v, tempKeys[cacheKey])
 						}
-						tempStorage[words[i]] = append(v, tempKeys[cacheKey])
 					}
 				}
 			}
