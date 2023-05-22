@@ -8,12 +8,12 @@ import (
 
 // Initialize the full-text cache with the provided data.
 // This function is thread safe.
-func InitWithMap(data []map[string]interface{}) (*FullText, error) {
+func InitWithMap(data []map[string]any) (*FullText, error) {
 	var ft *FullText = &FullText{
 		mutex:   &sync.RWMutex{},
-		storage: make(map[string]interface{}),
+		storage: make(map[string]any),
 		words:   []string{},
-		data:    []map[string]interface{}{},
+		data:    []map[string]any{},
 	}
 
 	// Load the cache data
@@ -32,7 +32,7 @@ func InitWithMap(data []map[string]interface{}) (*FullText, error) {
 // This function is thread safe.
 func InitWithJson(file string) (*FullText, error) {
 	// Read the json data
-	if data, err := Utils.ReadJson[[]map[string]interface{}](file); err != nil {
+	if data, err := Utils.ReadJson[[]map[string]any](file); err != nil {
 		return nil, err
 	} else {
 		return InitWithMap(data)

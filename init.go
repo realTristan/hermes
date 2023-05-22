@@ -14,7 +14,7 @@ import (
 //   - A pointer to a new Cache struct.
 func InitCache() *Cache {
 	return &Cache{
-		data:  make(map[string]map[string]interface{}),
+		data:  make(map[string]map[string]any),
 		mutex: &sync.RWMutex{},
 		ft:    nil,
 	}
@@ -55,7 +55,7 @@ func (c *Cache) FTInit(maxLength int, maxBytes int) error {
 func (c *Cache) ftInit(maxLength int, maxBytes int) error {
 	// Initialize the FT struct
 	var ft *FullText = &FullText{
-		storage:      make(map[string]interface{}),
+		storage:      make(map[string]any),
 		indices:      make(map[int]string),
 		currentIndex: 0,
 		maxLength:    maxLength,
@@ -85,7 +85,7 @@ func (c *Cache) ftInit(maxLength int, maxBytes int) error {
 //
 // Returns:
 // - error: If the full-text is already initialized.
-func (c *Cache) FTInitWithMap(data map[string]map[string]interface{}, maxLength int, maxBytes int) error {
+func (c *Cache) FTInitWithMap(data map[string]map[string]any, maxLength int, maxBytes int) error {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
 
@@ -108,10 +108,10 @@ func (c *Cache) FTInitWithMap(data map[string]map[string]interface{}, maxLength 
 //
 // Returns:
 // - error: From full-text storage insertion or if a key from the data already exists in the cache
-func (c *Cache) ftInitWithMap(data map[string]map[string]interface{}, maxLength int, maxBytes int) error {
+func (c *Cache) ftInitWithMap(data map[string]map[string]any, maxLength int, maxBytes int) error {
 	// Initialize the FT struct
 	var ft *FullText = &FullText{
-		storage:      make(map[string]interface{}),
+		storage:      make(map[string]any),
 		indices:      make(map[int]string),
 		currentIndex: 0,
 		maxLength:    maxLength,
@@ -174,7 +174,7 @@ func (c *Cache) FTInitWithJson(file string, maxLength int, maxBytes int) error {
 // Returns:
 // - error: Json file read error, or init with map error.
 func (c *Cache) ftInitWithJson(file string, maxLength int, maxBytes int) error {
-	if data, err := Utils.ReadJson[map[string]map[string]interface{}](file); err != nil {
+	if data, err := Utils.ReadJson[map[string]map[string]any](file); err != nil {
 		return err
 	} else {
 		return c.ftInitWithMap(data, maxLength, maxBytes)

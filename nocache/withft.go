@@ -1,13 +1,13 @@
 package nocache
 
 // Get the full-text value from a map
-func ftFromMap(value interface{}) string {
-	if _, ok := value.(map[string]interface{}); !ok {
+func ftFromMap(value any) string {
+	if _, ok := value.(map[string]any); !ok {
 		return ""
 	}
 
 	// Verify that the map has the correct length
-	var v map[string]interface{} = value.(map[string]interface{})
+	var v map[string]any = value.(map[string]any)
 	if len(v) != 2 {
 		return ""
 	}

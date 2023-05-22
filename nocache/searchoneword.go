@@ -15,17 +15,17 @@ import (
 //   - strict (bool): If true, only exact matches will be returned. If false, partial matches will also be returned.
 //
 // Returns:
-//   - []map[string]interface{}: An array of maps representing the search results. Each map contains key-value pairs
+//   - []map[string]any: An array of maps representing the search results. Each map contains key-value pairs
 //     from the entry in the data that matched the search query. If no results are found, an empty array is returned.
 //   - error: An error object. If no error occurs, this will be nil.
 //
 // Note: The search is case-insensitive.
-func (ft *FullText) SearchOneWord(query string, limit int, strict bool) ([]map[string]interface{}, error) {
+func (ft *FullText) SearchOneWord(query string, limit int, strict bool) ([]map[string]any, error) {
 	switch {
 	case len(query) == 0:
-		return []map[string]interface{}{}, errors.New("invalid query")
+		return []map[string]any{}, errors.New("invalid query")
 	case limit < 1:
-		return []map[string]interface{}{}, errors.New("invalid limit")
+		return []map[string]any{}, errors.New("invalid limit")
 	}
 
 	// Set the query to lowercase
@@ -47,13 +47,13 @@ func (ft *FullText) SearchOneWord(query string, limit int, strict bool) ([]map[s
 //   - strict (bool): If true, only exact matches will be returned. If false, partial matches will also be returned.
 //
 // Returns:
-//   - []map[string]interface{}: An array of maps representing the search results. Each map contains key-value pairs
+//   - []map[string]any: An array of maps representing the search results. Each map contains key-value pairs
 //     from the entry in the data that matched the search query. If no results are found, an empty array is returned.
 //
 // Note: The search is case-insensitive.
-func (ft *FullText) searchOneWord(query string, limit int, strict bool) []map[string]interface{} {
+func (ft *FullText) searchOneWord(query string, limit int, strict bool) []map[string]any {
 	// Define the result variable
-	var result []map[string]interface{} = []map[string]interface{}{}
+	var result []map[string]any = []map[string]any{}
 
 	// If the user wants a strict search, just return the result
 	// straight from the cache
@@ -100,13 +100,13 @@ func (ft *FullText) searchOneWord(query string, limit int, strict bool) []map[st
 // searchOneWordStrict is a method of the FullText struct that searches for a single word in the full-text cache and returns the results.
 //
 // Parameters:
-//   - result: A slice of map[string]interface{} representing the current search results.
+//   - result: A slice of map[string]any representing the current search results.
 //   - query: A string representing the word to search for.
 //   - limit: An integer representing the maximum number of results to return.
 //
 // Returns:
-//   - A slice of map[string]interface{} representing the search results.
-func (ft *FullText) searchOneWordStrict(result []map[string]interface{}, query string, limit int) []map[string]interface{} {
+//   - A slice of map[string]any representing the search results.
+func (ft *FullText) searchOneWordStrict(result []map[string]any, query string, limit int) []map[string]any {
 	// Check if the query is in the cache
 	if _, ok := ft.storage[query]; !ok {
 		return result
@@ -114,7 +114,7 @@ func (ft *FullText) searchOneWordStrict(result []map[string]interface{}, query s
 
 	// Check if the cache value is an integer
 	if v, ok := ft.storage[query].(int); ok {
-		return []map[string]interface{}{ft.data[v]}
+		return []map[string]any{ft.data[v]}
 	}
 
 	// Loop through the indices

@@ -30,7 +30,7 @@ func (c *Cache) clean() {
 	if c.ft != nil {
 		c.ft.clean()
 	}
-	c.data = map[string]map[string]interface{}{}
+	c.data = map[string]map[string]any{}
 }
 
 // FTClean is a method of the Cache struct that clears the full-text cache contents.
@@ -65,6 +65,6 @@ func (c *Cache) FTClean() error {
 // Returns:
 //   - None
 func (ft *FullText) clean() {
-	ft.storage = make(map[string]interface{})
+	ft.storage = make(map[string]any)
 	ft.indices = make(map[int]string)
 }

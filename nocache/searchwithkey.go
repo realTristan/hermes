@@ -13,17 +13,17 @@ import (
 //   - limit (int): The maximum number of search results to return. If the number of matching results exceeds this limit, the excess results will be ignored.
 //
 // Returns:
-//   - []map[string]interface{}: A slice of maps where each map represents a data record that matches the given query.
+//   - []map[string]any: A slice of maps where each map represents a data record that matches the given query.
 //     The keys of the map correspond to the column names of the data that were searched and returned in the result.
 //   - error: An error if the query, key or limit is invalid.
-func (ft *FullText) SearchWithKey(query string, key string, limit int) ([]map[string]interface{}, error) {
+func (ft *FullText) SearchWithKey(query string, key string, limit int) ([]map[string]any, error) {
 	switch {
 	case len(key) == 0:
-		return []map[string]interface{}{}, errors.New("invalid key")
+		return []map[string]any{}, errors.New("invalid key")
 	case len(query) == 0:
-		return []map[string]interface{}{}, errors.New("invalid query")
+		return []map[string]any{}, errors.New("invalid query")
 	case limit < 1:
-		return []map[string]interface{}{}, errors.New("invalid limit")
+		return []map[string]any{}, errors.New("invalid limit")
 	}
 
 	// Set the query to lowercase
@@ -46,14 +46,14 @@ func (ft *FullText) SearchWithKey(query string, key string, limit int) ([]map[st
 //   - limit (int): The maximum number of search results to return. If the number of matching results exceeds this limit, the excess results will be ignored.
 //
 // Returns:
-//   - []map[string]interface{}: An array of maps representing the search results. Each map contains key-value pairs
+//   - []map[string]any: An array of maps representing the search results. Each map contains key-value pairs
 //     from the entry in the data that matched the search query. If no results are found, an empty array is returned.
 //   - error: An error object. If no error occurs, this will be nil.
 //
 // Note: The search is case-insensitive.
-func (ft *FullText) searchWithKey(query string, key string, limit int) []map[string]interface{} {
+func (ft *FullText) searchWithKey(query string, key string, limit int) []map[string]any {
 	// Define variables
-	var result []map[string]interface{} = []map[string]interface{}{}
+	var result []map[string]any = []map[string]any{}
 
 	// Iterate over the query result
 	for i := 0; i < len(ft.data); i++ {

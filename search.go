@@ -14,14 +14,14 @@ import (
 //   - schema (map[string]bool): A map containing the schema to search for
 //
 // Returns:
-//   - []map[string]interface{}: A slice of maps containing the search results
+//   - []map[string]any: A slice of maps containing the search results
 //   - error: An error if the query or limit is invalid, or if the full-text index is not initialized
-func (c *Cache) Search(query string, limit int, strict bool, schema map[string]bool) ([]map[string]interface{}, error) {
+func (c *Cache) Search(query string, limit int, strict bool, schema map[string]bool) ([]map[string]any, error) {
 	switch {
 	case len(query) == 0:
-		return []map[string]interface{}{}, errors.New("invalid query")
+		return []map[string]any{}, errors.New("invalid query")
 	case limit < 1:
-		return []map[string]interface{}{}, errors.New("invalid limit")
+		return []map[string]any{}, errors.New("invalid limit")
 	}
 
 	// Lock the mutex
@@ -30,7 +30,7 @@ func (c *Cache) Search(query string, limit int, strict bool, schema map[string]b
 
 	// Check if the FT index is initialized
 	if c.ft == nil {
-		return []map[string]interface{}{}, errors.New("full-text not initialized")
+		return []map[string]any{}, errors.New("full-text not initialized")
 	}
 
 	// Set the query to lowercase
@@ -49,22 +49,22 @@ func (c *Cache) Search(query string, limit int, strict bool, schema map[string]b
 //   - schema (map[string]bool): A map containing the schema to search for
 //
 // Returns:
-//   - []map[string]interface{}: A slice of maps containing the search results
+//   - []map[string]any: A slice of maps containing the search results
 //   - error: An error if the query is invalid or if the smallest words array is not found in the cache
-func (c *Cache) search(query string, limit int, strict bool, schema map[string]bool) []map[string]interface{} {
+func (c *Cache) search(query string, limit int, strict bool, schema map[string]bool) []map[string]any {
 	// Split the query into separate words
 	var words []string = strings.Split(strings.TrimSpace(query), " ")
 	switch {
 	// If the words array is empty
 	case len(words) == 0:
-		return []map[string]interface{}{}
+		return []map[string]any{}
 	// Get the search result of the first word
 	case len(words) == 1:
 		return c.searchOneWord(words[0], limit, strict)
 	}
 
 	// Define variables
-	var result []map[string]interface{} = []map[string]interface{}{}
+	var result []map[string]any = []map[string]any{}
 
 	// Variables for storing the smallest words array
 	var (
@@ -74,10 +74,10 @@ func (c *Cache) search(query string, limit int, strict bool, schema map[string]b
 
 	// Check if the query is in the cache
 	if indices, ok := c.ft.storage[words[0]]; !ok {
-		return []map[string]interface{}{}
+		return []map[string]any{}
 	} else {
 		if temp, ok := indices.(int); ok {
-			return []map[string]interface{}{
+			return []map[string]any{
 				c.data[c.ft.indices[temp]],
 			}
 		}
@@ -89,7 +89,7 @@ func (c *Cache) search(query string, limit int, strict bool, schema map[string]b
 	for i := 1; i < len(words)-1; i++ {
 		if indices, ok := c.ft.storage[words[i]]; ok {
 			if index, ok := indices.(int); ok {
-				return []map[string]interface{}{
+				return []map[string]any{
 					c.data[c.ft.indices[index]],
 				}
 			}

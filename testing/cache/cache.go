@@ -10,7 +10,7 @@ func main() {
 	var cache *Hermes.Cache = Hermes.InitCache()
 
 	// Test Set, Get, Delete, Clean, Length, Values, Keys, and Exists
-	var data = map[string]interface{}{
+	var data = map[string]any{
 		"name": Hermes.WithFT("Tristan"),
 		"age":  17,
 	}

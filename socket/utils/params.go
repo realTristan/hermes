@@ -9,7 +9,7 @@ import (
 // Fields:
 //   - values: a map of the query parameters
 type Params struct {
-	values map[string]interface{}
+	values map[string]any
 }
 
 // Get the parameters from the provided data map
@@ -22,7 +22,7 @@ func ParseParams(msg []byte) (*Params, error) {
 }
 
 // Get the value of a query param
-func (p *Params) Get(key string) interface{} {
+func (p *Params) Get(key string) any {
 	return p.values[key]
 }
 

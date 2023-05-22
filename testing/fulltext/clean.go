@@ -10,7 +10,7 @@ func clean() {
 	var cache *Hermes.Cache = Hermes.InitCache()
 
 	// Test CleanFT()
-	var data = map[string]interface{}{
+	var data = map[string]any{
 		"name": "tristan",
 		"age":  17,
 	}

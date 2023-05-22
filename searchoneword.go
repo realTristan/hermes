@@ -14,15 +14,15 @@ import (
 //   - strict (bool): Determines whether the search should be strict or not. If set to true, only exact matches will be returned.
 //
 // Returns:
-//   - []map[string]interface{}: A slice of maps where each map represents a data record that matches the given query.
+//   - []map[string]any: A slice of maps where each map represents a data record that matches the given query.
 //     The keys of the map correspond to the column names of the data that were searched and returned in the result.
 //   - error: An error if the query or limit is invalid or if the full-text is not initialized.
-func (c Cache) SearchOneWord(query string, limit int, strict bool) ([]map[string]interface{}, error) {
+func (c Cache) SearchOneWord(query string, limit int, strict bool) ([]map[string]any, error) {
 	switch {
 	case len(query) == 0:
-		return []map[string]interface{}{}, errors.New("invalid query")
+		return []map[string]any{}, errors.New("invalid query")
 	case limit < 1:
-		return []map[string]interface{}{}, errors.New("invalid limit")
+		return []map[string]any{}, errors.New("invalid limit")
 	}
 
 	// Lock the mutex
@@ -31,7 +31,7 @@ func (c Cache) SearchOneWord(query string, limit int, strict bool) ([]map[string
 
 	// Check if the full-text is initialized
 	if c.ft == nil {
-		return []map[string]interface{}{}, errors.New("full-text is not initialized")
+		return []map[string]any{}, errors.New("full-text is not initialized")
 	}
 
 	// Search the data
@@ -45,14 +45,14 @@ func (c Cache) SearchOneWord(query string, limit int, strict bool) ([]map[string
 //   - strict (bool): Determines whether the search should be strict or not. If set to true, only exact matches will be returned.
 //
 // Returns:
-//   - []map[string]interface{}: A slice of maps where each map represents a data record that matches the given query.
+//   - []map[string]any: A slice of maps where each map represents a data record that matches the given query.
 //     The keys of the map correspond to the column names of the data that were searched and returned in the result.
-func (c *Cache) searchOneWord(query string, limit int, strict bool) []map[string]interface{} {
+func (c *Cache) searchOneWord(query string, limit int, strict bool) []map[string]any {
 	// Set the query to lowercase
 	query = strings.ToLower(query)
 
 	// Define variables
-	var result []map[string]interface{} = []map[string]interface{}{}
+	var result []map[string]any = []map[string]any{}
 
 	// If the user wants a strict search, just return the result
 	// straight from the cache
@@ -102,13 +102,13 @@ func (c *Cache) searchOneWord(query string, limit int, strict bool) []map[string
 // This function is thread-safe.
 //
 // Parameters:
-//   - result: A slice of map[string]interface{} representing the current search results.
+//   - result: A slice of map[string]any representing the current search results.
 //   - query: A string representing the word to search for.
 //   - limit: An integer representing the maximum number of results to return.
 //
 // Returns:
-//   - A slice of map[string]interface{} representing the search results.
-func (c *Cache) searchOneWordStrict(result []map[string]interface{}, query string, limit int) []map[string]interface{} {
+//   - A slice of map[string]any representing the search results.
+func (c *Cache) searchOneWordStrict(result []map[string]any, query string, limit int) []map[string]any {
 	// Check if the query is in the cache
 	if _, ok := c.ft.storage[query]; !ok {
 		return result
@@ -116,7 +116,7 @@ func (c *Cache) searchOneWordStrict(result []map[string]interface{}, query strin
 
 	// If there's only one result
 	if v, ok := c.ft.storage[query].(int); ok {
-		return []map[string]interface{}{c.data[c.ft.indices[v]]}
+		return []map[string]any{c.data[c.ft.indices[v]]}
 	}
 
 	// Loop through the indices

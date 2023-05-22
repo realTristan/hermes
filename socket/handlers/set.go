@@ -11,7 +11,7 @@ func Set(p *Utils.Params, c *Hermes.Cache) []byte {
 	var (
 		key   string
 		err   error
-		value map[string]interface{}
+		value map[string]any
 	)
 
 	// Get the key from the query

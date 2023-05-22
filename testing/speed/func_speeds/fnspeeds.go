@@ -28,12 +28,12 @@ func main() {
 	}
 
 	// The data for the user_id and user_id2 key
-	var data = map[string]interface{}{
+	var data = map[string]any{
 		"name": Hermes.WithFT("tristan1"),
 		"age":  17,
 	}
-	var data2 = map[string]interface{}{
-		"name": map[string]interface{}{
+	var data2 = map[string]any{
+		"name": map[string]any{
 			"$hermes.full_text": true,
 			"value":             "tristan2",
 		},

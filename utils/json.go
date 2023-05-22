@@ -6,8 +6,8 @@ import (
 )
 
 // Read a json file and return the data as a map.
-// map[string]map[string]interface{}
-// []map[string]interface{}
+// map[string]map[string]any
+// []map[string]any
 func ReadJson[T any](file string) (T, error) {
 	var v T
 

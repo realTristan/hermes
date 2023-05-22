@@ -15,13 +15,13 @@ import (
 //
 // Returns:
 //   - An error if the full-text storage limit or byte-size limit is reached.
-func (ft *FullText) insert(data map[string]map[string]interface{}) error {
+func (ft *FullText) insert(data map[string]map[string]any) error {
 	// Create a copy of the existing full-text variables
 	var (
-		tempStorage      map[string]interface{} = ft.storage
-		tempIndices      map[int]string         = ft.indices
-		tempCurrentIndex int                    = ft.currentIndex
-		tempKeys         map[string]int         = make(map[string]int)
+		tempStorage      map[string]any = ft.storage
+		tempIndices      map[int]string = ft.indices
+		tempCurrentIndex int            = ft.currentIndex
+		tempKeys         map[string]int = make(map[string]int)
 	)
 
 	// Loop through the json data

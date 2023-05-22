@@ -9,7 +9,7 @@ import (
 // Insert data into the full-text cache.
 // This function is not thread-safe, and should only be called from
 // an exported function.
-func (ft *FullText) insert(data []map[string]interface{}) error {
+func (ft *FullText) insert(data []map[string]any) error {
 	// Loop through the data
 	for i, item := range data {
 		// Loop through the map

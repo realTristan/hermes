@@ -36,7 +36,7 @@ func FTInitJson(p *Utils.Params, c *Hermes.Cache) []byte {
 	var (
 		maxLength int
 		maxBytes  int
-		json      map[string]map[string]interface{}
+		json      map[string]map[string]any
 	)
 
 	// Get the max length from the query

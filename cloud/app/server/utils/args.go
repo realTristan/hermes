@@ -7,12 +7,12 @@ import (
 
 // Data struct
 type Data struct {
-	port interface{}
+	port any
 }
 
 // Get the port
-func (d *Data) Port() interface{} {
-	var copy interface{} = d.port
+func (d *Data) Port() any {
+	var copy any = d.port
 	return copy
 }
 

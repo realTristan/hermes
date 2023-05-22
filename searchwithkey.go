@@ -13,16 +13,16 @@ import (
 //   - limit (int): The maximum number of results to be returned
 //
 // Returns:
-//   - []map[string]interface{}: A slice of maps containing the search results
+//   - []map[string]any: A slice of maps containing the search results
 //   - error: An error if the key, query or limit is invalid
-func (c *Cache) SearchWithKey(query string, key string, limit int) ([]map[string]interface{}, error) {
+func (c *Cache) SearchWithKey(query string, key string, limit int) ([]map[string]any, error) {
 	switch {
 	case len(key) == 0:
-		return []map[string]interface{}{}, errors.New("invalid key")
+		return []map[string]any{}, errors.New("invalid key")
 	case len(query) == 0:
-		return []map[string]interface{}{}, errors.New("invalid query")
+		return []map[string]any{}, errors.New("invalid query")
 	case limit < 1:
-		return []map[string]interface{}{}, errors.New("invalid limit")
+		return []map[string]any{}, errors.New("invalid limit")
 	}
 
 	// Set the query to lowercase
@@ -43,10 +43,10 @@ func (c *Cache) SearchWithKey(query string, key string, limit int) ([]map[string
 //   - limit (int): The maximum number of results to be returned
 //
 // Returns:
-//   - []map[string]interface{}: A slice of maps containing the search results
-func (c *Cache) searchWithKey(query string, key string, limit int) []map[string]interface{} {
+//   - []map[string]any: A slice of maps containing the search results
+func (c *Cache) searchWithKey(query string, key string, limit int) []map[string]any {
 	// Define variables
-	var result []map[string]interface{} = []map[string]interface{}{}
+	var result []map[string]any = []map[string]any{}
 
 	// Iterate over the query result
 	for _, item := range c.data {

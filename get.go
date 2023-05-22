@@ -7,8 +7,8 @@ package cache
 //   - key: A string representing the key to retrieve the value for.
 //
 // Returns:
-//   - A map[string]interface{} representing the value associated with the given key in the cache.
-func (c *Cache) Get(key string) map[string]interface{} {
+//   - A map[string]any representing the value associated with the given key in the cache.
+func (c *Cache) Get(key string) map[string]any {
 	c.mutex.RLock()
 	defer c.mutex.RUnlock()
 	return c.get(key)
@@ -21,7 +21,7 @@ func (c *Cache) Get(key string) map[string]interface{} {
 //   - key: A string representing the key to retrieve the value for.
 //
 // Returns:
-//   - A map[string]interface{} representing the value associated with the given key in the cache.
-func (c *Cache) get(key string) map[string]interface{} {
+//   - A map[string]any representing the value associated with the given key in the cache.
+func (c *Cache) get(key string) map[string]any {
 	return c.data[key]
 }

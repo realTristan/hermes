@@ -28,8 +28,8 @@ func BasicSearch() {
 			// print the data
 			for _, val := range data {
 				for k, v := range val {
-					var data map[string]interface{}
-					if v, ok := v.(map[string]interface{}); !ok {
+					var data map[string]any
+					if v, ok := v.(map[string]any); !ok {
 						continue
 					} else {
 						data = v
@@ -93,8 +93,8 @@ func HermesSearch() {
 }
 
 // Read a json file
-func readJson(file string) (map[string]map[string]interface{}, error) {
-	var v map[string]map[string]interface{} = map[string]map[string]interface{}{}
+func readJson(file string) (map[string]map[string]any, error) {
+	var v map[string]map[string]any = map[string]map[string]any{}
 
 	// Read the json data
 	if data, err := os.ReadFile(file); err != nil {

@@ -12,11 +12,11 @@ import (
 //
 // Parameters:
 //   - key: A string representing the key to set the value for.
-//   - value: A map[string]interface{} representing the value to set.
+//   - value: A map[string]any representing the value to set.
 //
 // Returns:
 //   - An error if the full-text cache key already exists. Otherwise, nil.
-func (c *Cache) Set(key string, value map[string]interface{}) error {
+func (c *Cache) Set(key string, value map[string]any) error {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
 	return c.set(key, value)
@@ -28,11 +28,11 @@ func (c *Cache) Set(key string, value map[string]interface{}) error {
 //
 // Parameters:
 //   - key: A string representing the key to set the value for.
-//   - value: A map[string]interface{} representing the value to set.
+//   - value: A map[string]any representing the value to set.
 //
 // Returns:
 //   - An error if the full-text cache key already exists. Otherwise, nil.
-func (c *Cache) set(key string, value map[string]interface{}) error {
+func (c *Cache) set(key string, value map[string]any) error {
 	if _, ok := c.data[key]; ok {
 		return fmt.Errorf("full-text cache key already exists (%s). please delete it before setting it another value", key)
 	}
@@ -57,17 +57,17 @@ func (c *Cache) set(key string, value map[string]interface{}) error {
 //
 // Parameters:
 //   - key: A string representing the key to set the value for.
-//   - value: A map[string]interface{} representing the value to set.
+//   - value: A map[string]any representing the value to set.
 //
 // Returns:
 //   - An error if the full-text storage limit or byte-size limit is reached. Otherwise, nil.
-func (c *Cache) ftSet(key string, value map[string]interface{}) error {
+func (c *Cache) ftSet(key string, value map[string]any) error {
 	// Create a copy of the existing full-text variables
 	var (
-		tempStorage      map[string]interface{} = c.ft.storage
-		tempIndices      map[int]string         = c.ft.indices
-		tempCurrentIndex int                    = c.ft.currentIndex
-		tempKeys         map[string]int         = make(map[string]int)
+		tempStorage      map[string]any = c.ft.storage
+		tempIndices      map[int]string = c.ft.indices
+		tempCurrentIndex int            = c.ft.currentIndex
+		tempKeys         map[string]int = make(map[string]int)
 	)
 
 	// Loop through the json data

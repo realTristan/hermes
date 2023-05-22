@@ -19,17 +19,17 @@ func WithFT(value string) WFT {
 // ftFromMap is a function that gets the full-text value from a map.
 //
 // Parameters:
-//   - value: An interface{} representing the value to get the full-text value from.
+//   - value: any representing the value to get the full-text value from.
 //
 // Returns:
 //   - A string representing the full-text value, or an empty string if the value is not a map or does not contain the correct keys.
-func ftFromMap(value interface{}) string {
-	if _, ok := value.(map[string]interface{}); !ok {
+func ftFromMap(value any) string {
+	if _, ok := value.(map[string]any); !ok {
 		return ""
 	}
 
 	// Verify that the map has the correct length
-	var v map[string]interface{} = value.(map[string]interface{})
+	var v map[string]any = value.(map[string]any)
 	if len(v) != 2 {
 		return ""
 	}

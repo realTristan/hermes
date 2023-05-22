@@ -13,15 +13,15 @@ import (
 //   - schema (map[string]bool): A map of column names in the FullText struct's data that should be searched. The boolean value indicates whether the column should be searched or not.
 //
 // Returns:
-//   - []map[string]interface{}: A slice of maps where each map represents a data record that matches the given query.
+//   - []map[string]any: A slice of maps where each map represents a data record that matches the given query.
 //     The keys of the map correspond to the column names of the data that were searched and returned in the result.
 //   - error: An error if the query or limit is invalid
-func (c *Cache) SearchValues(query string, limit int, schema map[string]bool) ([]map[string]interface{}, error) {
+func (c *Cache) SearchValues(query string, limit int, schema map[string]bool) ([]map[string]any, error) {
 	switch {
 	case len(query) == 0:
-		return []map[string]interface{}{}, errors.New("invalid query")
+		return []map[string]any{}, errors.New("invalid query")
 	case limit < 1:
-		return []map[string]interface{}{}, errors.New("invalid limit")
+		return []map[string]any{}, errors.New("invalid limit")
 	}
 
 	// Set the query to lowercase
@@ -42,11 +42,11 @@ func (c *Cache) SearchValues(query string, limit int, schema map[string]bool) ([
 //   - schema (map[string]bool): A map of column names in the FullText struct's data that should be searched. The boolean value indicates whether the column should be searched or not.
 //
 // Returns:
-//   - []map[string]interface{}: A slice of maps where each map represents a data record that matches the given query.
+//   - []map[string]any: A slice of maps where each map represents a data record that matches the given query.
 //     The keys of the map correspond to the column names of the data that were searched and returned in the result.
-func (c *Cache) searchValues(query string, limit int, schema map[string]bool) []map[string]interface{} {
+func (c *Cache) searchValues(query string, limit int, schema map[string]bool) []map[string]any {
 	// Define variables
-	var result []map[string]interface{} = []map[string]interface{}{}
+	var result []map[string]any = []map[string]any{}
 
 	// Iterate over the query result
 	for _, item := range c.data {
