@@ -46,18 +46,18 @@ func (ft *FullText) insert(data []map[string]interface{}) error {
 					if len(words[j]) <= 3 {
 						continue
 					}
-					if _, ok := ft.storage[words[j]]; !ok {
+					if temp, ok := ft.storage[words[j]]; !ok {
 						ft.storage[words[j]] = []int{i}
 						ft.words = append(ft.words, words[j])
-						continue
-					}
-					if indices, ok := ft.storage[words[j]].([]int); !ok {
-						ft.storage[words[j]] = []int{ft.storage[words[j]].(int), i}
 					} else {
-						if Utils.ContainsInt(indices, i) {
-							continue
+						if indices, ok := temp.([]int); !ok {
+							ft.storage[words[j]] = []int{temp.(int), i}
+						} else {
+							if Utils.ContainsInt(indices, i) {
+								continue
+							}
+							ft.storage[words[j]] = append(indices, i)
 						}
-						ft.storage[words[j]] = append(indices, i)
 					}
 				}
 			}
