@@ -1,12 +1,16 @@
 # Hermes ![Stars](https://img.shields.io/github/stars/realTristan/Hermes?color=brightgreen) ![Watchers](https://img.shields.io/github/watchers/realTristan/Hermes?label=Watchers)
 ![banner](https://user-images.githubusercontent.com/75189508/230987049-665418b1-3576-49b7-861e-29036859ad8a.png)
 
-# Go Install
+# Hermes Go
+Direct access to the hermes cache/nocache functions.
+## Import
 ```
 go get github.com/realTristan/Hermes
 ```
 
-# Python Install
+# Hermes Cloud
+Access the hermes cache functions via websocket.
+## Python Install
 ```
 pip install hermescloud
 ```
@@ -102,7 +106,7 @@ func main() {
 	cache.FTInit(10, -1)
 	
 	// Set the value in the cache
-	cache.Set("user_id", map[string]interface{}{
+	cache.Set("user_id", map[string]any{
 		"name":       Hermes.WithFT("tristan"),
 		"age":        17,
 		"expiration": time.Now(),

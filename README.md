@@ -106,7 +106,7 @@ func main() {
 	cache.FTInit(10, -1)
 	
 	// Set the value in the cache
-	cache.Set("user_id", map[string]interface{}{
+	cache.Set("user_id", map[string]any{
 		"name":       Hermes.WithFT("tristan"),
 		"age":        17,
 		"expiration": time.Now(),
