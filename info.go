@@ -2,77 +2,100 @@ package cache
 
 import (
 	"errors"
-	"fmt"
 
 	Utils "github.com/realTristan/Hermes/utils"
 )
 
-// Return a string with the cache, and full-text info.
+// Info is a method of the Cache struct that returns a map with the cache and full-text info.
 // This method is thread-safe.
 // An error is returned if the full-text index is not initialized.
-func (c *Cache) InfoString() (string, error) {
+//
+// Returns:
+//   - A map[string]any representing the cache and full-text info.
+//   - An error if the full-text index is not initialized.
+func (c *Cache) Info() (map[string]any, error) {
 	c.mutex.RLock()
 	defer c.mutex.RUnlock()
-	return c.infoString()
+	return c.info()
 }
 
-// Return a string with the cache, and full-text info.
-// This method is not thread-safe, and should only be called from
-// an exported function.
+// info is a method of the Cache struct that returns a map with the cache and full-text info.
+// This method is not thread-safe, and should only be called from an exported function.
 // An error is returned if the full-text index is not initialized.
-func (c *Cache) infoString() (string, error) {
-	// The initial cache info string
-	var s string = fmt.Sprintf("Cache Info:\n-----------\nNumber of keys: %d\n", len(c.data))
+//
+// Returns:
+//   - A map[string]any representing the cache and full-text info.
+//   - An error if the full-text index is not initialized.
+func (c *Cache) info() (map[string]any, error) {
+	var info map[string]any = map[string]any{
+		"keys": len(c.data),
+	}
 
 	// Check if the cache full-text has been initialized
 	if c.ft == nil {
-		return s, errors.New("full-text is not initialized")
+		return info, errors.New("full-text is not initialized")
 	}
 
-	// Append the full-text info to the cache info string
-	s += "\nFull-Text Cache Info:\n-----------\n"
+	// Add the full-text info to the map
 	if size, err := Utils.Size(c.ft.storage); err != nil {
-		return s, err
+		return info, err
 	} else {
-		s += fmt.Sprintf("Current Index: %d\n", c.ft.currentIndex)
-		s += fmt.Sprintf("Full-text storage size (bytes): %d\n", size)
-		s += fmt.Sprintf("Number of keys: %d\n", len(c.ft.storage))
+		// Add the full-text info to the map
+		info["full-text"] = map[string]any{
+			"keys":          len(c.ft.storage),
+			"current_index": c.ft.currentIndex,
+			"size":          size,
+		}
 	}
-	return s, nil
+
+	// Return the info map
+	return info, nil
 }
 
-// Return a string with the cache, and full-text info.
+// InfoForTesting is a method of the Cache struct that returns a map with the cache and full-text info for testing purposes.
 // This method is thread-safe.
 // An error is returned if the full-text index is not initialized.
-func (c *Cache) InfoStringForTesting() (string, error) {
+//
+// Returns:
+//   - A map[string]any representing the cache and full-text info for testing purposes.
+//   - An error if the full-text index is not initialized.
+func (c *Cache) InfoForTesting() (map[string]any, error) {
 	c.mutex.RLock()
 	defer c.mutex.RUnlock()
-	return c.infoStringForTesting()
+	return c.infoForTesting()
 }
 
-// Return a string with the cache, and full-text info.
-// This method is not thread-safe, and should only be called from
-// an exported function.
+// infoForTesting is a method of the Cache struct that returns a map with the cache and full-text info for testing purposes.
+// This method is not thread-safe, and should only be called from an exported function.
 // An error is returned if the full-text index is not initialized.
-func (c *Cache) infoStringForTesting() (string, error) {
-	// The initial cache info string
-	var s string = fmt.Sprintf("Cache Info:\n-----------\nNumber of keys: %d\nData: %v\n", len(c.data), c.data)
+//
+// Returns:
+//   - A map[string]any representing the cache and full-text info for testing purposes.
+//   - An error if the full-text index is not initialized.
+func (c *Cache) infoForTesting() (map[string]any, error) {
+	var info map[string]any = map[string]any{
+		"keys": len(c.data),
+		"data": c.data,
+	}
 
 	// Check if the cache full-text has been initialized
 	if c.ft == nil {
-		return s, errors.New("full-text is not initialized")
+		return info, errors.New("full-text is not initialized")
 	}
 
-	// Append the full-text info to the cache info string
-	s += "\nFull-Text Cache Info:\n-----------\n"
+	// Add the full-text info to the map
 	if size, err := Utils.Size(c.ft.storage); err != nil {
-		return s, err
+		return info, err
 	} else {
-		s += fmt.Sprintf("Number of keys: %d\n", len(c.ft.storage))
-		s += fmt.Sprintf("Full-text storage: %v\n", c.ft.storage)
-		s += fmt.Sprintf("Full-text storage size: %d\n", size)
-		s += fmt.Sprintf("Indices: %v\n", c.ft.indices)
-		s += fmt.Sprintf("Current Index: %d\n", c.ft.currentIndex)
+		info["full-text"] = map[string]any{
+			"keys":          len(c.ft.storage),
+			"current_index": c.ft.currentIndex,
+			"size":          size,
+			"storage":       c.ft.storage,
+			"indices":       c.ft.indices,
+		}
 	}
-	return s, nil
+
+	// Return the info map
+	return info, nil
 }

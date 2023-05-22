@@ -6,25 +6,38 @@ import (
 	Utils "github.com/realTristan/Hermes/api/utils"
 )
 
-// Get cache info in the form of a string
-// This is a handler function that returns a fiber context handler function
+// Info is a function that returns information about the cache.
+//
+// Parameters:
+//   - c: A pointer to a Hermes.Cache struct representing the cache to get information from.
+//
+// Returns:
+//   - A function that takes a pointer to a fiber.Ctx struct and returns an error.
+//     The function returns information about the cache.
 func Info(c *Hermes.Cache) func(ctx *fiber.Ctx) error {
 	return func(ctx *fiber.Ctx) error {
-		if info, err := c.InfoString(); err != nil {
+		if info, err := c.Info(); err != nil {
 			return ctx.Send(Utils.Error(err))
 		} else {
-			return ctx.Send([]byte(info))
+			return ctx.Send(Utils.Success(info))
 		}
 	}
 }
 
-// Get cache info in the form of a string for testing
+// InfoForTesting is a function that returns information about the cache for testing purposes.
+//
+// Parameters:
+//   - c: A pointer to a Hermes.Cache struct representing the cache to get information from.
+//
+// Returns:
+//   - A function that takes a pointer to a fiber.Ctx struct and returns an error.
+//     The function returns information about the cache for testing purposes.
 func InfoForTesting(c *Hermes.Cache) func(ctx *fiber.Ctx) error {
 	return func(ctx *fiber.Ctx) error {
-		if info, err := c.InfoStringForTesting(); err != nil {
+		if info, err := c.InfoForTesting(); err != nil {
 			return ctx.Send(Utils.Error(err))
 		} else {
-			return ctx.Send([]byte(info))
+			return ctx.Send(Utils.Success(info))
 		}
 	}
 }

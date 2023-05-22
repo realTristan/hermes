@@ -5,22 +5,34 @@ import (
 	Utils "github.com/realTristan/Hermes/socket/utils"
 )
 
-// Get cache info in the form of a string
-// This is a handler function that returns a fiber context handler function
+// Info is a function that returns information about the cache.
+//
+// Parameters:
+//   - _ : A pointer to a Utils.Params struct representing the parameters of the request. This parameter is ignored.
+//   - c: A pointer to a Hermes.Cache struct representing the cache to get information from.
+//
+// Returns:
+//   - A byte slice representing the information about the cache.
 func Info(_ *Utils.Params, c *Hermes.Cache) []byte {
-	if info, err := c.InfoString(); err != nil {
+	if info, err := c.Info(); err != nil {
 		return Utils.Error(err)
 	} else {
-		return []byte(info)
+		return Utils.Success(info)
 	}
 }
 
-// Get cache info for testing in the form of a string
-// This is a handler function that returns a fiber context handler function
+// InfoForTesting is a function that returns information about the cache for testing purposes.
+//
+// Parameters:
+//   - _ : A pointer to a Utils.Params struct representing the parameters of the request. This parameter is ignored.
+//   - c: A pointer to a Hermes.Cache struct representing the cache to get information from.
+//
+// Returns:
+//   - A byte slice representing the information about the cache for testing purposes.
 func InfoForTesting(_ *Utils.Params, c *Hermes.Cache) []byte {
-	if info, err := c.InfoStringForTesting(); err != nil {
+	if info, err := c.InfoForTesting(); err != nil {
 		return Utils.Error(err)
 	} else {
-		return []byte(info)
+		return Utils.Success(info)
 	}
 }
