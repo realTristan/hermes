@@ -38,15 +38,24 @@ func (ft *FullText) sequenceIndices() {
 	}
 
 	// Iterate over the ft storage
-	for word, keys := range ft.storage {
-		for i := 0; i < len(keys); i++ {
-			var index int = keys[i]
+	for word, data := range ft.storage {
+		// Check if the data is []int or int
+		if v, ok := data.(int); ok {
+			ft.storage[word] = tempKeys[ft.indices[v]]
+			continue
+		}
 
-			// Get the key from the old indices
-			var key string = ft.indices[index]
+		// If the data is []int, loop through the slice
+		if keys, ok := data.([]int); !ok {
+			for i := 0; i < len(keys); i++ {
+				var index int = keys[i]
 
-			// Set the new index
-			ft.storage[word][i] = tempKeys[key]
+				// Get the key from the old indices
+				var key string = ft.indices[index]
+
+				// Set the new index
+				ft.storage[word].([]int)[i] = tempKeys[key]
+			}
 		}
 	}
 

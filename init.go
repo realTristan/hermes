@@ -55,7 +55,7 @@ func (c *Cache) FTInit(maxLength int, maxBytes int) error {
 func (c *Cache) ftInit(maxLength int, maxBytes int) error {
 	// Initialize the FT struct
 	var ft *FullText = &FullText{
-		storage:      make(map[string][]int, maxLength),
+		storage:      make(map[string]interface{}),
 		indices:      make(map[int]string),
 		currentIndex: 0,
 		maxLength:    maxLength,
@@ -111,7 +111,7 @@ func (c *Cache) FTInitWithMap(data map[string]map[string]interface{}, maxLength 
 func (c *Cache) ftInitWithMap(data map[string]map[string]interface{}, maxLength int, maxBytes int) error {
 	// Initialize the FT struct
 	var ft *FullText = &FullText{
-		storage:      make(map[string][]int, maxLength),
+		storage:      make(map[string]interface{}),
 		indices:      make(map[int]string),
 		currentIndex: 0,
 		maxLength:    maxLength,

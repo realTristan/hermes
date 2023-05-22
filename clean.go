@@ -65,6 +65,6 @@ func (c *Cache) FTClean() error {
 // Returns:
 //   - None
 func (ft *FullText) clean() {
-	ft.storage = make(map[string][]int, ft.maxLength)
+	ft.storage = make(map[string]interface{})
 	ft.indices = make(map[int]string)
 }

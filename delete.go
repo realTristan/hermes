@@ -44,20 +44,32 @@ func (c *Cache) delete(key string) {
 //   - None
 func (ft *FullText) delete(key string) {
 	// Remove the key from the ft.storage
-	for word, keys := range ft.storage {
-		for i := 0; i < len(keys); i++ {
-			if key != ft.indices[keys[i]] {
-				continue
-			}
-
-			// Remove the key from the ft.storage slice
-			ft.storage[word] = append(ft.storage[word][:i], ft.storage[word][i+1:]...)
-			break
+	for word, data := range ft.storage {
+		// Check if the data is []int or int
+		if _, ok := data.(int); ok {
+			delete(ft.storage, word)
+			continue
 		}
 
-		// If the ft.storage[word] is empty, remove it from the storage
-		if len(ft.storage[word]) == 0 {
-			delete(ft.storage, word)
+		// If the data is []int, loop through the slice
+		if keys, ok := data.([]int); !ok {
+			for i := 0; i < len(keys); i++ {
+				if key != ft.indices[keys[i]] {
+					continue
+				}
+
+				// Remove the key from the ft.storage slice
+				keys = append(keys[:i], keys[i+1:]...)
+				ft.storage[word] = keys
+				break
+			}
+
+			// If keys is empty, remove it from the storage
+			if len(keys) == 0 {
+				delete(ft.storage, word)
+			} else if len(keys) == 1 {
+				ft.storage[word] = keys[0]
+			}
 		}
 	}
 }

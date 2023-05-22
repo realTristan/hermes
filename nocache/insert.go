@@ -51,10 +51,21 @@ func (ft *FullText) insert(data []map[string]interface{}) error {
 						ft.words = append(ft.words, words[j])
 						continue
 					}
-					if Utils.ContainsInt(ft.storage[words[j]], i) {
-						continue
+					if _, ok := ft.storage[words[j]].([]int); ok {
+						if Utils.ContainsInt(ft.storage[words[j]].([]int), i) {
+							continue
+						}
+						ft.storage[words[j]] = append(ft.storage[words[j]].([]int), i)
+					} else {
+						ft.storage[words[j]] = []int{ft.storage[words[j]].(int), i}
 					}
-					ft.storage[words[j]] = append(ft.storage[words[j]], i)
+				}
+			}
+
+			// Iterate over the temp storage and set the values with len 1 to int
+			for k, v := range ft.storage {
+				if v, ok := v.([]int); ok && len(v) == 1 {
+					ft.storage[k] = v[0]
 				}
 			}
 

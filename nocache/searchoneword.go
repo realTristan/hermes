@@ -63,8 +63,13 @@ func (ft *FullText) searchOneWord(query string, limit int, strict bool) []map[st
 			return result
 		}
 
+		// Check if the cache value is an integer
+		if _, ok := ft.storage[query].(int); ok {
+			return []map[string]interface{}{ft.data[ft.storage[query].(int)]}
+		}
+
 		// Loop through the indices
-		var indices []int = ft.storage[query]
+		var indices []int = ft.storage[query].([]int)
 		for i := 0; i < len(indices); i++ {
 			if len(result) >= limit {
 				return result
@@ -89,8 +94,17 @@ func (ft *FullText) searchOneWord(query string, limit int, strict bool) []map[st
 		}
 
 		// Loop through the cache indices
-		for j := 0; j < len(ft.storage[ft.words[i]]); j++ {
-			var index int = ft.storage[ft.words[i]][j]
+		if v, ok := ft.storage[ft.words[i]].(int); ok {
+			if _, ok := alreadyAdded[v]; ok {
+				continue
+			}
+			result = append(result, ft.data[v])
+			alreadyAdded[v] = 0
+			continue
+		}
+
+		for j := 0; j < len(ft.storage[ft.words[i]].([]int)); j++ {
+			var index int = ft.storage[ft.words[i]].([]int)[j]
 			if _, ok := alreadyAdded[index]; ok {
 				continue
 			}

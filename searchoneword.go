@@ -62,13 +62,18 @@ func (c *Cache) searchOneWord(query string, limit int, strict bool) []map[string
 			return result
 		}
 
+		// If there's only one result
+		if v, ok := c.ft.storage[query].(int); ok {
+			return []map[string]interface{}{c.data[c.ft.indices[v]]}
+		}
+
 		// Loop through the indices
-		for i := 0; i < len(c.ft.storage[query]); i++ {
+		for i := 0; i < len(c.ft.storage[query].([]int)); i++ {
 			if len(result) >= limit {
 				return result
 			}
 			var (
-				index int    = c.ft.storage[query][i]
+				index int    = c.ft.storage[query].([]int)[i]
 				key   string = c.ft.indices[index]
 			)
 			result = append(result, c.data[key])
@@ -91,14 +96,23 @@ func (c *Cache) searchOneWord(query string, limit int, strict bool) []map[string
 		}
 
 		// Loop through the cache indices
-		for j := 0; j < len(v); j++ {
-			if _, ok := alreadyAdded[v[j]]; ok {
+		if v, ok := v.(int); ok {
+			if _, ok := alreadyAdded[v]; ok {
+				continue
+			}
+			result = append(result, c.data[c.ft.indices[v]])
+			alreadyAdded[v] = 0
+			continue
+		}
+
+		for j := 0; j < len(v.([]int)); j++ {
+			if _, ok := alreadyAdded[v.([]int)[j]]; ok {
 				continue
 			}
 
 			// Else, append the index to the result
-			result = append(result, c.data[c.ft.indices[v[j]]])
-			alreadyAdded[v[j]] = 0
+			result = append(result, c.data[c.ft.indices[v.([]int)[j]]])
+			alreadyAdded[v.([]int)[j]] = 0
 		}
 	}
 

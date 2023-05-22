@@ -10,13 +10,13 @@ import (
 // The index is used to enable full-text search on the data in the cache.
 //
 // Fields:
-//   - storage (map[string][]int): A map that stores the indices of the entries in the cache that contain each word in the full-text index. The keys of the map are strings that represent the words in the index, and the values are slices of integers that represent the indices of the entries in the cache that contain the word.
+//   - storage (map[string]interface{}): A map that stores the indices of the entries in the cache that contain each word in the full-text index. The keys of the map are strings that represent the words in the index, and the values are slices of integers that represent the indices of the entries in the cache that contain the word.
 //   - indices (map[int]string): A map that stores the words in the full-text index. The keys of the map are integers that represent the indices of the words in the index, and the values are strings that represent the words.
 //   - currentIndex (int): An integer that represents the current index of the full-text index. This is used to assign unique indices to new words as they are added to the index.
 //   - maxLength (int): An integer that represents the maximum number of words that can be stored in the full-text index.
 //   - maxBytes (int): An integer that represents the maximum size of the text that can be stored in the full-text index, in bytes.
 type FullText struct {
-	storage      map[string][]int
+	storage      map[string]interface{} // either []int or int
 	indices      map[int]string
 	currentIndex int
 	maxLength    int
@@ -112,7 +112,7 @@ func (c *Cache) FTSetMaxLength(maxLength int) error {
 // Returns:
 //   - map[string][]int: A copy of the full-text index storage map.
 //   - error: An error object. If no error occurs, this will be nil.
-func (c *Cache) FTStorage() (map[string][]int, error) {
+func (c *Cache) FTStorage() (map[string]interface{}, error) {
 	c.mutex.RLock()
 	defer c.mutex.RUnlock()
 
@@ -122,7 +122,7 @@ func (c *Cache) FTStorage() (map[string][]int, error) {
 	}
 
 	// Copy the storage map
-	var copy map[string][]int = c.ft.storage
+	var copy map[string]interface{} = c.ft.storage
 
 	// Return the copy
 	return copy, nil

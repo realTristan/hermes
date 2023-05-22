@@ -84,22 +84,32 @@ func (ft *FullText) search(query string, limit int, strict bool, schema map[stri
 	if v, ok := ft.storage[words[0]]; !ok {
 		return []map[string]interface{}{}
 	} else {
-		smallest = len(v)
+		if t, ok := v.(int); ok {
+			return []map[string]interface{}{
+				ft.data[t],
+			}
+		}
+		smallest = len(v.([]int))
 	}
 
 	// Find the smallest words array
 	// Don't include the first or last words from the query
 	for i := 1; i < len(words)-1; i++ {
 		if v, ok := ft.storage[words[i]]; ok {
-			if len(v) < smallest {
-				smallest = len(v)
+			if t, ok := v.(int); ok {
+				return []map[string]interface{}{
+					ft.data[t],
+				}
+			}
+			if len(v.([]int)) < smallest {
+				smallest = len(v.([]int))
 				smallestIndex = i
 			}
 		}
 	}
 
 	// Loop through the indices
-	var indices []int = ft.storage[words[smallestIndex]]
+	var indices []int = ft.storage[words[smallestIndex]].([]int)
 	for i := 0; i < len(indices); i++ {
 		for key, value := range ft.data[indices[i]] {
 			if v, ok := value.(string); !ok {

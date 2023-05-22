@@ -64,10 +64,10 @@ func (c *Cache) set(key string, value map[string]interface{}) error {
 func (c *Cache) ftSet(key string, value map[string]interface{}) error {
 	// Create a copy of the existing full-text variables
 	var (
-		tempStorage      map[string][]int = c.ft.storage
-		tempIndices      map[int]string   = c.ft.indices
-		tempCurrentIndex int              = c.ft.currentIndex
-		tempKeys         map[string]int   = make(map[string]int)
+		tempStorage      map[string]interface{} = c.ft.storage
+		tempIndices      map[int]string         = c.ft.indices
+		tempCurrentIndex int                    = c.ft.currentIndex
+		tempKeys         map[string]int         = make(map[string]int)
 	)
 
 	// Loop through the json data
@@ -135,11 +135,22 @@ func (c *Cache) ftSet(key string, value map[string]interface{}) error {
 					tempStorage[words[i]] = []int{tempCurrentIndex}
 					continue
 				}
-				if Utils.ContainsInt(tempStorage[words[i]], tempKeys[key]) {
-					continue
+				if _, ok := tempStorage[words[i]].([]int); ok {
+					if Utils.ContainsInt(tempStorage[words[i]].([]int), tempKeys[key]) {
+						continue
+					}
+					tempStorage[words[i]] = append(tempStorage[words[i]].([]int), tempKeys[key])
+				} else {
+					tempStorage[words[i]] = []int{tempStorage[words[i]].(int), tempKeys[key]}
 				}
-				tempStorage[words[i]] = append(tempStorage[words[i]], tempKeys[key])
 			}
+		}
+	}
+
+	// Iterate over the temp storage and set the values with len 1 to int
+	for k, v := range tempStorage {
+		if v, ok := v.([]int); ok && len(v) == 1 {
+			tempStorage[k] = v[0]
 		}
 	}
 

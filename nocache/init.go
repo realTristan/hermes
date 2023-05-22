@@ -11,7 +11,7 @@ import (
 func InitWithMap(data []map[string]interface{}) (*FullText, error) {
 	var ft *FullText = &FullText{
 		mutex:   &sync.RWMutex{},
-		storage: make(map[string][]int),
+		storage: make(map[string]interface{}),
 		words:   []string{},
 		data:    []map[string]interface{}{},
 	}

@@ -76,22 +76,32 @@ func (c *Cache) search(query string, limit int, strict bool, schema map[string]b
 	if v, ok := c.ft.storage[words[0]]; !ok {
 		return []map[string]interface{}{}
 	} else {
-		smallest = len(v)
+		if t, ok := v.(int); ok {
+			return []map[string]interface{}{
+				c.data[c.ft.indices[t]],
+			}
+		}
+		smallest = len(v.([]int))
 	}
 
 	// Find the smallest words array
 	// Don't include the first or last words from the query
 	for i := 1; i < len(words)-1; i++ {
 		if v, ok := c.ft.storage[words[i]]; ok {
-			if len(v) < smallest {
-				smallest = len(v)
+			if t, ok := v.(int); ok {
+				return []map[string]interface{}{
+					c.data[c.ft.indices[t]],
+				}
+			}
+			if len(v.([]int)) < smallest {
+				smallest = len(v.([]int))
 				smallestIndex = i
 			}
 		}
 	}
 
 	// Loop through the indices
-	var keys []int = c.ft.storage[words[smallestIndex]]
+	var keys []int = c.ft.storage[words[smallestIndex]].([]int)
 	for i := 0; i < len(keys); i++ {
 		for key, value := range c.data[c.ft.indices[keys[i]]] {
 			if !schema[key] {
