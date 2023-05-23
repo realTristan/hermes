@@ -21,16 +21,24 @@ func clean() {
 	cache.Set("user_id2", data)
 
 	// Initialize the FT cache
-	cache.FTInit(-1, -1)
+	cache.FTInit(-1, -1, 3)
 
 	// Search for a word in the cache
-	var result, _ = cache.SearchOneWord("tristan", 100, false)
+	var result, _ = cache.SearchOneWord(Hermes.SearchParams{
+		Query:  "tristan",
+		Limit:  100,
+		Strict: false,
+	})
 	fmt.Println(result)
 
 	// Clean
 	cache.FTClean()
 
 	// Search for a word in the cache
-	result, _ = cache.SearchOneWord("tristan", 100, false)
+	result, _ = cache.SearchOneWord(Hermes.SearchParams{
+		Query:  "tristan",
+		Limit:  100,
+		Strict: false,
+	})
 	fmt.Println(result)
 }

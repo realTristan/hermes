@@ -9,7 +9,7 @@ import (
 // Insert data into the full-text cache.
 // This function is not thread-safe, and should only be called from
 // an exported function.
-func (ft *FullText) insert(data []map[string]any) error {
+func (ft *FullText) insert(data []map[string]any, minWordLength int) error {
 	// Loop through the data
 	for i, item := range data {
 		// Loop through the map
@@ -43,7 +43,7 @@ func (ft *FullText) insert(data []map[string]any) error {
 
 				// Loop through the words
 				for j := 0; j < len(words); j++ {
-					if len(words[j]) <= 3 {
+					if len(words[j]) < minWordLength {
 						continue
 					}
 					if temp, ok := ft.storage[words[j]]; !ok {

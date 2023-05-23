@@ -23,7 +23,7 @@ func main() {
 	// Define variables
 	var (
 		// Initialize the full text
-		ft, _ = Hermes.InitWithJson("../../../testing/data/data_array.json")
+		ft, _ = Hermes.InitWithJson("../../../testing/data/data_array.json", 3)
 
 		// Track the start time
 		start time.Time = time.Now()

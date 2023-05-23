@@ -84,7 +84,7 @@ func (ft *FullText) insert(data map[string]map[string]any) error {
 				// Loop through the words
 				for i := 0; i < len(words); i++ {
 					// Check if the word is valid
-					if len(words[i]) <= ft.minWordLength {
+					if len(words[i]) < ft.minWordLength {
 						continue
 					}
 					if temp, ok := tempStorage[words[i]]; !ok {

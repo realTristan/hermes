@@ -58,7 +58,7 @@ func HermesSearch() {
 	var cache *Hermes.Cache = Hermes.InitCache()
 
 	// Initialize the FT cache with a json file
-	cache.FTInitWithJson("../../data/data_hash.json", -1, -1)
+	cache.FTInitWithJson("../../data/data_hash.json", -1, -1, 3)
 	var (
 		average int64 = 0
 		total   int   = 0
@@ -69,14 +69,15 @@ func HermesSearch() {
 			start time.Time = time.Now()
 
 			// Search for a word in the cache
-			res, _ = cache.Search("computer science", 100, false, map[string]bool{
-				"id":             false,
-				"components":     false,
-				"units":          false,
-				"description":    true,
-				"name":           true,
-				"pre_requisites": true,
-				"title":          true,
+			res, _ = cache.Search(Hermes.SearchParams{
+				Query:  "computer science",
+				Limit:  100,
+				Strict: false,
+				Schema: map[string]bool{
+					"name":        true,
+					"description": true,
+					"title":       true,
+				},
 			})
 		)
 

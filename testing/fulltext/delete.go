@@ -10,7 +10,7 @@ func delete() {
 	var cache *Hermes.Cache = Hermes.InitCache()
 
 	// Initialize the FT cache
-	cache.FTInit(-1, -1)
+	cache.FTInit(-1, -1, 3)
 
 	// Test Delete()
 	var data = map[string]any{

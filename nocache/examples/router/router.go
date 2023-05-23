@@ -22,7 +22,7 @@ var ft *Hermes.FullText
 
 // Main function
 func main() {
-	ft, _ = Hermes.InitWithJson("../../../testing/data/data_array.json")
+	ft, _ = Hermes.InitWithJson("../../../testing/data/data_array.json", 3)
 
 	// Print host
 	fmt.Println(" >> Listening on: http://localhost:8000/")

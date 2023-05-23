@@ -128,7 +128,7 @@ func (c *Cache) ftSet(key string, value map[string]any) error {
 
 			// Loop through the words
 			for i := 0; i < len(words); i++ {
-				if len(words[i]) <= c.ft.minWordLength {
+				if len(words[i]) < c.ft.minWordLength {
 					continue
 				}
 				if temp, ok := tempStorage[words[i]]; !ok {

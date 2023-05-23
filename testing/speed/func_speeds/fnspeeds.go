@@ -8,12 +8,8 @@ import (
 )
 
 func main() {
-	// Important Variables
-	var (
-		cache        *Hermes.Cache = Hermes.InitCache()
-		maxWords     int           = -1 // -1 for no limit
-		maxSizeBytes int           = -1 // -1 for no limit
-	)
+	// Cache
+	var cache *Hermes.Cache = Hermes.InitCache()
 
 	/* Initialize the FT cache
 	if err := cache.InitFTWithJson("../../data/data_hash.json", maxWords, maxSizeBytes, schema); err != nil {
@@ -23,7 +19,7 @@ func main() {
 	// cache.Info()
 
 	// Initialize the FT cache
-	if err := cache.FTInit(maxWords, maxSizeBytes); err != nil {
+	if err := cache.FTInit(-1, -1, 3); err != nil {
 		fmt.Println(err)
 	}
 
@@ -59,7 +55,11 @@ func main() {
 
 	// Search for a word in the cache
 	duration("Search", func() {
-		var result, _ = cache.SearchOneWord("tristan", 100, false)
+		var result, _ = cache.SearchOneWord(Hermes.SearchParams{
+			Query:  "tristan",
+			Limit:  100,
+			Strict: false,
+		})
 		fmt.Println(result)
 	})
 
@@ -78,7 +78,11 @@ func main() {
 
 	// Search for a word in the cache
 	duration("Search", func() {
-		var result, _ = cache.SearchOneWord("tristan", 100, false)
+		var result, _ = cache.SearchOneWord(Hermes.SearchParams{
+			Query:  "tristan",
+			Limit:  100,
+			Strict: false,
+		})
 		fmt.Println(result)
 	})
 
