@@ -6,8 +6,12 @@ import (
 	Utils "github.com/realTristan/Hermes/api/utils"
 )
 
-// Check if key exists
-// This is a handler function that returns a fiber context handler function
+// Exists is a handler function that returns a fiber context handler function for checking if a key exists in the cache.
+// Parameters:
+//   - c (*Hermes.Cache): A pointer to a Hermes.Cache struct.
+//
+// Returns:
+//   - func(ctx *fiber.Ctx) error: A fiber context handler function that checks if a key exists in the cache and returns a success message with a boolean value indicating whether the key exists or an error message if the key is not provided.
 func Exists(c *Hermes.Cache) func(ctx *fiber.Ctx) error {
 	return func(ctx *fiber.Ctx) error {
 		// Get the key from the query

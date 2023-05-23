@@ -6,7 +6,13 @@ import (
 	"github.com/realTristan/Hermes/api/handlers"
 )
 
-// Set the routes
+// SetRoutes is a function that sets the routes for the Hermes Cache API.
+// Parameters:
+//   - app (*fiber.App): A pointer to a fiber.App struct.
+//   - cache (*Hermes.Cache): A pointer to a Hermes.Cache struct.
+//
+// Returns:
+//   - void: This function does not return anything.
 func SetRoutes(app *fiber.App, cache *Hermes.Cache) {
 	// Dev Testing Handler
 	app.Get("/dev/hermes", func(c *fiber.Ctx) error {
@@ -36,6 +42,7 @@ func SetRoutes(app *fiber.App, cache *Hermes.Cache) {
 	app.Get("/ft/search/withkey", handlers.SearchWithKey(cache))
 	app.Post("/ft/maxbytes", handlers.FTSetMaxBytes(cache))
 	app.Post("/ft/maxlength", handlers.FTSetMaxLength(cache))
+	app.Post("/ft/minwordlength", handlers.FTSetMinWordLength(cache))
 	app.Get("/ft/storage", handlers.FTStorage(cache))
 	app.Get("/ft/storage/size", handlers.FTStorageSize(cache))
 	app.Get("/ft/storage/length", handlers.FTStorageLength(cache))

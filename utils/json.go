@@ -5,9 +5,13 @@ import (
 	"os"
 )
 
-// Read a json file and return the data as a map.
-// map[string]map[string]any
-// []map[string]any
+// ReadJson is a generic function that reads a JSON file and unmarshals its contents into a provided value of type T.
+// Parameters:
+//   - file (string): The path to the JSON file to read.
+//
+// Returns:
+//   - T: The unmarshalled value of type T.
+//   - error: An error if the file cannot be read or the unmarshalling fails, or nil if successful.
 func ReadJson[T any](file string) (T, error) {
 	var v T
 

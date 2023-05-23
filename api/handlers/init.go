@@ -6,8 +6,12 @@ import (
 	Utils "github.com/realTristan/Hermes/api/utils"
 )
 
-// Initialize the full-text search cache
-// This is a handler function that returns a fiber context handler function
+// FTInit is a handler function that returns a fiber context handler function for initializing the full-text search cache.
+// Parameters:
+//   - c (*Hermes.Cache): A pointer to a Hermes.Cache struct.
+//
+// Returns:
+//   - func(ctx *fiber.Ctx) error: A fiber context handler function that initializes the full-text search cache using the max length, max bytes, and min word length parameters provided in the query string and returns a success message or an error message if the parameters are not provided or if the initialization fails.
 func FTInit(c *Hermes.Cache) func(ctx *fiber.Ctx) error {
 	return func(ctx *fiber.Ctx) error {
 		var (
@@ -39,8 +43,12 @@ func FTInit(c *Hermes.Cache) func(ctx *fiber.Ctx) error {
 	}
 }
 
-// Initialize the full-text search cache
-// This is a handler function that returns a fiber context handler function
+// FTInitJson is a handler function that returns a fiber context handler function for initializing the full-text search cache with a JSON object.
+// Parameters:
+//   - c (*Hermes.Cache): A pointer to a Hermes.Cache struct.
+//
+// Returns:
+//   - func(ctx *fiber.Ctx) error: A fiber context handler function that initializes the full-text search cache using a JSON object, max length, max bytes, and min word length parameters provided in the query string and returns a success message or an error message if the parameters are not provided or if the initialization fails.
 func FTInitJson(c *Hermes.Cache) func(ctx *fiber.Ctx) error {
 	return func(ctx *fiber.Ctx) error {
 		var (

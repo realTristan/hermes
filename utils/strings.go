@@ -4,12 +4,22 @@ import (
 	"strings"
 )
 
-// Check if a char is alphanumeric.
+// IsAlphaNumChar is a function that checks if a given byte is an alphanumeric character.
+// Parameters:
+//   - c (byte): The byte to check.
+//
+// Returns:
+//   - bool: true if the byte is an alphanumeric character, false otherwise.
 func IsAlphaNumChar(c byte) bool {
 	return (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z')
 }
 
-// Check  if a string consists entirely of alphanumeric characters.
+// IsAlphaNum is a function that checks if a given string consists entirely of alphanumeric characters.
+// Parameters:
+//   - s (string): The string to check.
+//
+// Returns:
+//   - bool: true if the string consists entirely of alphanumeric characters, false otherwise.
 func IsAlphaNum(s string) bool {
 	for _, c := range s {
 		if !IsAlphaNumChar(byte(c)) {
@@ -19,7 +29,12 @@ func IsAlphaNum(s string) bool {
 	return true
 }
 
-// Trim non alphanumeric characters from the beginning and end of a string.
+// TrimNonAlphaNum is a function that removes non-alphanumeric characters from the beginning and end of a given string.
+// Parameters:
+//   - s (string): The string to trim.
+//
+// Returns:
+//   - string: The trimmed string.
 func TrimNonAlphaNum(s string) string {
 	if len(s) == 0 {
 		return s

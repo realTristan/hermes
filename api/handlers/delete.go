@@ -6,8 +6,12 @@ import (
 	Utils "github.com/realTristan/Hermes/api/utils"
 )
 
-// Delete a key from the cache
-// This is a handler function that returns a fiber context handler function
+// Delete is a handler function that returns a fiber context handler function for deleting a key from the cache.
+// Parameters:
+//   - c (*Hermes.Cache): A pointer to a Hermes.Cache struct.
+//
+// Returns:
+//   - func(ctx *fiber.Ctx) error: A fiber context handler function that deletes a key from the cache and returns a success message or an error message if the key is not provided.
 func Delete(c *Hermes.Cache) func(ctx *fiber.Ctx) error {
 	return func(ctx *fiber.Ctx) error {
 		// Get the key from the query

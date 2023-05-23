@@ -6,15 +6,23 @@ import (
 	"github.com/gofiber/websocket/v2"
 )
 
-// Check whether the error is a close error by converting
-// the error to a string and checking if it contains the
-// word "close".
+// IsCloseError is a function that checks if an error is a close error by converting
+// the error to a string and checking if it contains the word "close".
+// Parameters:
+//   - err (error): The error to check.
+//
+// Returns:
+//   - bool: true if the error is a close error, false otherwise.
 func IsCloseError(err error) bool {
 	return strings.Contains(err.Error(), "close")
 }
 
-// Check whether the error is a close error using websocket
-// error codes and IsCloseError function.
+// IsSocketCloseError is a function that checks if an error is a WebSocket close error.
+// Parameters:
+//   - err (error): The error to check.
+//
+// Returns:
+//   - bool: true if the error is a WebSocket close error, false otherwise.
 func IsSocketCloseError(err error) bool {
 	return websocket.IsCloseError(
 		err,

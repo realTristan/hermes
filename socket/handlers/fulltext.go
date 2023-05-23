@@ -7,14 +7,24 @@ import (
 	Utils "github.com/realTristan/Hermes/socket/utils"
 )
 
-// Check if full-text is initialized
-// This is a handler function that returns a fiber context handler function
+// FTIsInitialized is a handler function that returns a fiber context handler function for checking if the full-text storage is initialized.
+// Parameters:
+//   - _ (*Utils.Params): A pointer to a Utils.Params struct (unused).
+//   - c (*Hermes.Cache): A pointer to a Hermes.Cache struct.
+//
+// Returns:
+//   - []byte: A JSON-encoded byte slice containing a boolean value indicating whether the full-text storage is initialized.
 func FTIsInitialized(_ *Utils.Params, c *Hermes.Cache) []byte {
 	return Utils.Success(c.FTIsInitialized())
 }
 
-// Set the full-text max bytes
-// This is a handler function that returns a fiber context handler function
+// FTSetMaxBytes is a handler function that returns a fiber context handler function for setting the maximum number of bytes for the full-text storage.
+// Parameters:
+//   - p (*Utils.Params): A pointer to a Utils.Params struct.
+//   - c (*Hermes.Cache): A pointer to a Hermes.Cache struct.
+//
+// Returns:
+//   - []byte: A JSON-encoded byte slice containing a success message or an error message if the value is invalid or the setting fails.
 func FTSetMaxBytes(p *Utils.Params, c *Hermes.Cache) []byte {
 	// Get the value from the query
 	var value int
@@ -29,8 +39,13 @@ func FTSetMaxBytes(p *Utils.Params, c *Hermes.Cache) []byte {
 	return Utils.Success("null")
 }
 
-// Set the full-text maximum length
-// This is a handler function that returns a fiber context handler function
+// FTSetMaxLength is a handler function that returns a fiber context handler function for setting the maximum length for the full-text storage.
+// Parameters:
+//   - p (*Utils.Params): A pointer to a Utils.Params struct.
+//   - c (*Hermes.Cache): A pointer to a Hermes.Cache struct.
+//
+// Returns:
+//   - []byte: A JSON-encoded byte slice containing a success message or an error message if the value is invalid or the setting fails.
 func FTSetMaxLength(p *Utils.Params, c *Hermes.Cache) []byte {
 	// Get the value from the query
 	var value int
@@ -45,8 +60,13 @@ func FTSetMaxLength(p *Utils.Params, c *Hermes.Cache) []byte {
 	return Utils.Success("null")
 }
 
-// Get the full-text storage
-// This is a handler function that returns a fiber context handler function
+// FTStorage is a handler function that returns a fiber context handler function for retrieving the full-text storage.
+// Parameters:
+//   - _ (*Utils.Params): A pointer to a Utils.Params struct (unused).
+//   - c (*Hermes.Cache): A pointer to a Hermes.Cache struct.
+//
+// Returns:
+//   - []byte: A JSON-encoded byte slice containing the full-text storage or an error message if the retrieval fails.
 func FTStorage(_ *Utils.Params, c *Hermes.Cache) []byte {
 	if data, err := c.FTStorage(); err != nil {
 		return Utils.Error(err)
@@ -57,8 +77,13 @@ func FTStorage(_ *Utils.Params, c *Hermes.Cache) []byte {
 	}
 }
 
-// Get the full-text sotrage length
-// This is a handler function that returns a fiber context handler function
+// FTStorageLength is a handler function that returns a fiber context handler function for retrieving the length of the full-text storage.
+// Parameters:
+//   - _ (*Utils.Params): A pointer to a Utils.Params struct (unused).
+//   - c (*Hermes.Cache): A pointer to a Hermes.Cache struct.
+//
+// Returns:
+//   - []byte: A JSON-encoded byte slice containing the length of the full-text storage or an error message if the retrieval fails.
 func FTStorageLength(_ *Utils.Params, c *Hermes.Cache) []byte {
 	if length, err := c.FTStorageLength(); err != nil {
 		return Utils.Error(err)
@@ -67,8 +92,13 @@ func FTStorageLength(_ *Utils.Params, c *Hermes.Cache) []byte {
 	}
 }
 
-// Get the full-text storage size
-// This is a handler function that returns a fiber context handler function
+// FTStorageSize is a handler function that returns a fiber context handler function for retrieving the size of the full-text storage.
+// Parameters:
+//   - _ (*Utils.Params): A pointer to a Utils.Params struct (unused).
+//   - c (*Hermes.Cache): A pointer to a Hermes.Cache struct.
+//
+// Returns:
+//   - []byte: A JSON-encoded byte slice containing the size of the full-text storage or an error message if the retrieval fails.
 func FTStorageSize(_ *Utils.Params, c *Hermes.Cache) []byte {
 	if size, err := c.FTStorageSize(); err != nil {
 		return Utils.Error(err)

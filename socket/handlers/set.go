@@ -5,8 +5,13 @@ import (
 	Utils "github.com/realTristan/Hermes/socket/utils"
 )
 
-// Set a value in the cache
-// This is a handler function that returns a fiber context handler function
+// Set is a handler function that returns a fiber context handler function for setting a value in the cache.
+// Parameters:
+//   - p (*Utils.Params): A pointer to a Utils.Params struct.
+//   - c (*Hermes.Cache): A pointer to a Hermes.Cache struct.
+//
+// Returns:
+//   - []byte: A JSON-encoded byte slice containing a success message or an error message if the set operation fails.
 func Set(p *Utils.Params, c *Hermes.Cache) []byte {
 	var (
 		key   string

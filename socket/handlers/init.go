@@ -5,8 +5,13 @@ import (
 	Utils "github.com/realTristan/Hermes/socket/utils"
 )
 
-// Initialize the full-text search cache
-// This is a handler function that returns a fiber context handler function
+// FTInit is a handler function that returns a fiber context handler function for initializing the full-text search cache.
+// Parameters:
+//   - p (*Utils.Params): A pointer to a Utils.Params struct.
+//   - c (*Hermes.Cache): A pointer to a Hermes.Cache struct.
+//
+// Returns:
+//   - []byte: A JSON-encoded byte slice containing a success message or an error message if the initialization fails.
 func FTInit(p *Utils.Params, c *Hermes.Cache) []byte {
 	var (
 		maxLength     int
@@ -36,8 +41,13 @@ func FTInit(p *Utils.Params, c *Hermes.Cache) []byte {
 	return Utils.Success("null")
 }
 
-// Initialize the full-text search cache
-// This is a handler function that returns a fiber context handler function
+// FTInitJson is a handler function that returns a fiber context handler function for initializing the full-text search cache with a JSON object.
+// Parameters:
+//   - p (*Utils.Params): A pointer to a Utils.Params struct.
+//   - c (*Hermes.Cache): A pointer to a Hermes.Cache struct.
+//
+// Returns:
+//   - []byte: A JSON-encoded byte slice containing a success message or an error message if the initialization fails.
 func FTInitJson(p *Utils.Params, c *Hermes.Cache) []byte {
 	var (
 		maxLength     int

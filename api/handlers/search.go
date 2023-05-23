@@ -8,8 +8,12 @@ import (
 	Utils "github.com/realTristan/Hermes/api/utils"
 )
 
-// Search for something in the cache
-// This is a handler function that returns a fiber context handler function
+// Search is a handler function that returns a fiber context handler function for searching the cache.
+// Parameters:
+//   - c (*Hermes.Cache): A pointer to a Hermes.Cache struct.
+//
+// Returns:
+//   - func(ctx *fiber.Ctx) error: A fiber context handler function that searches the cache using the query, limit, strict, and schema parameters provided in the query string and returns a JSON-encoded string of the search results or an error message if the search fails or if the parameters are not provided.
 func Search(c *Hermes.Cache) func(ctx *fiber.Ctx) error {
 	return func(ctx *fiber.Ctx) error {
 		var (
@@ -55,8 +59,12 @@ func Search(c *Hermes.Cache) func(ctx *fiber.Ctx) error {
 	}
 }
 
-// Search for one word
-// This is a handler function that returns a fiber context handler function
+// SearchOneWord is a handler function that returns a fiber context handler function for searching the cache for a single word.
+// Parameters:
+//   - c (*Hermes.Cache): A pointer to a Hermes.Cache struct.
+//
+// Returns:
+//   - func(ctx *fiber.Ctx) error: A fiber context handler function that searches the cache for a single word using the query, limit, and strict parameters provided in the query string and returns a JSON-encoded string of the search results or an error message if the search fails or if the parameters are not provided.
 func SearchOneWord(c *Hermes.Cache) func(ctx *fiber.Ctx) error {
 	return func(ctx *fiber.Ctx) error {
 		var (
@@ -95,8 +103,12 @@ func SearchOneWord(c *Hermes.Cache) func(ctx *fiber.Ctx) error {
 	}
 }
 
-// Search in values
-// This is a handler function that returns a fiber context handler function
+// SearchValues is a handler function that returns a fiber context handler function for searching the cache for values.
+// Parameters:
+//   - c (*Hermes.Cache): A pointer to a Hermes.Cache struct.
+//
+// Returns:
+//   - func(ctx *fiber.Ctx) error: A fiber context handler function that searches the cache for values using the query, limit, and schema parameters provided in the query string and returns a JSON-encoded string of the search results or an error message if the search fails or if the parameters are not provided.
 func SearchValues(c *Hermes.Cache) func(ctx *fiber.Ctx) error {
 	return func(ctx *fiber.Ctx) error {
 		var (
@@ -135,8 +147,12 @@ func SearchValues(c *Hermes.Cache) func(ctx *fiber.Ctx) error {
 	}
 }
 
-// Search for values
-// This is a handler function that returns a fiber context handler function
+// SearchWithKey is a handler function that returns a fiber context handler function for searching the cache with a specific key.
+// Parameters:
+//   - c (*Hermes.Cache): A pointer to a Hermes.Cache struct.
+//
+// Returns:
+//   - func(ctx *fiber.Ctx) error: A fiber context handler function that searches the cache with a specific key using the query and limit parameters provided in the query string and returns a JSON-encoded string of the search results or an error message if the search fails or if the parameters are not provided.
 func SearchWithKey(c *Hermes.Cache) func(ctx *fiber.Ctx) error {
 	return func(ctx *fiber.Ctx) error {
 		var (

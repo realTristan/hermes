@@ -2,6 +2,9 @@
 
 ## Documentation
 - API
+- Request, Response, etc.
+
+
 - Sockets
 - Database (in progress)
 - Hermes Go

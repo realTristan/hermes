@@ -7,8 +7,13 @@ import (
 	Utils "github.com/realTristan/Hermes/socket/utils"
 )
 
-// Search for something in the cache
-// This is a handler function that returns a fiber context handler function
+// Search is a handler function that returns a fiber context handler function for searching the cache for a query.
+// Parameters:
+//   - p (*Utils.Params): A pointer to a Utils.Params struct.
+//   - c (*Hermes.Cache): A pointer to a Hermes.Cache struct.
+//
+// Returns:
+//   - []byte: A JSON-encoded byte slice containing the search results or an error message if the search fails.
 func Search(p *Utils.Params, c *Hermes.Cache) []byte {
 	var (
 		strict bool
@@ -53,8 +58,13 @@ func Search(p *Utils.Params, c *Hermes.Cache) []byte {
 	}
 }
 
-// Search for one word
-// This is a handler function that returns a fiber context handler function
+// SearchOneWord is a handler function that returns a fiber context handler function for searching the cache for a single word query.
+// Parameters:
+//   - p (*Utils.Params): A pointer to a Utils.Params struct.
+//   - c (*Hermes.Cache): A pointer to a Hermes.Cache struct.
+//
+// Returns:
+//   - []byte: A JSON-encoded byte slice containing the search results or an error message if the search fails.
 func SearchOneWord(p *Utils.Params, c *Hermes.Cache) []byte {
 	var (
 		strict bool
@@ -94,8 +104,13 @@ func SearchOneWord(p *Utils.Params, c *Hermes.Cache) []byte {
 	}
 }
 
-// Search in values
-// This is a handler function that returns a fiber context handler function
+// SearchValues is a handler function that returns a fiber context handler function for searching the cache for a query in values.
+// Parameters:
+//   - p (*Utils.Params): A pointer to a Utils.Params struct.
+//   - c (*Hermes.Cache): A pointer to a Hermes.Cache struct.
+//
+// Returns:
+//   - []byte: A JSON-encoded byte slice containing the search results or an error message if the search fails.
 func SearchValues(p *Utils.Params, c *Hermes.Cache) []byte {
 	var (
 		query  string
@@ -135,8 +150,13 @@ func SearchValues(p *Utils.Params, c *Hermes.Cache) []byte {
 	}
 }
 
-// Search for values
-// This is a handler function that returns a fiber context handler function
+// SearchWithKey is a handler function that returns a fiber context handler function for searching the cache for a query with a specific key.
+// Parameters:
+//   - p (*Utils.Params): A pointer to a Utils.Params struct.
+//   - c (*Hermes.Cache): A pointer to a Hermes.Cache struct.
+//
+// Returns:
+//   - []byte: A JSON-encoded byte slice containing the search results or an error message if the search fails.
 func SearchWithKey(p *Utils.Params, c *Hermes.Cache) []byte {
 	var (
 		key    string

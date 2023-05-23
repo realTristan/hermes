@@ -6,8 +6,12 @@ import (
 	Utils "github.com/realTristan/Hermes/api/utils"
 )
 
-// Clean the regular cache
-// This is a handler function that returns a fiber context handler function
+// Clean is a function that returns a fiber context handler function for cleaning the regular cache.
+// Parameters:
+//   - c (*Hermes.Cache): A pointer to a Hermes.Cache struct.
+//
+// Returns:
+//   - func(ctx *fiber.Ctx) error: A fiber context handler function that cleans the regular cache and returns a success message.
 func Clean(c *Hermes.Cache) func(ctx *fiber.Ctx) error {
 	return func(ctx *fiber.Ctx) error {
 		c.Clean()
@@ -15,8 +19,12 @@ func Clean(c *Hermes.Cache) func(ctx *fiber.Ctx) error {
 	}
 }
 
-// Clean the full-text storage
-// This is a handler function that returns a fiber context handler function
+// FTClean is a function that returns a fiber context handler function for cleaning the full-text cache.
+// Parameters:
+//   - c (*Hermes.Cache): A pointer to a Hermes.Cache struct.
+//
+// Returns:
+//   - func(ctx *fiber.Ctx) error: A fiber context handler function that cleans the full-text cache and returns a success message or an error message if the cleaning fails.
 func FTClean(c *Hermes.Cache) func(ctx *fiber.Ctx) error {
 	return func(ctx *fiber.Ctx) error {
 		if err := c.FTClean(); err != nil {
