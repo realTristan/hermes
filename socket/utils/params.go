@@ -85,6 +85,16 @@ func GetMaxBytesParam(p *Params, maxBytes *int) error {
 	return nil
 }
 
+// Get the min word length parameter
+func GetMinWordLengthParam(p *Params, minWordLength *int) error {
+	if i, ok := p.Get("minwordlength").(float64); !ok {
+		return errors.New("invalid minwordlength")
+	} else {
+		*minWordLength = int(i)
+	}
+	return nil
+}
+
 // Get the json parameter
 func GetJSONParam[T any](p *Params, json *T) error {
 	if s, ok := p.Get("json").(string); !ok || len(s) == 0 {

@@ -23,7 +23,7 @@ var cache *Hermes.Cache
 // Main function
 func main() {
 	cache = Hermes.InitCache()
-	cache.FTInitWithJson("../../testing/data/data_hash.json", -1, -1)
+	cache.FTInitWithJson("../../testing/data/data_hash.json", -1, -1, 3)
 
 	// Print host
 	fmt.Println(" >> Listening on: http://localhost:8000/")
@@ -61,14 +61,10 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 	// Search for a word in the cache
 	// Make sure the show which keys you do want to search through,
 	// and which ones you don't
-	var res, _ = cache.Search(query, limit, strict, map[string]bool{
-		"id":             false,
-		"components":     false,
-		"units":          false,
-		"description":    true,
-		"name":           true,
-		"pre_requisites": true,
-		"title":          true,
+	var res, _ = cache.Search(Hermes.SearchParams{
+		Query:  query,
+		Limit:  limit,
+		Strict: strict,
 	})
 
 	// Print the duration

@@ -11,8 +11,9 @@ import (
 func FTInit(c *Hermes.Cache) func(ctx *fiber.Ctx) error {
 	return func(ctx *fiber.Ctx) error {
 		var (
-			maxLength int
-			maxBytes  int
+			maxLength     int
+			maxBytes      int
+			minWordLength int
 		)
 
 		// Get the max length parameter
@@ -25,8 +26,13 @@ func FTInit(c *Hermes.Cache) func(ctx *fiber.Ctx) error {
 			return ctx.Send(Utils.Error(err))
 		}
 
+		// Get the min word length parameter
+		if err := Utils.GetMinWordLengthParam(ctx, &minWordLength); err != nil {
+			return ctx.Send(Utils.Error(err))
+		}
+
 		// Initialize the full-text cache
-		if err := c.FTInit(maxLength, maxBytes); err != nil {
+		if err := c.FTInit(maxLength, maxBytes, minWordLength); err != nil {
 			return ctx.Send(Utils.Error(err))
 		}
 		return ctx.Send(Utils.Success("null"))
@@ -38,9 +44,10 @@ func FTInit(c *Hermes.Cache) func(ctx *fiber.Ctx) error {
 func FTInitJson(c *Hermes.Cache) func(ctx *fiber.Ctx) error {
 	return func(ctx *fiber.Ctx) error {
 		var (
-			maxLength int
-			maxBytes  int
-			json      map[string]map[string]interface{}
+			maxLength     int
+			maxBytes      int
+			minWordLength int
+			json          map[string]map[string]interface{}
 		)
 
 		// Get the max length from the query
@@ -53,13 +60,18 @@ func FTInitJson(c *Hermes.Cache) func(ctx *fiber.Ctx) error {
 			return ctx.Send(Utils.Error(err))
 		}
 
+		// Get the min word length from the query
+		if err := Utils.GetMinWordLengthParam(ctx, &minWordLength); err != nil {
+			return ctx.Send(Utils.Error(err))
+		}
+
 		// Get the JSON from the query
 		if err := Utils.GetJSONParam(ctx, &json); err != nil {
 			return ctx.Send(Utils.Error(err))
 		}
 
 		// Initialize the full-text cache
-		if err := c.FTInitWithMap(json, maxLength, maxBytes); err != nil {
+		if err := c.FTInitWithMap(json, maxLength, maxBytes, minWordLength); err != nil {
 			return ctx.Send(Utils.Error(err))
 		}
 

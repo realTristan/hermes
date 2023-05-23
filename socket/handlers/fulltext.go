@@ -50,13 +50,10 @@ func FTSetMaxLength(p *Utils.Params, c *Hermes.Cache) []byte {
 func FTStorage(_ *Utils.Params, c *Hermes.Cache) []byte {
 	if data, err := c.FTStorage(); err != nil {
 		return Utils.Error(err)
+	} else if data, err := json.Marshal(data); err != nil {
+		return Utils.Error(err)
 	} else {
-		// Marshal the data
-		if data, err := json.Marshal(data); err != nil {
-			return Utils.Error(err)
-		} else {
-			return data
-		}
+		return data
 	}
 }
 

@@ -30,7 +30,7 @@ func InitCache() *Cache {
 //
 // Returns:
 // - error: If the full-text is already initialized.
-func (c *Cache) FTInit(maxLength int, maxBytes int) error {
+func (c *Cache) FTInit(maxLength int, maxBytes int, minWordLength int) error {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
 
@@ -40,7 +40,7 @@ func (c *Cache) FTInit(maxLength int, maxBytes int) error {
 	}
 
 	// Initialize the FT
-	return c.ftInit(maxLength, maxBytes)
+	return c.ftInit(maxLength, maxBytes, minWordLength)
 }
 
 // Initialize the full-text for the cache.
@@ -52,14 +52,15 @@ func (c *Cache) FTInit(maxLength int, maxBytes int) error {
 //
 // Returns:
 // - error: From full-text cache insertion.
-func (c *Cache) ftInit(maxLength int, maxBytes int) error {
+func (c *Cache) ftInit(maxLength int, maxBytes int, minWordLength int) error {
 	// Initialize the FT struct
 	var ft *FullText = &FullText{
-		storage:      make(map[string]any),
-		indices:      make(map[int]string),
-		currentIndex: 0,
-		maxLength:    maxLength,
-		maxBytes:     maxBytes,
+		storage:       make(map[string]any),
+		indices:       make(map[int]string),
+		currentIndex:  0,
+		maxLength:     maxLength,
+		maxBytes:      maxBytes,
+		minWordLength: minWordLength,
 	}
 
 	// Load the cache data
@@ -85,7 +86,7 @@ func (c *Cache) ftInit(maxLength int, maxBytes int) error {
 //
 // Returns:
 // - error: If the full-text is already initialized.
-func (c *Cache) FTInitWithMap(data map[string]map[string]any, maxLength int, maxBytes int) error {
+func (c *Cache) FTInitWithMap(data map[string]map[string]any, maxLength int, maxBytes int, minWordLength int) error {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
 
@@ -95,7 +96,7 @@ func (c *Cache) FTInitWithMap(data map[string]map[string]any, maxLength int, max
 	}
 
 	// Initialize the FT cache
-	return c.ftInitWithMap(data, maxLength, maxBytes)
+	return c.ftInitWithMap(data, maxLength, maxBytes, minWordLength)
 }
 
 // Initialize the full-text for the cache with a map.
@@ -108,14 +109,15 @@ func (c *Cache) FTInitWithMap(data map[string]map[string]any, maxLength int, max
 //
 // Returns:
 // - error: From full-text storage insertion or if a key from the data already exists in the cache
-func (c *Cache) ftInitWithMap(data map[string]map[string]any, maxLength int, maxBytes int) error {
+func (c *Cache) ftInitWithMap(data map[string]map[string]any, maxLength int, maxBytes int, minWordLength int) error {
 	// Initialize the FT struct
 	var ft *FullText = &FullText{
-		storage:      make(map[string]any),
-		indices:      make(map[int]string),
-		currentIndex: 0,
-		maxLength:    maxLength,
-		maxBytes:     maxBytes,
+		storage:       make(map[string]any),
+		indices:       make(map[int]string),
+		currentIndex:  0,
+		maxLength:     maxLength,
+		maxBytes:      maxBytes,
+		minWordLength: minWordLength,
 	}
 
 	// Iterate over the cache keys and add them to the data
@@ -150,7 +152,7 @@ func (c *Cache) ftInitWithMap(data map[string]map[string]any, maxLength int, max
 //
 // Returns:
 // - error: If the full-text is already initialized.
-func (c *Cache) FTInitWithJson(file string, maxLength int, maxBytes int) error {
+func (c *Cache) FTInitWithJson(file string, maxLength int, maxBytes int, minWordLength int) error {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
 
@@ -160,7 +162,7 @@ func (c *Cache) FTInitWithJson(file string, maxLength int, maxBytes int) error {
 	}
 
 	// Initialize the FT
-	return c.ftInitWithJson(file, maxLength, maxBytes)
+	return c.ftInitWithJson(file, maxLength, maxBytes, minWordLength)
 }
 
 // Initialize the full-text for the cache with a JSON file.
@@ -173,10 +175,10 @@ func (c *Cache) FTInitWithJson(file string, maxLength int, maxBytes int) error {
 //
 // Returns:
 // - error: Json file read error, or init with map error.
-func (c *Cache) ftInitWithJson(file string, maxLength int, maxBytes int) error {
+func (c *Cache) ftInitWithJson(file string, maxLength int, maxBytes int, minWordLength int) error {
 	if data, err := Utils.ReadJson[map[string]map[string]any](file); err != nil {
 		return err
 	} else {
-		return c.ftInitWithMap(data, maxLength, maxBytes)
+		return c.ftInitWithMap(data, maxLength, maxBytes, minWordLength)
 	}
 }

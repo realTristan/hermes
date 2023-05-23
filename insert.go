@@ -84,20 +84,18 @@ func (ft *FullText) insert(data map[string]map[string]any) error {
 				// Loop through the words
 				for i := 0; i < len(words); i++ {
 					// Check if the word is valid
-					if len(words[i]) <= 3 {
+					if len(words[i]) <= ft.minWordLength {
 						continue
 					}
 					if temp, ok := tempStorage[words[i]]; !ok {
 						tempStorage[words[i]] = []int{tempCurrentIndex}
+					} else if v, ok := temp.([]int); !ok {
+						tempStorage[words[i]] = []int{temp.(int), tempKeys[cacheKey]}
 					} else {
-						if v, ok := temp.([]int); !ok {
-							tempStorage[words[i]] = []int{temp.(int), tempKeys[cacheKey]}
-						} else {
-							if Utils.SliceContains(v, tempKeys[cacheKey]) {
-								continue
-							}
-							tempStorage[words[i]] = append(v, tempKeys[cacheKey])
+						if Utils.SliceContains(v, tempKeys[cacheKey]) {
+							continue
 						}
+						tempStorage[words[i]] = append(v, tempKeys[cacheKey])
 					}
 				}
 			}

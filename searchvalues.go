@@ -8,43 +8,48 @@ import (
 // SearchValues searches for all records containing the given query in the specified schema with a limit of results to return.
 // Parameters:
 //   - c (c *Cache): A pointer to the Cache struct
-//   - query (string): The search query to match against data in the FullText struct
-//   - limit (int): The maximum number of results to be returned
-//   - schema (map[string]bool): A map of column names in the FullText struct's data that should be searched. The boolean value indicates whether the column should be searched or not.
+//   - sp (SearchParams): A SearchParams struct containing the search parameters.
 //
 // Returns:
 //   - []map[string]any: A slice of maps where each map represents a data record that matches the given query.
 //     The keys of the map correspond to the column names of the data that were searched and returned in the result.
 //   - error: An error if the query or limit is invalid
-func (c *Cache) SearchValues(query string, limit int, schema map[string]bool) ([]map[string]any, error) {
-	switch {
-	case len(query) == 0:
+func (c *Cache) SearchValues(sp SearchParams) ([]map[string]any, error) {
+	// If the query is empty, return an error
+	if len(sp.Query) == 0 {
 		return []map[string]any{}, errors.New("invalid query")
-	case limit < 1:
-		return []map[string]any{}, errors.New("invalid limit")
+	}
+
+	// If no limit is provided, set it to 10
+	if sp.Limit == 0 {
+		sp.Limit = 10
+	}
+
+	// If no schema is provided, set it to all columns
+	if len(sp.Schema) == 0 {
+		sp.Schema = make(map[string]bool)
 	}
 
 	// Set the query to lowercase
-	query = strings.ToLower(query)
+	sp.Query = strings.ToLower(sp.Query)
 
 	// Lock the mutex
 	c.mutex.RLock()
 	defer c.mutex.RUnlock()
 
 	// Search the data
-	return c.searchValues(query, limit, schema), nil
+	return c.searchValues(sp), nil
 }
 
 // searchValues searches for all records containing the given query in the specified schema with a limit of results to return.
 // Parameters:
-//   - query (string): The search query to match against data in the FullText struct
-//   - limit (int): The maximum number of results to be returned
-//   - schema (map[string]bool): A map of column names in the FullText struct's data that should be searched. The boolean value indicates whether the column should be searched or not.
+//   - c (c *Cache): A pointer to the Cache struct
+//   - sp (SearchParams): A SearchParams struct containing the search parameters.
 //
 // Returns:
 //   - []map[string]any: A slice of maps where each map represents a data record that matches the given query.
 //     The keys of the map correspond to the column names of the data that were searched and returned in the result.
-func (c *Cache) searchValues(query string, limit int, schema map[string]bool) []map[string]any {
+func (c *Cache) searchValues(sp SearchParams) []map[string]any {
 	// Define variables
 	var result []map[string]any = []map[string]any{}
 
@@ -53,15 +58,15 @@ func (c *Cache) searchValues(query string, limit int, schema map[string]bool) []
 		// Iterate over the keys and values for the data for that index
 		for key, value := range item {
 			switch {
-			case len(result) >= limit:
+			case len(result) >= sp.Limit:
 				return result
-			case !schema[key]:
+			case !sp.Schema[key]:
 				continue
 			}
 
 			// Check if the value contains the query
 			if v, ok := value.(string); ok {
-				if strings.Contains(strings.ToLower(v), query) {
+				if strings.Contains(strings.ToLower(v), sp.Query) {
 					result = append(result, item)
 				}
 			}

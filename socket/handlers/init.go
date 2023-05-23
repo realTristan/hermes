@@ -9,8 +9,9 @@ import (
 // This is a handler function that returns a fiber context handler function
 func FTInit(p *Utils.Params, c *Hermes.Cache) []byte {
 	var (
-		maxLength int
-		maxBytes  int
+		maxLength     int
+		maxBytes      int
+		minWordLength int
 	)
 
 	// Get the max length parameter
@@ -23,8 +24,13 @@ func FTInit(p *Utils.Params, c *Hermes.Cache) []byte {
 		return Utils.Error(err)
 	}
 
+	// Get the min word length parameter
+	if err := Utils.GetMinWordLengthParam(p, &minWordLength); err != nil {
+		return Utils.Error(err)
+	}
+
 	// Initialize the full-text cache
-	if err := c.FTInit(maxLength, maxBytes); err != nil {
+	if err := c.FTInit(maxLength, maxBytes, minWordLength); err != nil {
 		return Utils.Error(err)
 	}
 	return Utils.Success("null")
@@ -34,9 +40,10 @@ func FTInit(p *Utils.Params, c *Hermes.Cache) []byte {
 // This is a handler function that returns a fiber context handler function
 func FTInitJson(p *Utils.Params, c *Hermes.Cache) []byte {
 	var (
-		maxLength int
-		maxBytes  int
-		json      map[string]map[string]any
+		maxLength     int
+		maxBytes      int
+		minWordLength int
+		json          map[string]map[string]any
 	)
 
 	// Get the max length from the query
@@ -49,13 +56,18 @@ func FTInitJson(p *Utils.Params, c *Hermes.Cache) []byte {
 		return Utils.Error(err)
 	}
 
+	// Get the min word length from the query
+	if err := Utils.GetMinWordLengthParam(p, &minWordLength); err != nil {
+		return Utils.Error(err)
+	}
+
 	// Get the JSON from the query
 	if err := Utils.GetJSONParam(p, &json); err != nil {
 		return Utils.Error(err)
 	}
 
 	// Initialize the full-text cache
-	if err := c.FTInitWithMap(json, maxLength, maxBytes); err != nil {
+	if err := c.FTInitWithMap(json, maxLength, maxBytes, minWordLength); err != nil {
 		return Utils.Error(err)
 	}
 

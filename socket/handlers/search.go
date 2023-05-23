@@ -39,14 +39,17 @@ func Search(p *Utils.Params, c *Hermes.Cache) []byte {
 	}
 
 	// Search for the query
-	if res, err := c.Search(query, limit, strict, schema); err != nil {
+	if res, err := c.Search(Hermes.SearchParams{
+		Query:  query,
+		Limit:  limit,
+		Strict: strict,
+		Schema: schema,
+	}); err != nil {
+		return Utils.Error(err)
+	} else if data, err := json.Marshal(res); err != nil {
 		return Utils.Error(err)
 	} else {
-		if data, err := json.Marshal(res); err != nil {
-			return Utils.Error(err)
-		} else {
-			return data
-		}
+		return data
 	}
 }
 
@@ -76,7 +79,11 @@ func SearchOneWord(p *Utils.Params, c *Hermes.Cache) []byte {
 	}
 
 	// Search for the query
-	if res, err := c.SearchOneWord(query, limit, strict); err != nil {
+	if res, err := c.SearchOneWord(Hermes.SearchParams{
+		Query:  query,
+		Limit:  limit,
+		Strict: strict,
+	}); err != nil {
 		return Utils.Error(err)
 	} else {
 		if data, err := json.Marshal(res); err != nil {
@@ -113,7 +120,11 @@ func SearchValues(p *Utils.Params, c *Hermes.Cache) []byte {
 	}
 
 	// Search for the query
-	if res, err := c.SearchValues(query, limit, schema); err != nil {
+	if res, err := c.SearchValues(Hermes.SearchParams{
+		Query:  query,
+		Limit:  limit,
+		Schema: schema,
+	}); err != nil {
 		return Utils.Error(err)
 	} else {
 		if data, err := json.Marshal(res); err != nil {
@@ -156,7 +167,11 @@ func SearchWithKey(p *Utils.Params, c *Hermes.Cache) []byte {
 	}
 
 	// Search for the query
-	if res, err := c.SearchWithKey(query, key, limit); err != nil {
+	if res, err := c.SearchWithKey(Hermes.SearchParams{
+		Query: query,
+		Key:   key,
+		Limit: limit,
+	}); err != nil {
 		return Utils.Error(err)
 	} else {
 		if data, err := json.Marshal(res); err != nil {

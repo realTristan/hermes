@@ -5,23 +5,28 @@ import (
 	"strings"
 )
 
-// Search searches for a query by splitting the query into separate words and returning the search results.
+// Search is a method of the Cache struct that searches for a query by splitting the query into separate words and returning the search results.
 // Parameters:
 //   - c (c *Cache): A pointer to the Cache struct
-//   - query (string): The search query
-//   - limit (int): The limit of search results to return
-//   - strict (bool): A boolean to indicate whether the search should be strict or not
-//   - schema (map[string]bool): A map containing the schema to search for
+//   - sp (SearchParams): A SearchParams struct containing the search parameters.
 //
 // Returns:
-//   - []map[string]any: A slice of maps containing the search results
-//   - error: An error if the query or limit is invalid, or if the full-text index is not initialized
-func (c *Cache) Search(query string, limit int, strict bool, schema map[string]bool) ([]map[string]any, error) {
-	switch {
-	case len(query) == 0:
+//   - []map[string]any: A slice of maps containing the search results.
+//   - error: An error if the query is invalid or if the smallest words array is not found in the cache.
+func (c *Cache) Search(sp SearchParams) ([]map[string]any, error) {
+	// If the query is empty, return an error
+	if len(sp.Query) == 0 {
 		return []map[string]any{}, errors.New("invalid query")
-	case limit < 1:
-		return []map[string]any{}, errors.New("invalid limit")
+	}
+
+	// If no limit is provided, set it to 10
+	if sp.Limit == 0 {
+		sp.Limit = 10
+	}
+
+	// If no schema is provided, set it to the cache schema
+	if len(sp.Schema) == 0 {
+		sp.Schema = make(map[string]bool)
 	}
 
 	// Lock the mutex
@@ -34,33 +39,30 @@ func (c *Cache) Search(query string, limit int, strict bool, schema map[string]b
 	}
 
 	// Set the query to lowercase
-	query = strings.ToLower(query)
+	sp.Query = strings.ToLower(sp.Query)
 
 	// Search for the query
-	return c.search(query, limit, strict, schema), nil
+	return c.search(sp), nil
 }
 
-// search searches for a query by splitting the query into separate words and returning the search results.
+// search is a method of the Cache struct that searches for a query by splitting the query into separate words and returning the search results.
 // Parameters:
 //   - c (c *Cache): A pointer to the Cache struct
-//   - query (string): The search query
-//   - limit (int): The limit of search results to return
-//   - strict (bool): A boolean to indicate whether the search should be strict or not
-//   - schema (map[string]bool): A map containing the schema to search for
+//   - sp (SearchParams): A SearchParams struct containing the search parameters.
 //
 // Returns:
-//   - []map[string]any: A slice of maps containing the search results
-//   - error: An error if the query is invalid or if the smallest words array is not found in the cache
-func (c *Cache) search(query string, limit int, strict bool, schema map[string]bool) []map[string]any {
+//   - []map[string]any: A slice of maps containing the search results.
+func (c *Cache) search(sp SearchParams) []map[string]any {
 	// Split the query into separate words
-	var words []string = strings.Split(strings.TrimSpace(query), " ")
+	var words []string = strings.Split(strings.TrimSpace(sp.Query), " ")
 	switch {
 	// If the words array is empty
 	case len(words) == 0:
 		return []map[string]any{}
 	// Get the search result of the first word
 	case len(words) == 1:
-		return c.searchOneWord(words[0], limit, strict)
+		sp.Query = words[0]
+		return c.searchOneWord(sp)
 	}
 
 	// Define variables
@@ -104,13 +106,13 @@ func (c *Cache) search(query string, limit int, strict bool, schema map[string]b
 	var keys []int = c.ft.storage[words[smallestIndex]].([]int)
 	for i := 0; i < len(keys); i++ {
 		for key, value := range c.data[c.ft.indices[keys[i]]] {
-			if !schema[key] {
+			if !sp.Schema[key] {
 				continue
 			}
 
 			// Check if the value contains the query
 			if v, ok := value.(string); ok {
-				if strings.Contains(strings.ToLower(v), query) {
+				if strings.Contains(strings.ToLower(v), sp.Query) {
 					result = append(result, c.data[c.ft.indices[keys[i]]])
 				}
 			}

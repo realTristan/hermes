@@ -15,12 +15,14 @@ import (
 //   - currentIndex (int): An integer that represents the current index of the full-text index. This is used to assign unique indices to new words as they are added to the index.
 //   - maxLength (int): An integer that represents the maximum number of words that can be stored in the full-text index.
 //   - maxBytes (int): An integer that represents the maximum size of the text that can be stored in the full-text index, in bytes.
+//   - minWordLength (int): An integer that represents the minimum length of a word that can be stored in the full-text index.
 type FullText struct {
-	storage      map[string]any // either []int or int
-	indices      map[int]string
-	currentIndex int
-	maxLength    int
-	maxBytes     int
+	storage       map[string]any // either []int or int
+	indices       map[int]string
+	currentIndex  int
+	maxLength     int
+	maxBytes      int
+	minWordLength int
 }
 
 // FTIsInitialized is a method of the Cache struct that returns a boolean value indicating whether the full-text index is initialized.
@@ -58,6 +60,11 @@ func (c *Cache) FTSetMaxBytes(maxBytes int) error {
 		return errors.New("full text not initialized")
 	}
 
+	// Check if the current size of the storage is the same as the new max size
+	if c.ft.maxBytes == maxBytes {
+		return nil
+	}
+
 	// Check if the current size of the storage is greater than the new max size
 	if i, err := Utils.Size(c.ft.storage); err != nil {
 		return err
@@ -92,6 +99,11 @@ func (c *Cache) FTSetMaxLength(maxLength int) error {
 		return errors.New("full text not initialized")
 	}
 
+	// Check if the current size of the storage is the same as the new max size
+	if maxLength == c.ft.maxLength {
+		return nil
+	}
+
 	// Check if the current size of the storage is greater than the new max size
 	if len(c.ft.storage) > maxLength {
 		return errors.New("the current size of the full-text storage is greater than the new max size")
@@ -99,6 +111,48 @@ func (c *Cache) FTSetMaxLength(maxLength int) error {
 
 	// Set the maxLength field
 	c.ft.maxLength = maxLength
+
+	// Return no error
+	return nil
+}
+
+// FTSetMinWordLength is a method of the Cache struct that sets the minimum word length for the full-text search.
+// Parameters:
+//   - minWordLength (int): An integer representing the minimum word length.
+//
+// Returns:
+//   - error: An error if the full-text search is not initialized or if the new minimum word length is greater than the maximum word length.
+func (c *Cache) FTSetMinWordLength(minWordLength int) error {
+	c.mutex.Lock()
+	defer c.mutex.Unlock()
+
+	// Check if the ft is initialized
+	if c.ft == nil {
+		return errors.New("full text not initialized")
+	}
+
+	// If they're the same
+	if minWordLength == c.ft.minWordLength {
+		return nil
+	}
+
+	// If the new min word length is greater than the max
+	// word length, reset the ft
+	if minWordLength > c.ft.minWordLength {
+		return c.ftInit(c.ft.maxBytes, c.ft.maxLength, minWordLength)
+	}
+
+	// Set the minWordLength field
+	c.ft.minWordLength = minWordLength
+
+	// Iterate over the ft storage
+	for word := range c.ft.storage {
+		// Check if the word length is less than the min word length
+		if len(word) < minWordLength {
+			// Delete the word from the ft storage
+			delete(c.ft.storage, word)
+		}
+	}
 
 	// Return no error
 	return nil

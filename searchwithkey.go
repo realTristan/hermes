@@ -8,56 +8,51 @@ import (
 // SearchWithKey searches for all records containing the given query in the specified key column with a limit of results to return.
 // Parameters:
 //   - c (c *Cache): A pointer to the Cache struct
-//   - query (string): The search query to match against data in the FullText struct
-//   - key (string): The key to search data on
-//   - limit (int): The maximum number of results to be returned
+//   - sp (SearchParams): A SearchParams struct containing the search parameters.
 //
 // Returns:
 //   - []map[string]any: A slice of maps containing the search results
 //   - error: An error if the key, query or limit is invalid
-func (c *Cache) SearchWithKey(query string, key string, limit int) ([]map[string]any, error) {
+func (c *Cache) SearchWithKey(sp SearchParams) ([]map[string]any, error) {
 	switch {
-	case len(key) == 0:
+	case len(sp.Key) == 0:
 		return []map[string]any{}, errors.New("invalid key")
-	case len(query) == 0:
+	case len(sp.Query) == 0:
 		return []map[string]any{}, errors.New("invalid query")
-	case limit < 1:
-		return []map[string]any{}, errors.New("invalid limit")
 	}
 
 	// Set the query to lowercase
-	query = strings.ToLower(query)
+	sp.Query = strings.ToLower(sp.Query)
 
 	// Lock the mutex
 	c.mutex.RLock()
 	defer c.mutex.RUnlock()
 
 	// Search the data
-	return c.searchWithKey(query, key, limit), nil
+	return c.searchWithKey(sp), nil
 }
 
 // searchWithKey searches for all records containing the given query in the specified key column with a limit of results to return.
 // Parameters:
-//   - query (string): The search query to match against data in the FullText struct
-//   - key (string): The key to search data on
-//   - limit (int): The maximum number of results to be returned
+//   - c (c *Cache): A pointer to the Cache struct
+//   - sp (SearchParams): A SearchParams struct containing the search parameters.
 //
 // Returns:
 //   - []map[string]any: A slice of maps containing the search results
-func (c *Cache) searchWithKey(query string, key string, limit int) []map[string]any {
+func (c *Cache) searchWithKey(sp SearchParams) []map[string]any {
 	// Define variables
 	var result []map[string]any = []map[string]any{}
 
 	// Iterate over the query result
 	for _, item := range c.data {
 		for _, v := range item {
-			if len(result) >= limit {
+			if len(result) >= sp.Limit {
 				return result
 			}
 
 			// Check if the value contains the query
 			if v, ok := v.(string); ok {
-				if strings.Contains(strings.ToLower(v), query) {
+				if strings.Contains(strings.ToLower(v), sp.Query) {
 					result = append(result, item)
 				}
 			}

@@ -40,14 +40,17 @@ func Search(c *Hermes.Cache) func(ctx *fiber.Ctx) error {
 		}
 
 		// Search for the query
-		if res, err := c.Search(query, limit, strict, schema); err != nil {
+		if res, err := c.Search(Hermes.SearchParams{
+			Query:  query,
+			Limit:  limit,
+			Strict: strict,
+			Schema: schema,
+		}); err != nil {
+			return ctx.Send(Utils.Error(err))
+		} else if data, err := json.Marshal(res); err != nil {
 			return ctx.Send(Utils.Error(err))
 		} else {
-			if data, err := json.Marshal(res); err != nil {
-				return ctx.Send(Utils.Error(err))
-			} else {
-				return ctx.Send(data)
-			}
+			return ctx.Send(data)
 		}
 	}
 }
@@ -78,14 +81,16 @@ func SearchOneWord(c *Hermes.Cache) func(ctx *fiber.Ctx) error {
 		}
 
 		// Search for the query
-		if res, err := c.SearchOneWord(query, limit, strict); err != nil {
+		if res, err := c.SearchOneWord(Hermes.SearchParams{
+			Query:  query,
+			Limit:  limit,
+			Strict: strict,
+		}); err != nil {
+			return ctx.Send(Utils.Error(err))
+		} else if data, err := json.Marshal(res); err != nil {
 			return ctx.Send(Utils.Error(err))
 		} else {
-			if data, err := json.Marshal(res); err != nil {
-				return ctx.Send(Utils.Error(err))
-			} else {
-				return ctx.Send(data)
-			}
+			return ctx.Send(data)
 		}
 	}
 }
@@ -116,14 +121,16 @@ func SearchValues(c *Hermes.Cache) func(ctx *fiber.Ctx) error {
 		}
 
 		// Search for the query
-		if res, err := c.SearchValues(query, limit, schema); err != nil {
+		if res, err := c.SearchValues(Hermes.SearchParams{
+			Query:  query,
+			Limit:  limit,
+			Schema: schema,
+		}); err != nil {
+			return ctx.Send(Utils.Error(err))
+		} else if data, err := json.Marshal(res); err != nil {
 			return ctx.Send(Utils.Error(err))
 		} else {
-			if data, err := json.Marshal(res); err != nil {
-				return ctx.Send(Utils.Error(err))
-			} else {
-				return ctx.Send(data)
-			}
+			return ctx.Send(data)
 		}
 	}
 }
@@ -133,10 +140,9 @@ func SearchValues(c *Hermes.Cache) func(ctx *fiber.Ctx) error {
 func SearchWithKey(c *Hermes.Cache) func(ctx *fiber.Ctx) error {
 	return func(ctx *fiber.Ctx) error {
 		var (
-			key    string
-			query  string
-			limit  int
-			schema map[string]bool
+			key   string
+			query string
+			limit int
 		)
 
 		// Get the query from the url params
@@ -154,20 +160,17 @@ func SearchWithKey(c *Hermes.Cache) func(ctx *fiber.Ctx) error {
 			return ctx.Send(Utils.Error(err))
 		}
 
-		// Get the schema from the url params
-		if err := Utils.GetSchemaParam(ctx, &schema); err != nil {
-			return ctx.Send(Utils.Error(err))
-		}
-
 		// Search for the query
-		if res, err := c.SearchWithKey(query, key, limit); err != nil {
+		if res, err := c.SearchWithKey(Hermes.SearchParams{
+			Key:   key,
+			Query: query,
+			Limit: limit,
+		}); err != nil {
+			return ctx.Send(Utils.Error(err))
+		} else if data, err := json.Marshal(res); err != nil {
 			return ctx.Send(Utils.Error(err))
 		} else {
-			if data, err := json.Marshal(res); err != nil {
-				return ctx.Send(Utils.Error(err))
-			} else {
-				return ctx.Send(data)
-			}
+			return ctx.Send(data)
 		}
 	}
 }

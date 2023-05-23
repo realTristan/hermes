@@ -128,20 +128,18 @@ func (c *Cache) ftSet(key string, value map[string]any) error {
 
 			// Loop through the words
 			for i := 0; i < len(words); i++ {
-				if len(words[i]) <= 3 {
+				if len(words[i]) <= c.ft.minWordLength {
 					continue
 				}
 				if temp, ok := tempStorage[words[i]]; !ok {
 					tempStorage[words[i]] = []int{tempCurrentIndex}
+				} else if indices, ok := temp.([]int); !ok {
+					tempStorage[words[i]] = []int{temp.(int), tempKeys[key]}
 				} else {
-					if indices, ok := temp.([]int); !ok {
-						tempStorage[words[i]] = []int{temp.(int), tempKeys[key]}
-					} else {
-						if Utils.SliceContains(indices, tempKeys[key]) {
-							continue
-						}
-						tempStorage[words[i]] = append(indices, tempKeys[key])
+					if Utils.SliceContains(indices, tempKeys[key]) {
+						continue
 					}
+					tempStorage[words[i]] = append(indices, tempKeys[key])
 				}
 			}
 		}

@@ -43,6 +43,18 @@ func GetMaxBytesParam(ctx *fiber.Ctx, maxBytes *int) error {
 	return nil
 }
 
+// Get the min word length url parameter
+func GetMinWordLengthParam(ctx *fiber.Ctx, minWordLength *int) error {
+	if s := ctx.Query("minwordlength"); len(s) == 0 {
+		return errors.New("invalid minwordlength")
+	} else if i, err := strconv.Atoi(s); err != nil {
+		return err
+	} else {
+		*minWordLength = i
+	}
+	return nil
+}
+
 // Get the json url parameter
 func GetJSONParam[T any](ctx *fiber.Ctx, json *T) error {
 	if s := ctx.Query("json"); len(s) == 0 {

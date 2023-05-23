@@ -58,13 +58,10 @@ func FTStorage(c *Hermes.Cache) func(ctx *fiber.Ctx) error {
 	return func(ctx *fiber.Ctx) error {
 		if data, err := c.FTStorage(); err != nil {
 			return ctx.Send(Utils.Error(err))
+		} else if data, err := json.Marshal(data); err != nil {
+			return ctx.Send(Utils.Error(err))
 		} else {
-			// Marshal the data
-			if data, err := json.Marshal(data); err != nil {
-				return ctx.Send(Utils.Error(err))
-			} else {
-				return ctx.Send(data)
-			}
+			return ctx.Send(data)
 		}
 	}
 }
