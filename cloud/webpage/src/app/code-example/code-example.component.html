@@ -6,28 +6,26 @@
       <div class="ml-2 h-3 w-3 bg-orange-300 rounded-full"></div>
       <div class="ml-2 h-3 w-3 bg-green-500 rounded-full"></div>
     </div>
-    <div class="mt-4 flex">
-      <pre class="flex-1 typing items-center -ml-20 mt-4 mr-4">
-            <mark class="text-pink-400 bg-transparent">func</mark> <mark class="text-blue-400 bg-transparent">main</mark>() {{'{'}}
-                <mark class="text-gray-500 bg-transparent">// Initialize the cache</mark>
-                cache <mark class="text-blue-200 bg-transparent">:=</mark> Hermes.<mark class="text-indigo-400 bg-transparent">InitCache</mark>()
-                cache<mark class="text-cyan-50 bg-transparent">.</mark><mark class="text-indigo-400 bg-transparent">FTInit</mark>(<mark class="text-blue-300 bg-transparent">10</mark>, <mark class="text-blue-300 bg-transparent">-1</mark>, <mark class="text-blue-300 bg-transparent">3</mark>)
-                
-                <mark class="text-gray-500 bg-transparent">// Set a value in the cache with the key "user_id"</mark>
-                cache<mark class="text-cyan-50 bg-transparent">.</mark><mark class="text-indigo-400 bg-transparent">Set</mark>(<mark class="text-blue-300 bg-transparent">"user_id"</mark>, map[<mark class="text-blue-300 bg-transparent">string</mark>]<mark class="text-blue-300 bg-transparent">any </mark>{{'{'}} 
-                    <mark class="text-blue-300 bg-transparent">"name"</mark>:       Hermes.<mark class="text-indigo-400 bg-transparent">WithFT</mark>(<mark class="text-blue-300 bg-transparent">"tristan"</mark>),
-                    <mark class="text-blue-300 bg-transparent">"age"</mark>:        <mark class="text-blue-300 bg-transparent">17</mark>,
-                {{'}'}})
+    <pre class="flex-1 typing items-center -ml-9 mt-8 mr-4 overflow-auto w-96 md:w-auto">
+        <mark class="text-pink-400 bg-transparent">func</mark> <mark class="text-blue-400 bg-transparent">main</mark>() {{'{'}}
+            <mark class="text-gray-500 bg-transparent">// Initialize the cache</mark>
+            cache <mark class="text-blue-200 bg-transparent">:=</mark> Hermes.<mark class="text-indigo-400 bg-transparent">InitCache</mark>()
+            cache<mark class="text-cyan-50 bg-transparent">.</mark><mark class="text-indigo-400 bg-transparent">FTInit</mark>(<mark class="text-blue-300 bg-transparent">10</mark>, <mark class="text-blue-300 bg-transparent">-1</mark>, <mark class="text-blue-300 bg-transparent">3</mark>)
+            
+            <mark class="text-gray-500 bg-transparent">// Set a value in the cache with the key "user_id"</mark>
+            cache<mark class="text-cyan-50 bg-transparent">.</mark><mark class="text-indigo-400 bg-transparent">Set</mark>(<mark class="text-blue-300 bg-transparent">"user_id"</mark>, map[<mark class="text-blue-300 bg-transparent">string</mark>]<mark class="text-blue-300 bg-transparent">any </mark>{{'{'}} 
+                <mark class="text-blue-300 bg-transparent">"name"</mark>:       Hermes.<mark class="text-indigo-400 bg-transparent">WithFT</mark>(<mark class="text-blue-300 bg-transparent">"tristan"</mark>),
+                <mark class="text-blue-300 bg-transparent">"age"</mark>:        <mark class="text-blue-300 bg-transparent">17</mark>,
+            {{'}'}})
 
-                <mark class="text-gray-500 bg-transparent">// Search for the word "tristan"</mark>
-                result, err <mark class="text-blue-200 bg-transparent">:=</mark> cache<mark class="text-cyan-50 bg-transparent">.</mark><mark class="text-indigo-400 bg-transparent">Search</mark>(Hermes.<mark class="text-indigo-400 bg-transparent">SearchParams</mark>{{'{'}} 
-                    <mark class="text-blue-300 bg-transparent">Query</mark>:  <mark class="text-blue-300 bg-transparent">"tristan"</mark>,
-                    <mark class="text-blue-300 bg-transparent">Limit</mark>:  <mark class="text-blue-300 bg-transparent">100</mark>,
-                    <mark class="text-blue-300 bg-transparent">Strict</mark>: <mark class="text-blue-300 bg-transparent">false</mark>,
-                {{'}'}})
-                <mark class="text-cyan-50 bg-transparent">fmt</mark><mark class="text-indigo-400 bg-transparent">.</mark><mark class="text-indigo-400 bg-transparent">Println</mark>(result, err)
-            {{'}'}}
-        </pre>
-    </div>
+            <mark class="text-gray-500 bg-transparent">// Search for the word "tristan"</mark>
+            result, err <mark class="text-blue-200 bg-transparent">:=</mark> cache<mark class="text-cyan-50 bg-transparent">.</mark><mark class="text-indigo-400 bg-transparent">Search</mark>(Hermes.<mark class="text-indigo-400 bg-transparent">SearchParams</mark>{{'{'}} 
+                <mark class="text-blue-300 bg-transparent">Query</mark>:  <mark class="text-blue-300 bg-transparent">"tristan"</mark>,
+                <mark class="text-blue-300 bg-transparent">Limit</mark>:  <mark class="text-blue-300 bg-transparent">100</mark>,
+                <mark class="text-blue-300 bg-transparent">Strict</mark>: <mark class="text-blue-300 bg-transparent">false</mark>,
+            {{'}'}})
+            <mark class="text-cyan-50 bg-transparent">fmt</mark><mark class="text-indigo-400 bg-transparent">.</mark><mark class="text-indigo-400 bg-transparent">Println</mark>(result, err)
+        {{'}'}}
+    </pre>
   </div>
 </div>

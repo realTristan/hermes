@@ -1,18 +1,8 @@
-html {
-    font-size: 62.5%;
-}
-
-body {
-    font-size: 1.4rem;
-    padding: 80px;
-    background: #6A84ED;
-}
-
 .laptop {
     position: relative;
     max-width: 40rem;
 
-    .laptop__screen {
+    .laptop_screen {
         position: relative;
         z-index: 1;
         padding: 3%;
@@ -31,7 +21,7 @@ body {
         }
     }
 
-    .laptop__bottom {
+    .laptop_bottom {
         position: relative;
         z-index: 1;
         margin-right: -7%;
@@ -52,7 +42,7 @@ body {
         }
     }
 
-    .laptop__under {
+    .laptop_under {
         position: absolute;
         top: 100%;
         left: 25%;
@@ -83,7 +73,7 @@ body {
         }
     }
 
-    .laptop__shadow {
+    .laptop_shadow {
         position: absolute;
         right: -10%;
         bottom: -2.5rem;
