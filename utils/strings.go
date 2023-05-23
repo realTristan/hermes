@@ -54,7 +54,12 @@ func TrimNonAlphaNum(s string) string {
 	return s
 }
 
-// Split by alphanumeric characters.
+// SplitByAlphaNum is a function that splits a given string into a slice of substrings by alphanumeric characters.
+// Parameters:
+//   - s (string): The string to split.
+//
+// Returns:
+//   - []string: A slice of substrings split by alphanumeric characters.
 func SplitByAlphaNum(s string) []string {
 	var (
 		word  string   = ""
@@ -76,7 +81,12 @@ func SplitByAlphaNum(s string) []string {
 	return words
 }
 
-// Remove double spaces from a string and return the modified string.
+// RemoveDoubleSpaces is a function that removes double spaces from a given string and returns the modified string.
+// Parameters:
+//   - s (string): The string to remove double spaces from.
+//
+// Returns:
+//   - string: The modified string with double spaces removed.
 func RemoveDoubleSpaces(s string) string {
 	for strings.Contains(s, "  ") {
 		s = strings.Replace(s, "  ", " ", -1)
@@ -84,7 +94,13 @@ func RemoveDoubleSpaces(s string) string {
 	return s
 }
 
-// Check if a string contains another string as a substring.
+// Contains is a function that checks if a given string contains another string as a substring.
+// Parameters:
+//   - s1 (string): The string to search for the substring.
+//   - s2 (string): The substring to search for in the string.
+//
+// Returns:
+//   - bool: true if the substring is found in the string, false otherwise.
 func Contains(s1 string, s2 string) bool {
 	var (
 		s1Len int = len(s1)
