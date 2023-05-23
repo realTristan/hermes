@@ -49,15 +49,13 @@ func (ft *FullText) insert(data []map[string]any, minWordLength int) error {
 					if temp, ok := ft.storage[words[j]]; !ok {
 						ft.storage[words[j]] = []int{i}
 						ft.words = append(ft.words, words[j])
+					} else if indices, ok := temp.([]int); !ok {
+						ft.storage[words[j]] = []int{temp.(int), i}
 					} else {
-						if indices, ok := temp.([]int); !ok {
-							ft.storage[words[j]] = []int{temp.(int), i}
-						} else {
-							if Utils.SliceContains(indices, i) {
-								continue
-							}
-							ft.storage[words[j]] = append(indices, i)
+						if Utils.SliceContains(indices, i) {
+							continue
 						}
+						ft.storage[words[j]] = append(indices, i)
 					}
 				}
 			}
