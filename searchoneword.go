@@ -58,7 +58,7 @@ func (c *Cache) searchOneWord(sp SearchParams) []map[string]any {
 	// If the user wants a strict search, just return the result
 	// straight from the cache
 	if sp.Strict {
-		return c.searchOneWordStrict(result, sp.Query, sp.Limit)
+		return c.searchOneWordStrict(result, sp)
 	}
 
 	// Define a map to store the indices that have already been added
@@ -108,24 +108,24 @@ func (c *Cache) searchOneWord(sp SearchParams) []map[string]any {
 //
 // Returns:
 //   - A slice of map[string]any representing the search results.
-func (c *Cache) searchOneWordStrict(result []map[string]any, query string, limit int) []map[string]any {
+func (c *Cache) searchOneWordStrict(result []map[string]any, sp SearchParams) []map[string]any {
 	// Check if the query is in the cache
-	if _, ok := c.ft.storage[query]; !ok {
+	if _, ok := c.ft.storage[sp.Query]; !ok {
 		return result
 	}
 
 	// If there's only one result
-	if v, ok := c.ft.storage[query].(int); ok {
+	if v, ok := c.ft.storage[sp.Query].(int); ok {
 		return []map[string]any{c.data[c.ft.indices[v]]}
 	}
 
 	// Loop through the indices
-	for i := 0; i < len(c.ft.storage[query].([]int)); i++ {
-		if len(result) >= limit {
+	for i := 0; i < len(c.ft.storage[sp.Query].([]int)); i++ {
+		if len(result) >= sp.Limit {
 			return result
 		}
 		var (
-			index int    = c.ft.storage[query].([]int)[i]
+			index int    = c.ft.storage[sp.Query].([]int)[i]
 			key   string = c.ft.indices[index]
 		)
 		result = append(result, c.data[key])

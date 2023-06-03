@@ -24,11 +24,6 @@ func (c *Cache) Search(sp SearchParams) ([]map[string]any, error) {
 		sp.Limit = 10
 	}
 
-	// If no schema is provided, set it to the cache schema
-	if len(sp.Schema) == 0 {
-		sp.Schema = make(map[string]bool)
-	}
-
 	// Lock the mutex
 	c.mutex.RLock()
 	defer c.mutex.RUnlock()
@@ -105,11 +100,7 @@ func (c *Cache) search(sp SearchParams) []map[string]any {
 	// Loop through the indices
 	var keys []int = c.ft.storage[words[smallestIndex]].([]int)
 	for i := 0; i < len(keys); i++ {
-		for key, value := range c.data[c.ft.indices[keys[i]]] {
-			if !sp.Schema[key] {
-				continue
-			}
-
+		for _, value := range c.data[c.ft.indices[keys[i]]] {
 			// Check if the value contains the query
 			if v, ok := value.(string); ok {
 				if strings.Contains(strings.ToLower(v), sp.Query) {

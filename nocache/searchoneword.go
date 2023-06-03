@@ -20,23 +20,23 @@ import (
 //   - error: An error object. If no error occurs, this will be nil.
 //
 // Note: The search is case-insensitive.
-func (ft *FullText) SearchOneWord(query string, limit int, strict bool) ([]map[string]any, error) {
+func (ft *FullText) SearchOneWord(sp SearchParams) ([]map[string]any, error) {
 	switch {
-	case len(query) == 0:
+	case len(sp.Query) == 0:
 		return []map[string]any{}, errors.New("invalid query")
-	case limit < 1:
+	case sp.Limit < 1:
 		return []map[string]any{}, errors.New("invalid limit")
 	}
 
 	// Set the query to lowercase
-	query = strings.ToLower(query)
+	sp.Query = strings.ToLower(sp.Query)
 
 	// Lock the mutex
 	ft.mutex.RLock()
 	defer ft.mutex.RUnlock()
 
 	// Search the data
-	return ft.searchOneWord(query, limit, strict), nil
+	return ft.searchOneWord(sp), nil
 }
 
 // searchOneWord searches for a single query within the data using a full-text search approach.
@@ -51,14 +51,14 @@ func (ft *FullText) SearchOneWord(query string, limit int, strict bool) ([]map[s
 //     from the entry in the data that matched the search query. If no results are found, an empty array is returned.
 //
 // Note: The search is case-insensitive.
-func (ft *FullText) searchOneWord(query string, limit int, strict bool) []map[string]any {
+func (ft *FullText) searchOneWord(sp SearchParams) []map[string]any {
 	// Define the result variable
 	var result []map[string]any = []map[string]any{}
 
 	// If the user wants a strict search, just return the result
 	// straight from the cache
-	if strict {
-		return ft.searchOneWordStrict(result, query, limit)
+	if sp.Strict {
+		return ft.searchOneWordStrict(result, sp)
 	}
 
 	// true for already checked
@@ -67,9 +67,9 @@ func (ft *FullText) searchOneWord(query string, limit int, strict bool) []map[st
 	// Loop through the cache keys
 	for i := 0; i < len(ft.words); i++ {
 		switch {
-		case len(result) >= limit:
+		case len(result) >= sp.Limit:
 			return result
-		case !Utils.Contains(ft.words[i], query):
+		case !Utils.Contains(ft.words[i], sp.Query):
 			continue
 		}
 
@@ -106,21 +106,21 @@ func (ft *FullText) searchOneWord(query string, limit int, strict bool) []map[st
 //
 // Returns:
 //   - A slice of map[string]any representing the search results.
-func (ft *FullText) searchOneWordStrict(result []map[string]any, query string, limit int) []map[string]any {
+func (ft *FullText) searchOneWordStrict(result []map[string]any, sp SearchParams) []map[string]any {
 	// Check if the query is in the cache
-	if _, ok := ft.storage[query]; !ok {
+	if _, ok := ft.storage[sp.Query]; !ok {
 		return result
 	}
 
 	// Check if the cache value is an integer
-	if v, ok := ft.storage[query].(int); ok {
+	if v, ok := ft.storage[sp.Query].(int); ok {
 		return []map[string]any{ft.data[v]}
 	}
 
 	// Loop through the indices
-	var indices []int = ft.storage[query].([]int)
+	var indices []int = ft.storage[sp.Query].([]int)
 	for i := 0; i < len(indices); i++ {
-		if len(result) >= limit {
+		if len(result) >= sp.Limit {
 			return result
 		}
 		result = append(result, ft.data[indices[i]])

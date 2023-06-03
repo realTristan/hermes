@@ -9,17 +9,6 @@ import (
 
 // Main function
 func main() {
-	// Create a schema. These are the fields that will be searched.
-	var schema = map[string]bool{
-		"id":             false,
-		"components":     false,
-		"units":          false,
-		"description":    true,
-		"name":           true,
-		"pre_requisites": true,
-		"title":          true,
-	}
-
 	// Define variables
 	var (
 		// Initialize the full text
@@ -30,7 +19,11 @@ func main() {
 
 		// Search for a word in the cache
 		// @params: query, limit, strict
-		res, _ = ft.Search("computer", 100, false, schema)
+		res, _ = ft.Search(Hermes.SearchParams{
+			Query:  "computer",
+			Limit:  100,
+			Strict: false,
+		})
 	)
 
 	// Print the duration

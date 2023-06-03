@@ -66,14 +66,10 @@ func HermesSearch() {
 		var start time.Time = time.Now()
 
 		// Search for a word in the cache
-		cache.Search("computer", 100, false, map[string]bool{
-			"id":             false,
-			"components":     false,
-			"units":          false,
-			"pre_requisites": false,
-			"title":          false,
-			"description":    true,
-			"name":           true,
+		cache.Search(Hermes.SearchParams{
+			Query:  "computer",
+			Limit:  100,
+			Strict: false,
 		})
 
 		// Print the duration

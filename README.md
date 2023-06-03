@@ -431,10 +431,7 @@ Search for a query in the full-text storage.
   "function": "ft.search",
   "query": "tristan",
   "strict": false,
-  "limit": 10,
-  "schema": {
-    "key": true
-  }
+  "limit": 10
 }
 ```
 

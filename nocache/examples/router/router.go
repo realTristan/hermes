@@ -60,14 +60,10 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 	// Search for a word in the cache
 	// Make sure the show which keys you do want to search through,
 	// and which ones you don't
-	var res, _ = ft.Search(query, limit, strict, map[string]bool{
-		"id":             false,
-		"components":     false,
-		"units":          false,
-		"description":    true,
-		"name":           true,
-		"pre_requisites": true,
-		"title":          true,
+	var res, _ = ft.Search(Hermes.SearchParams{
+		Query:  query,
+		Limit:  limit,
+		Strict: strict,
 	})
 
 	// Print the duration

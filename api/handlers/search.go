@@ -20,7 +20,6 @@ func Search(c *Hermes.Cache) func(ctx *fiber.Ctx) error {
 			strict bool
 			query  string
 			limit  int
-			schema map[string]bool
 		)
 
 		// Get the query from the url params
@@ -38,17 +37,11 @@ func Search(c *Hermes.Cache) func(ctx *fiber.Ctx) error {
 			return ctx.Send(Utils.Error(err))
 		}
 
-		// Get the schema from the url params
-		if err := Utils.GetSchemaParam(ctx, &schema); err != nil {
-			return ctx.Send(Utils.Error(err))
-		}
-
 		// Search for the query
 		if res, err := c.Search(Hermes.SearchParams{
 			Query:  query,
 			Limit:  limit,
 			Strict: strict,
-			Schema: schema,
 		}); err != nil {
 			return ctx.Send(Utils.Error(err))
 		} else if data, err := json.Marshal(res); err != nil {
