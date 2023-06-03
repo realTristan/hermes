@@ -2,9 +2,6 @@ package cache
 
 import (
 	"fmt"
-	"strings"
-
-	Utils "github.com/realTristan/Hermes/utils"
 )
 
 // Set is a method of the Cache struct that sets a value in the cache for the specified key.
@@ -42,7 +39,6 @@ func (c *Cache) set(key string, value map[string]any) error {
 		if err := c.ftSet(key, value); err != nil {
 			return err
 		}
-		return nil
 	}
 
 	// Update the value in the cache
@@ -62,103 +58,19 @@ func (c *Cache) set(key string, value map[string]any) error {
 // Returns:
 //   - An error if the full-text storage limit or byte-size limit is reached. Otherwise, nil.
 func (c *Cache) ftSet(key string, value map[string]any) error {
-	// Create a copy of the existing full-text variables
-	var (
-		tempStorage      map[string]any = c.ft.storage
-		tempIndices      map[int]string = c.ft.indices
-		tempCurrentIndex int            = c.ft.currentIndex
-		tempKeys         map[string]int = make(map[string]int)
-	)
-
-	// Loop through the json data
-	for k, v := range tempIndices {
-		tempKeys[v] = k
-	}
-
-	// Check if the key is in the temp keys map. If not, add it.
-	if _, ok := tempKeys[key]; !ok {
-		tempIndices[tempCurrentIndex] = key
-		tempKeys[key] = tempCurrentIndex
-		tempCurrentIndex++
-	}
-
-	// Loop through the provided value
+	// Create a new temp storage
+	var ts *TempStorage = NewTempStorage(c.ft)
 	for k, v := range value {
-		var strv string
-		// Check if the value is a WFT
-		if wft, ok := v.(WFT); ok {
-			strv = wft.value
-		} else if _strv := ftFromMap(v); len(_strv) > 0 {
-			strv = _strv
-		} else {
-			continue
-		}
-
-		// Set the key in the provided value to the string wft value
-		value[k] = strv
-
-		// Clean the string value
-		strv = strings.TrimSpace(strv)
-		strv = Utils.RemoveDoubleSpaces(strv)
-		strv = strings.ToLower(strv)
-
-		// Loop through the words
-		for _, word := range strings.Split(strv, " ") {
-			if len(word) == 0 {
-				continue
-			}
-
-			// Check if the storage limit has been reached
-			if c.ft.maxLength > 0 {
-				if len(tempStorage) > c.ft.maxLength {
-					return fmt.Errorf("full-text storage limit reached (%d/%d keys). load cancelled", len(tempStorage), c.ft.maxLength)
-				}
-			}
-			if c.ft.maxBytes > 0 {
-				if cacheSize, err := Utils.Size(tempStorage); err != nil {
-					return err
-				} else if cacheSize > c.ft.maxBytes {
-					return fmt.Errorf("full-text byte-size limit reached (%d/%d bytes). load cancelled", cacheSize, c.ft.maxBytes)
-				}
-			}
-
-			// Trim the word
-			word = Utils.TrimNonAlphaNum(word)
-			var words []string = Utils.SplitByAlphaNum(word)
-
-			// Loop through the words
-			for i := 0; i < len(words); i++ {
-				if len(words[i]) < c.ft.minWordLength {
-					continue
-				}
-				if temp, ok := tempStorage[words[i]]; !ok {
-					tempStorage[words[i]] = []int{tempCurrentIndex}
-				} else if indices, ok := temp.([]int); !ok {
-					tempStorage[words[i]] = []int{temp.(int), tempKeys[key]}
-				} else {
-					if Utils.SliceContains(indices, tempKeys[key]) {
-						continue
-					}
-					tempStorage[words[i]] = append(indices, tempKeys[key])
-				}
-			}
+		if err := ts.insert(c.ft, key, value, k, v); err != nil {
+			return err
 		}
 	}
 
 	// Iterate over the temp storage and set the values with len 1 to int
-	for k, v := range tempStorage {
-		if v, ok := v.([]int); ok && len(v) == 1 {
-			tempStorage[k] = v[0]
-		}
-	}
+	ts.cleanSingleArrays()
 
 	// Set the full-text cache to the temp map
-	c.ft.storage = tempStorage
-	c.ft.indices = tempIndices
-	c.ft.currentIndex = tempCurrentIndex
-
-	// Update the cache
-	c.data[key] = value
+	ts.updateFullText(c.ft)
 
 	// Return nil for no errors
 	return nil
