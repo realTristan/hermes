@@ -56,10 +56,9 @@ func (c *Cache) set(key string, value map[string]any) error {
 // Returns:
 //   - An error if the full-text storage limit or byte-size limit is reached. Otherwise, nil.
 func (c *Cache) ftSet(key string, value map[string]any) error {
-	// Create a new temp storage
 	var ts *TempStorage = NewTempStorage(c.ft)
 	for k, v := range value {
-		if ftv := ts.getFTValue(v); len(ftv) == 0 {
+		if ftv := WFTGetValue(v); len(ftv) == 0 {
 			continue
 		} else {
 			// Update the value

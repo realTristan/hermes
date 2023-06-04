@@ -101,36 +101,22 @@ func (ts *TempStorage) error(ft *FullText) error {
 func (ts *TempStorage) update(ft *FullText, words []string, cacheKey string) {
 	// Loop through the words
 	for i := 0; i < len(words); i++ {
+		var word string = words[i]
+
 		// Check if the word is valid
-		if len(words[i]) < ft.minWordLength {
+		if len(word) < ft.minWordLength {
 			continue
 		}
-		if temp, ok := ts.data[words[i]]; !ok {
-			ts.data[words[i]] = []int{ts.index}
+		if temp, ok := ts.data[word]; !ok {
+			ts.data[word] = []int{ts.index}
 		} else if v, ok := temp.([]int); !ok {
-			ts.data[words[i]] = []int{temp.(int), ts.keys[cacheKey]}
+			ts.data[word] = []int{temp.(int), ts.keys[cacheKey]}
 		} else {
 			if Utils.SliceContains(v, ts.keys[cacheKey]) {
 				continue
 			}
-			ts.data[words[i]] = append(v, ts.keys[cacheKey])
+			ts.data[word] = append(v, ts.keys[cacheKey])
 		}
-	}
-}
-
-// getFTValue is a method of the TempStorage struct that returns the full-text value of a given value.
-// Parameters:
-//   - value (any): A value to get the full-text value of.
-//
-// Returns:
-//   - (string): The full-text value of the given value.
-func (ts *TempStorage) getFTValue(value any) string {
-	if wft, ok := value.(WFT); ok {
-		return wft.Value
-	} else if v := ftFromMap(value); len(v) > 0 {
-		return v
-	} else {
-		return ""
 	}
 }
 
@@ -146,45 +132,6 @@ func (ts *TempStorage) updateKeys(cacheKey string) {
 		ts.indices[ts.index] = cacheKey
 		ts.keys[cacheKey] = ts.index
 	}
-}
-
-// insert is a method of the FullText struct that inserts a value in the full-text cache for the specified key.
-// This function is not thread-safe and should only be called from an exported function.
-//
-// Parameters:
-//   - data: A map of maps containing the data to be inserted.
-//
-// Returns:
-//   - An error if the full-text storage limit or byte-size limit is reached.
-func (ft *FullText) insert(data *map[string]map[string]any) error {
-	// Create a new temp storage
-	var ts *TempStorage = NewTempStorage(ft)
-
-	// Loop through the json data
-	for cacheKey, cacheValue := range *data {
-		for k, v := range cacheValue {
-			if ftv := ts.getFTValue(v); len(ftv) == 0 {
-				continue
-			} else {
-				// Set the key in the provided value to the string wft value
-				(*data)[cacheKey][k] = ftv
-
-				// Insert the value in the temp storage
-				if err := ts.insert(ft, cacheKey, ftv); err != nil {
-					return err
-				}
-			}
-		}
-	}
-
-	// Iterate over the temp storage and set the values with len 1 to int
-	ts.cleanSingleArrays()
-
-	// Set the full-text cache to the temp map
-	ts.updateFullText(ft)
-
-	// Return nil for no errors
-	return nil
 }
 
 // insertWords is a method of the TempStorage struct that inserts data into the temp storage.
