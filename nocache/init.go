@@ -8,7 +8,7 @@ import (
 
 // Initialize the full-text cache with the provided data.
 // This function is thread safe.
-func InitWithMap(data []map[string]any, minWordLength int) (*FullText, error) {
+func InitWithMapSlice(data []map[string]any, minWordLength int) (*FullText, error) {
 	var ft *FullText = &FullText{
 		mutex:   &sync.RWMutex{},
 		storage: make(map[string]any),
@@ -35,6 +35,6 @@ func InitWithJson(file string, minWordLength int) (*FullText, error) {
 	if data, err := Utils.ReadJson[[]map[string]any](file); err != nil {
 		return nil, err
 	} else {
-		return InitWithMap(data, minWordLength)
+		return InitWithMapSlice(data, minWordLength)
 	}
 }
