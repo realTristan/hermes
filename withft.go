@@ -2,7 +2,7 @@ package cache
 
 // WFT is a struct that represents a value to be set in the cache and in the full-text cache.
 type WFT struct {
-	value string
+	Value string
 }
 
 // WithFT is a function that creates a new WFT struct with the specified value.
@@ -12,10 +12,7 @@ type WFT struct {
 //
 // Returns:
 //   - A WFT struct with the specified value or the initial string
-func (cache *Cache) WithFT(value string) any {
-	if cache.ft == nil {
-		return value
-	}
+func (cache *Cache) WithFT(value string) WFT {
 	return WFT{value}
 }
 

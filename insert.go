@@ -126,7 +126,7 @@ func (ts *TempStorage) update(ft *FullText, words []string, cacheKey string) {
 //   - (string): The full-text value of the given value.
 func (ts *TempStorage) getFTValue(value any) string {
 	if wft, ok := value.(WFT); ok {
-		return wft.value
+		return wft.Value
 	} else if v := ftFromMap(value); len(v) > 0 {
 		return v
 	} else {
@@ -156,18 +156,18 @@ func (ts *TempStorage) updateKeys(cacheKey string) {
 //
 // Returns:
 //   - An error if the full-text storage limit or byte-size limit is reached.
-func (ft *FullText) insert(data map[string]map[string]any) error {
+func (ft *FullText) insert(data *map[string]map[string]any) error {
 	// Create a new temp storage
 	var ts *TempStorage = NewTempStorage(ft)
 
 	// Loop through the json data
-	for cacheKey, cacheValue := range data {
+	for cacheKey, cacheValue := range *data {
 		for k, v := range cacheValue {
 			if ftv := ts.getFTValue(v); len(ftv) == 0 {
 				continue
 			} else {
 				// Set the key in the provided value to the string wft value
-				cacheValue[k] = ftv
+				(*data)[cacheKey][k] = ftv
 
 				// Insert the value in the temp storage
 				if err := ts.insert(ft, cacheKey, ftv); err != nil {

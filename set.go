@@ -10,7 +10,7 @@ import "fmt"
 //   - value: A map[string]any representing the value to set.
 //
 // Returns:
-//   - An error if the full-text cache key already exists. Otherwise, nil.
+//   - Error
 func (c *Cache) Set(key string, value map[string]any) error {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
@@ -29,7 +29,7 @@ func (c *Cache) Set(key string, value map[string]any) error {
 //   - An error if the full-text cache key already exists. Otherwise, nil.
 func (c *Cache) set(key string, value map[string]any) error {
 	if _, ok := c.data[key]; ok {
-		return fmt.Errorf("full-text cache key already exists (%s). please delete it before setting it another value", key)
+		return fmt.Errorf("full-text cache key already exists (%s). delete it before setting it another value", key)
 	}
 
 	// Update the value in the FT cache

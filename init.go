@@ -64,7 +64,7 @@ func (c *Cache) ftInit(maxLength int, maxBytes int, minWordLength int) error {
 	}
 
 	// Load the cache data
-	if err := ft.insert(c.data); err != nil {
+	if err := ft.insert(&c.data); err != nil {
 		return err
 	}
 
@@ -108,7 +108,7 @@ func (c *Cache) FTInitWithMap(data map[string]map[string]any, maxLength int, max
 // - maxBytes: the maximum size, in bytes, of the full-text index.
 //
 // Returns:
-// - error: From full-text storage insertion or if a key from the data already exists in the cache
+// - error
 func (c *Cache) ftInitWithMap(data map[string]map[string]any, maxLength int, maxBytes int, minWordLength int) error {
 	// Initialize the FT struct
 	var ft *FullText = &FullText{
@@ -129,7 +129,7 @@ func (c *Cache) ftInitWithMap(data map[string]map[string]any, maxLength int, max
 	}
 
 	// Insert the data into the ft storage
-	if err := ft.insert(data); err != nil {
+	if err := ft.insert(&data); err != nil {
 		return err
 	}
 
