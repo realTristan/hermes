@@ -170,7 +170,7 @@ func (ft *FullText) insert(data map[string]map[string]any) error {
 				cacheValue[k] = strv
 
 				// Insert the value in the temp storage
-				if err := ts.insert(ft, cacheKey, cacheValue, strv); err != nil {
+				if err := ts.insert(ft, cacheKey, strv); err != nil {
 					return err
 				}
 			}
@@ -191,14 +191,11 @@ func (ft *FullText) insert(data map[string]map[string]any) error {
 // Parameters:
 //   - ft (*FullText): A pointer to the FullText object to check the storage limit against.
 //   - cacheKey (string): A string representing the cache key to insert.
-//   - cacheValue (map[string]any): A map representing the cache value to insert.
-//   - k (string): A string representing the key to insert in the cache value.
-//   - v (any): A value to insert in the cache value.
+//   - strv (string): A string representing the value to insert.
 //
 // Returns:
 //   - (error): An error if the storage limit has been reached, nil otherwise.
-func (ts *TempStorage) insert(ft *FullText, cacheKey string, cacheValue map[string]any, strv string) error {
-
+func (ts *TempStorage) insert(ft *FullText, cacheKey string, strv string) error {
 	// Set the cache key in the temp storage keys
 	ts.updateKeys(cacheKey)
 
