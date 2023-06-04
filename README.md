@@ -16,22 +16,11 @@ pip install hermescloud
 ```
 
 # What is Hermes?
-Hermes is an extremely fast full-text search algorithm and caching system written in Go. It's designed for API implementations which can be used by wrappers in other languages.
-Hermes has two notable algorithms. The first being the with-cache algorithm. When using the with-cache algorithm, you can set, get, store, etc. keys and values into the cache. The second
-being a no-cache algorithm that reads data from a map, or json file, and uses and array to store the data. Both of these algorithms provide full-text search query times from 10µs to 300µs.
+Hermes is an extremely fast full-text search and caching framework written in Go.
+Hermes has a cache algorithm where you can set, get, store, etc. keys and values into the cache. Hermes also has a no-cache algorithm that reads data from an array or json file, and uses an array to store data. Both of these algorithms provide full-text search query speed from 10µs to 300µs.
 
 # Example of NoCache
-If you want to use only the full-text-search features, then just import hermes and load it using a .json file. (as shown in /example). Note: For small to medium-sized datasets (like the ones I used in /data), Hermes works great. Although, as the words in the dataset increases, the full-text-search cache will take up significantly more memory.
-
-## Benchmarks
-```
-Dataset Map Entries: 4,115
-Dataset Total Words: 208,092
-Dataset Map Size: ≈ 2.3MB
-
-Query: Computer, Limit: 100, Strict: False => 36.5µs
-Query: Computer, Limit: 100, Strict: True => 12.102µs
-```
+If you want to use only the full-text-search features, then import hermes/nocache. Load the data using a .json file or array of maps. No Cache is much faster than the With-Cache algorithm, but you can't update the data.
 
 ## Code
 ```go
@@ -59,7 +48,18 @@ func main() {
 }
 ```
 
+## Benchmarks
+```
+Dataset Map Entries: 4,115
+Dataset Total Words: 208,092
+Dataset Map Size: ≈ 2.3MB
+
+Query: Computer, Limit: 100, Strict: False => 36.5µs
+Query: Computer, Limit: 100, Strict: True => 12.102µs
+```
+
 ## data.json
+### Used with Hermes.InitWithJson()
 ```json
 [
   {
@@ -72,18 +72,8 @@ func main() {
 ]
 ```
 
-# Example of Cache
-The full-text-search from /cache is significantly slower than the nocache FTS. Why? Because the FTS in /cache requires more memory, keys, and utilizes a map instead of a slice to store data. If you want to use a cache along with the full text-search algorithm, import the files from /cache. To setup a cache, check out /cache/example or /cache/testing. 
-
-## Benchmarks
-```
-Dataset Map Entries: 4,115
-Dataset Total Words: 208,092
-Dataset Map Size: ≈ 2.3MB
-
-Query: Computer, Limit: 100, Strict: False => 263.7µs
-Query: Computer, Limit: 100, Strict: True => 40.84µs
-```
+# With-Cache Example
+The with-cache algorithm is notably slower than the no-cache algorithm. Why? Because the with-cache algorithm uses maps to store data and not an array. Import hermes directly to use the with-cache features.
 
 ## Code
 ```go
@@ -98,7 +88,7 @@ import (
 func main() {
   // Initialize the cache
   cache := Hermes.InitCache()
-
+  
   // MaxLength: 10, MaxBytes: -1 (no limit), MinWordLength: 3
   cache.FTInit(10, -1, 3)
 
@@ -117,6 +107,16 @@ func main() {
 
   fmt.Println(result)
 }
+```
+
+## Benchmarks
+```
+Dataset Map Entries: 4,115
+Dataset Total Words: 208,092
+Dataset Map Size: ≈ 2.3MB
+
+Query: Computer, Limit: 100, Strict: False => 263.7µs
+Query: Computer, Limit: 100, Strict: True => 40.84µs
 ```
 
 ## data.json
