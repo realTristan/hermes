@@ -8,7 +8,7 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	Hermes "github.com/realTristan/Hermes"
-	socket "github.com/realTristan/Hermes/socket"
+	Socket "github.com/realTristan/Hermes/cloud/socket"
 )
 
 // Main function
@@ -32,7 +32,7 @@ func main() {
 		Prefork:      false,
 		ServerHeader: "Hermes",
 	})
-	socket.SetRouter(app, cache)
+	Socket.SetRouter(app, cache)
 
 	// Listen on the port
 	log.Fatal(app.Listen(args.Port().(string)))
