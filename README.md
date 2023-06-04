@@ -1,16 +1,14 @@
 # Hermes ![Stars](https://img.shields.io/github/stars/realTristan/Hermes?color=brightgreen) ![Watchers](https://img.shields.io/github/watchers/realTristan/Hermes?label=Watchers)
 <img width="1173" alt="Screenshot 2023-06-03 at 1 55 31 PM" src="https://github.com/realTristan/Hermes/assets/75189508/f884f643-00af-405d-900d-a636d119cf74">
 
-# Hermes Go
+## Hermes Go
 Direct access to the hermes cache/nocache functions.
-## Import
 ```
 go get github.com/realTristan/Hermes
 ```
 
-# Hermes Cloud
+## Hermes Cloud
 Access the hermes cache functions via websocket.
-## Python Install
 ```
 pip install hermescloud
 ```
@@ -88,7 +86,7 @@ import (
 func main() {
   // Initialize the cache
   cache := Hermes.InitCache()
-  
+
   // MaxLength: 10, MaxBytes: -1 (no limit), MinWordLength: 3
   cache.FTInit(10, -1, 3)
 
