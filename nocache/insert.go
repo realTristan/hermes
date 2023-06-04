@@ -19,7 +19,7 @@ func (ft *FullText) insert(data []map[string]any, minWordLength int) error {
 				strvNormal string
 				strv       string
 			)
-			if _strv := ftFromMap(value); len(_strv) > 0 {
+			if _strv := WFTGetValueFromMap(value); len(_strv) > 0 {
 				strv = _strv
 				strvNormal = _strv
 			} else {

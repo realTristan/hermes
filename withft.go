@@ -33,7 +33,7 @@ func WFTGetValue(value any) string {
 	return ""
 }
 
-// ftFromMap is a function that gets the full-text value from a map.
+// WFTGetValueFromMap is a function that gets the full-text value from a map.
 //
 // Parameters:
 //   - value: any representing the value to get the full-text value from.
