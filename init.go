@@ -57,7 +57,7 @@ func (c *Cache) ftInit(maxLength int, maxBytes int, minWordLength int) error {
 	var ft *FullText = &FullText{
 		storage:       make(map[string]any),
 		indices:       make(map[int]string),
-		currentIndex:  0,
+		index:         0,
 		maxLength:     maxLength,
 		maxBytes:      maxBytes,
 		minWordLength: minWordLength,
@@ -114,7 +114,7 @@ func (c *Cache) ftInitWithMap(data map[string]map[string]any, maxLength int, max
 	var ft *FullText = &FullText{
 		storage:       make(map[string]any),
 		indices:       make(map[int]string),
-		currentIndex:  0,
+		index:         0,
 		maxLength:     maxLength,
 		maxBytes:      maxBytes,
 		minWordLength: minWordLength,

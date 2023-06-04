@@ -14,10 +14,10 @@ import (
 // Returns:
 //   - (*TempStorage): A pointer to the newly created TempStorage object.
 type TempStorage struct {
-	data         map[string]any
-	indices      map[int]string
-	currentIndex int
-	keys         map[string]int
+	data    map[string]any
+	indices map[int]string
+	index   int
+	keys    map[string]int
 }
 
 // NewTempStorage is a function that creates a new TempStorage object for a given FullText object.
@@ -28,10 +28,10 @@ type TempStorage struct {
 //   - (*TempStorage): A pointer to the newly created TempStorage object.
 func NewTempStorage(ft *FullText) *TempStorage {
 	var ts = &TempStorage{
-		data:         ft.storage,
-		indices:      ft.indices,
-		currentIndex: ft.currentIndex,
-		keys:         make(map[string]int),
+		data:    ft.storage,
+		indices: ft.indices,
+		index:   ft.index,
+		keys:    make(map[string]int),
 	}
 
 	// Loop through the data
@@ -50,7 +50,7 @@ func NewTempStorage(ft *FullText) *TempStorage {
 func (ts *TempStorage) updateFullText(ft *FullText) {
 	ft.storage = ts.data
 	ft.indices = ts.indices
-	ft.currentIndex = ts.currentIndex
+	ft.index = ts.index
 }
 
 // cleanSingleArrays is a method of the TempStorage struct that replaces single-element integer arrays with their single integer value.
@@ -106,7 +106,7 @@ func (ts *TempStorage) update(ft *FullText, words []string, cacheKey string) {
 			continue
 		}
 		if temp, ok := ts.data[words[i]]; !ok {
-			ts.data[words[i]] = []int{ts.currentIndex}
+			ts.data[words[i]] = []int{ts.index}
 		} else if v, ok := temp.([]int); !ok {
 			ts.data[words[i]] = []int{temp.(int), ts.keys[cacheKey]}
 		} else {
@@ -142,9 +142,9 @@ func (ts *TempStorage) getFTValue(value any) string {
 //   - None.
 func (ts *TempStorage) updateKeys(cacheKey string) {
 	if _, ok := ts.keys[cacheKey]; !ok {
-		ts.currentIndex++
-		ts.indices[ts.currentIndex] = cacheKey
-		ts.keys[cacheKey] = ts.currentIndex
+		ts.index++
+		ts.indices[ts.index] = cacheKey
+		ts.keys[cacheKey] = ts.index
 	}
 }
 

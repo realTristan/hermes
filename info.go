@@ -43,7 +43,7 @@ func (c *Cache) info() (map[string]any, error) {
 		// Add the full-text info to the map
 		info["full-text"] = map[string]any{
 			"keys":          len(c.ft.storage),
-			"current_index": c.ft.currentIndex,
+			"current_index": c.ft.index,
 			"size":          size,
 		}
 	}
@@ -89,7 +89,7 @@ func (c *Cache) infoForTesting() (map[string]any, error) {
 	} else {
 		info["full-text"] = map[string]any{
 			"keys":          len(c.ft.storage),
-			"current_index": c.ft.currentIndex,
+			"current_index": c.ft.index,
 			"size":          size,
 			"storage":       c.ft.storage,
 			"indices":       c.ft.indices,

@@ -1,6 +1,6 @@
 package cache
 
-// When you delete a number of keys from the cache, the currentIndex remains
+// When you delete a number of keys from the cache, the index remains
 // the same. Over time, this number will grow to be very large, and will
 // cause the cache to use a lot of memory. This function resets the indices
 // to be sequential, starting from 0.
@@ -11,7 +11,7 @@ func (c *Cache) FTSequenceIndices() {
 	c.ft.sequenceIndices()
 }
 
-// When you delete a number of keys from the cache, the currentIndex remains
+// When you delete a number of keys from the cache, the index remains
 // the same. Over time, this number will grow to be very large, and will
 // cause the cache to use a lot of memory. This function resets the indices
 // to be sequential, starting from 0.
@@ -20,16 +20,16 @@ func (c *Cache) FTSequenceIndices() {
 func (ft *FullText) sequenceIndices() {
 	// Store the temp variables
 	var (
-		tempIndices      map[int]string = make(map[int]string)
-		tempCurrentIndex int            = 0
-		tempKeys         map[string]int = make(map[string]int)
+		tempIndices map[int]string = make(map[int]string)
+		tempindex   int            = 0
+		tempKeys    map[string]int = make(map[string]int)
 	)
 
 	// Fill the temp indices by iterating over the current
 	// indices and adding them to the tempIndices map
 	for _, value := range ft.indices {
-		tempIndices[tempCurrentIndex] = value
-		tempCurrentIndex++
+		tempIndices[tempindex] = value
+		tempindex++
 	}
 
 	// Fill the temp keys with the opposites of ft.indices
@@ -61,5 +61,5 @@ func (ft *FullText) sequenceIndices() {
 
 	// Set the old variables to the new variables
 	ft.indices = tempIndices
-	ft.currentIndex = tempCurrentIndex
+	ft.index = tempindex
 }

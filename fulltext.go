@@ -12,14 +12,14 @@ import (
 // Fields:
 //   - storage (map[string]any): A map that stores the indices of the entries in the cache that contain each word in the full-text index. The keys of the map are strings that represent the words in the index, and the values are slices of integers that represent the indices of the entries in the cache that contain the word.
 //   - indices (map[int]string): A map that stores the words in the full-text index. The keys of the map are integers that represent the indices of the words in the index, and the values are strings that represent the words.
-//   - currentIndex (int): An integer that represents the current index of the full-text index. This is used to assign unique indices to new words as they are added to the index.
+//   - index (int): An integer that represents the current index of the full-text index. This is used to assign unique indices to new words as they are added to the index.
 //   - maxLength (int): An integer that represents the maximum number of words that can be stored in the full-text index.
 //   - maxBytes (int): An integer that represents the maximum size of the text that can be stored in the full-text index, in bytes.
 //   - minWordLength (int): An integer that represents the minimum length of a word that can be stored in the full-text index.
 type FullText struct {
 	storage       map[string]any // either []int or int
 	indices       map[int]string
-	currentIndex  int
+	index         int
 	maxLength     int
 	maxBytes      int
 	minWordLength int
