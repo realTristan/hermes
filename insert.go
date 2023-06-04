@@ -163,14 +163,14 @@ func (ft *FullText) insert(data map[string]map[string]any) error {
 	// Loop through the json data
 	for cacheKey, cacheValue := range data {
 		for k, v := range cacheValue {
-			if strv := ts.getFTValue(v); len(strv) == 0 {
+			if ftv := ts.getFTValue(v); len(ftv) == 0 {
 				continue
 			} else {
 				// Set the key in the provided value to the string wft value
-				cacheValue[k] = strv
+				cacheValue[k] = ftv
 
 				// Insert the value in the temp storage
-				if err := ts.insert(ft, cacheKey, strv); err != nil {
+				if err := ts.insert(ft, cacheKey, ftv); err != nil {
 					return err
 				}
 			}
@@ -191,21 +191,21 @@ func (ft *FullText) insert(data map[string]map[string]any) error {
 // Parameters:
 //   - ft (*FullText): A pointer to the FullText object to check the storage limit against.
 //   - cacheKey (string): A string representing the cache key to insert.
-//   - strv (string): A string representing the value to insert.
+//   - ftv (string): A string representing the value to insert.
 //
 // Returns:
 //   - (error): An error if the storage limit has been reached, nil otherwise.
-func (ts *TempStorage) insert(ft *FullText, cacheKey string, strv string) error {
+func (ts *TempStorage) insert(ft *FullText, cacheKey string, ftv string) error {
 	// Set the cache key in the temp storage keys
 	ts.updateKeys(cacheKey)
 
 	// Clean the string value
-	strv = strings.TrimSpace(strv)
-	strv = Utils.RemoveDoubleSpaces(strv)
-	strv = strings.ToLower(strv)
+	ftv = strings.TrimSpace(ftv)
+	ftv = Utils.RemoveDoubleSpaces(ftv)
+	ftv = strings.ToLower(ftv)
 
 	// Loop through the words
-	for _, word := range strings.Split(strv, " ") {
+	for _, word := range strings.Split(ftv, " ") {
 		if len(word) == 0 {
 			continue
 		} else if len(word) < ft.minWordLength {

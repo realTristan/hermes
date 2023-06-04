@@ -59,14 +59,14 @@ func (c *Cache) ftSet(key string, value map[string]any) error {
 	// Create a new temp storage
 	var ts *TempStorage = NewTempStorage(c.ft)
 	for k, v := range value {
-		if strv := ts.getFTValue(v); len(strv) == 0 {
+		if ftv := ts.getFTValue(v); len(ftv) == 0 {
 			continue
 		} else {
 			// Update the value
-			value[k] = strv
+			value[k] = ftv
 
 			// Insert the value in the temp storage
-			if err := ts.insert(c.ft, key, strv); err != nil {
+			if err := ts.insert(c.ft, key, ftv); err != nil {
 				return err
 			}
 		}
