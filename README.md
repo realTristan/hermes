@@ -49,12 +49,12 @@ func main() {
   var ft, _ = Hermes.InitWithJson("data.json")
 
   // Search for a word in the cache
-  // @params: query, limit, strict
   var res, _ = ft.Search(Hermes.SearchParams{
     Query:  "tristan",
     Limit:  100,
     Strict: false,
   })
+
   fmt.Println(res)
 }
 ```
