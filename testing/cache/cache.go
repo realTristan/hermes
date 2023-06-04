@@ -8,6 +8,7 @@ import (
 
 func main() {
 	var cache *Hermes.Cache = Hermes.InitCache()
+	cache.FTInit(3, -1, -1)
 
 	// Test Set, Get, Delete, Clean, Length, Values, Keys, and Exists
 	var data = map[string]any{
