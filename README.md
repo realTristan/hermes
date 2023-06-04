@@ -46,7 +46,7 @@ func main() {
 }
 ```
 
-## Benchmarks
+### Benchmarks
 ```
 Dataset Map Entries: 4,115
 Dataset Total Words: 208,092
@@ -56,8 +56,8 @@ Query: Computer, Limit: 100, Strict: False => 36.5µs
 Query: Computer, Limit: 100, Strict: True => 12.102µs
 ```
 
-## data.json
-### Used with Hermes.InitWithJson()
+### data.json
+Used with Hermes.InitWithJson()
 ```json
 [
   {
@@ -107,7 +107,7 @@ func main() {
 }
 ```
 
-## Benchmarks
+### Benchmarks
 ```
 Dataset Map Entries: 4,115
 Dataset Total Words: 208,092
@@ -117,8 +117,8 @@ Query: Computer, Limit: 100, Strict: False => 263.7µs
 Query: Computer, Limit: 100, Strict: True => 40.84µs
 ```
 
-## data.json
-### Used with cache.FTInitWithJson()
+### data.json
+Used with cache.FTInitWithJson()
 ```json
 {
   "user_id": {
