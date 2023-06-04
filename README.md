@@ -97,9 +97,8 @@ import (
 
 func main() {
   // Initialize the cache
-  var cache *Hermes.Cache = Hermes.InitCache()
+  cache := Hermes.InitCache()
 
-  // Initialize the full-text cache
   // MaxLength: 10, MaxBytes: -1 (no limit), MinWordLength: 3
   cache.FTInit(10, -1, 3)
 
@@ -107,15 +106,15 @@ func main() {
   cache.Set("user_id", map[string]any{
     "name":       cache.WithFT("tristan"),
     "age":        17,
-    "expiration": time.Now(),
   })
 
   // Search for a word in the cache and print the result
-  var result, _ = cache.Search(Hermes.SearchParams{
+  result, err := cache.Search(Hermes.SearchParams{
     Query:  "tristan",
     Limit:  100,
     Strict: false,
   })
+
   fmt.Println(result)
 }
 ```
