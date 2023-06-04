@@ -33,6 +33,7 @@ func NewTempStorage(ft *FullText) *TempStorage {
 		currentIndex: ft.currentIndex,
 		keys:         make(map[string]int),
 	}
+
 	// Loop through the data
 	for k, v := range ts.indices {
 		ts.keys[v] = k
@@ -141,9 +142,9 @@ func (ts *TempStorage) getFTValue(value any) string {
 //   - None.
 func (ts *TempStorage) updateKeys(cacheKey string) {
 	if _, ok := ts.keys[cacheKey]; !ok {
+		ts.currentIndex++
 		ts.indices[ts.currentIndex] = cacheKey
 		ts.keys[cacheKey] = ts.currentIndex
-		ts.currentIndex++
 	}
 }
 
@@ -162,8 +163,16 @@ func (ft *FullText) insert(data map[string]map[string]any) error {
 	// Loop through the json data
 	for cacheKey, cacheValue := range data {
 		for k, v := range cacheValue {
-			if err := ts.insert(ft, cacheKey, cacheValue, k, v); err != nil {
-				return err
+			if strv := ts.getFTValue(v); len(strv) == 0 {
+				continue
+			} else {
+				// Set the key in the provided value to the string wft value
+				cacheValue[k] = strv
+
+				// Insert the value in the temp storage
+				if err := ts.insert(ft, cacheKey, cacheValue, strv); err != nil {
+					return err
+				}
 			}
 		}
 	}
@@ -188,15 +197,10 @@ func (ft *FullText) insert(data map[string]map[string]any) error {
 //
 // Returns:
 //   - (error): An error if the storage limit has been reached, nil otherwise.
-func (ts *TempStorage) insert(ft *FullText, cacheKey string, cacheValue map[string]any, k string, v any) error {
-	// Check if the value is a WFT
-	var strv string = ts.getFTValue(v)
+func (ts *TempStorage) insert(ft *FullText, cacheKey string, cacheValue map[string]any, strv string) error {
 
 	// Set the cache key in the temp storage keys
 	ts.updateKeys(cacheKey)
-
-	// Set the key in the provided value to the string wft value
-	cacheValue[k] = strv
 
 	// Clean the string value
 	strv = strings.TrimSpace(strv)

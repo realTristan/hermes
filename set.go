@@ -1,8 +1,6 @@
 package cache
 
-import (
-	"fmt"
-)
+import "fmt"
 
 // Set is a method of the Cache struct that sets a value in the cache for the specified key.
 // This function is thread-safe.
@@ -61,8 +59,16 @@ func (c *Cache) ftSet(key string, value map[string]any) error {
 	// Create a new temp storage
 	var ts *TempStorage = NewTempStorage(c.ft)
 	for k, v := range value {
-		if err := ts.insert(c.ft, key, value, k, v); err != nil {
-			return err
+		if strv := ts.getFTValue(v); len(strv) == 0 {
+			continue
+		} else {
+			// Update the value
+			value[k] = strv
+
+			// Insert the value in the temp storage
+			if err := ts.insert(c.ft, key, value, strv); err != nil {
+				return err
+			}
 		}
 	}
 
