@@ -15,7 +15,7 @@ pip install hermescloud
 
 # What is Hermes?
 Hermes is an extremely fast full-text search and caching framework written in Go.
-Hermes has a cache algorithm where you can set, get, store, etc. keys and values into the cache. Hermes also has a no-cache algorithm that reads data from an array or json file, and uses an array to store data. Both of these algorithms provide full-text search query speed from 10µs to 300µs.
+Hermes has a cache algorithm where you can set, get, store, etc. keys and values into the cache, and a no-cache algorithm that reads data from an array or json file, and uses an array to store data. Both of these algorithms provide full-text search query speed from 10µs to 300µs.
 
 # Example of NoCache
 If you want to use only the full-text-search features, then import hermes/nocache. Load the data using a .json file or array of maps. No Cache is much faster than the With-Cache algorithm, but you can't update the data.
