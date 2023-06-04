@@ -20,7 +20,7 @@ Hermes is an extremely fast full-text search algorithm and caching system writte
 Hermes has two notable algorithms. The first being the with-cache algorithm. When using the with-cache algorithm, you can set, get, store, etc. keys and values into the cache. The second
 being a no-cache algorithm that reads data from a map, or json file, and uses and array to store the data. Both of these algorithms provide full-text search query times from 10µs to 300µs.
 
-# Example of NoCache Full-Text-Search
+# Example of NoCache
 If you want to use only the full-text-search features, then just import hermes and load it using a .json file. (as shown in /example). Note: For small to medium-sized datasets (like the ones I used in /data), Hermes works great. Although, as the words in the dataset increases, the full-text-search cache will take up significantly more memory.
 
 ## Benchmarks
@@ -72,7 +72,7 @@ func main() {
 ]
 ```
 
-# Example of Cache Full-Text-Search
+# Example of Cache
 The full-text-search from /cache is significantly slower than the nocache FTS. Why? Because the FTS in /cache requires more memory, keys, and utilizes a map instead of a slice to store data. If you want to use a cache along with the full text-search algorithm, import the files from /cache. To setup a cache, check out /cache/example or /cache/testing. 
 
 ## Benchmarks
