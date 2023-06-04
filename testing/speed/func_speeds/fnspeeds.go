@@ -25,7 +25,7 @@ func main() {
 
 	// The data for the user_id and user_id2 key
 	var data = map[string]any{
-		"name": Hermes.WithFT("tristan1"),
+		"name": cache.WithFT("tristan1"),
 		"age":  17,
 	}
 	var data2 = map[string]any{

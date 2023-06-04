@@ -12,7 +12,7 @@ func main() {
 
 	// Test Set, Get, Delete, Clean, Length, Values, Keys, and Exists
 	var data = map[string]any{
-		"name": Hermes.WithFT("Tristan"),
+		"name": cache.WithFT("Tristan"),
 		"age":  17,
 	}
 

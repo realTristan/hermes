@@ -11,8 +11,11 @@ type WFT struct {
 //   - value: A string representing the value to set in the cache and in the full-text cache.
 //
 // Returns:
-//   - A WFT struct with the specified value.
-func WithFT(value string) WFT {
+//   - A WFT struct with the specified value or the initial string
+func (cache *Cache) WithFT(value string) any {
+	if cache.ft == nil {
+		return value
+	}
 	return WFT{value}
 }
 

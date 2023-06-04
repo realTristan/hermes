@@ -38,37 +38,37 @@ Query: Computer, Limit: 100, Strict: True => 12.102µs
 package main
 
 import (
-    "fmt"
-    "time"
+  "fmt"
+  "time"
 
-    Hermes "github.com/realTristan/Hermes/nocache"
+  Hermes "github.com/realTristan/Hermes/nocache"
 )
 
 func main() {
-    // Initialize the full-text cache
-    var ft, _ = Hermes.InitWithJson("data.json")
-	
-    // Search for a word in the cache
-    // @params: query, limit, strict
-    var res, _ = ft.Search(Hermes.SearchParams{
-    	Query:  "tristan",
-    	Limit:  100,
-    	Strict: false,
-    })
-    fmt.Println(res)
+  // Initialize the full-text cache
+  var ft, _ = Hermes.InitWithJson("data.json")
+
+  // Search for a word in the cache
+  // @params: query, limit, strict
+  var res, _ = ft.Search(Hermes.SearchParams{
+    Query:  "tristan",
+    Limit:  100,
+    Strict: false,
+  })
+  fmt.Println(res)
 }
 ```
 
 ## data.json
 ```json
 [
-    {
-	"id": 1,
-        "name": {
-            "$hermes.full_text": true,
-            "$hermes.value": "Tristan Simpson"
-        },
+  {
+    "id": 1,
+    "name": {
+      "$hermes.full_text": true,
+      "$hermes.value": "Tristan Simpson"
     },
+  },
 ]
 ```
 
@@ -90,33 +90,33 @@ Query: Computer, Limit: 100, Strict: True => 40.84µs
 package main
 
 import (
-    "fmt"
-    "time"
-    Hermes "github.com/realTristan/Hermes"
+  "fmt"
+  "time"
+  Hermes "github.com/realTristan/Hermes"
 )
 
 func main() {
-    // Initialize the cache
-    var cache *Hermes.Cache = Hermes.InitCache()
-	
-    // Initialize the full-text cache
-    // MaxLength: 10, MaxBytes: -1 (no limit), MinWordLength: 3
-    cache.FTInit(10, -1, 3)
-	
-    // Set the value in the cache
-    cache.Set("user_id", map[string]any{
-        "name":       Hermes.WithFT("tristan"),
-        "age":        17,
-        "expiration": time.Now(),
-    })
-	
-    // Search for a word in the cache and print the result
-    var result, _ = cache.Search(Hermes.SearchParams{
-        Query:  "tristan",
-        Limit:  100,
-        Strict: false,
-    })
-    fmt.Println(result)
+  // Initialize the cache
+  var cache *Hermes.Cache = Hermes.InitCache()
+
+  // Initialize the full-text cache
+  // MaxLength: 10, MaxBytes: -1 (no limit), MinWordLength: 3
+  cache.FTInit(10, -1, 3)
+
+  // Set the value in the cache
+  cache.Set("user_id", map[string]any{
+    "name":       cache.WithFT("tristan"),
+    "age":        17,
+    "expiration": time.Now(),
+  })
+
+  // Search for a word in the cache and print the result
+  var result, _ = cache.Search(Hermes.SearchParams{
+    Query:  "tristan",
+    Limit:  100,
+    Strict: false,
+  })
+  fmt.Println(result)
 }
 ```
 
@@ -143,21 +143,21 @@ Coming Soon
 ## Custom Implementation
 ```go
 import (
-    "github.com/gofiber/fiber/v2"
-    Hermes "github.com/realTristan/Hermes"
-    Socket "github.com/realTristan/Hermes/socket"
+  "github.com/gofiber/fiber/v2"
+  Hermes "github.com/realTristan/Hermes"
+  Socket "github.com/realTristan/Hermes/socket"
 )
 
 func main() {
-    // Cache and fiber app
-    cache := Hermes.InitCache()
-    app := fiber.New()
+  // Cache and fiber app
+  cache := Hermes.InitCache()
+  app := fiber.New()
 
-    // Set the router
-    Socket.SetRouter(app, cache)
+  // Set the router
+  Socket.SetRouter(app, cache)
 
-    // Listen on port 3000
-    app.Listen(":3000")
+  // Listen on port 3000
+  app.Listen(":3000")
 }
 ```
 
