@@ -1,6 +1,9 @@
 # Hermes ![Stars](https://img.shields.io/github/stars/realTristan/hermes?color=brightgreen) ![Watchers](https://img.shields.io/github/watchers/realTristan/hermes?label=Watchers)
 <img width="1173" alt="Screenshot 2023-06-03 at 1 55 31 PM" src="https://github.com/realTristan/hermes/assets/75189508/f884f643-00af-405d-900d-a636d119cf74">
 
+# How to contribute
+Hermes is still in a developmental phase. Helping with test-cases, benchmarks, speed, and memory-usage are a great way to contribute to the project.
+
 ## Hermes Go
 Direct access to the hermes cache/nocache functions.
 ```
