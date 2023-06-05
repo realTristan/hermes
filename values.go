@@ -17,7 +17,7 @@ func (c *Cache) Values() []map[string]any {
 // Returns:
 //   - A slice of map[string]any representing all the values in the cache.
 func (c *Cache) values() []map[string]any {
-	var values []map[string]any = []map[string]any{}
+	values := make([]map[string]any, 0, len(c.data))
 	for _, value := range c.data {
 		values = append(values, value)
 	}

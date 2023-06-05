@@ -17,7 +17,7 @@ func (c *Cache) Keys() []string {
 // Returns:
 //   - A slice of strings containing all the keys in the cache.
 func (c *Cache) keys() []string {
-	var keys []string = []string{}
+	keys := make([]string, 0, len(c.data))
 	for key := range c.data {
 		keys = append(keys, key)
 	}
