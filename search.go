@@ -65,7 +65,7 @@ func (c *Cache) search(sp SearchParams) []map[string]any {
 
 	// Variables for storing the smallest words array
 	var (
-		smallest      int = 0
+		smallest      int = 0 //nolint:ineffassign
 		smallestIndex int = 0
 	)
 
