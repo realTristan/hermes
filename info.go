@@ -3,7 +3,7 @@ package hermes
 import (
 	"errors"
 
-	Utils "github.com/realTristan/Hermes/utils"
+	utils "github.com/realTristan/hermes/utils"
 )
 
 // Info is a method of the Cache struct that returns a map with the cache and full-text info.
@@ -37,7 +37,7 @@ func (c *Cache) info() (map[string]any, error) {
 	}
 
 	// Add the full-text info to the map
-	if size, err := Utils.Size(c.ft.storage); err != nil {
+	if size, err := utils.Size(c.ft.storage); err != nil {
 		return info, err
 	} else {
 		// Add the full-text info to the map
@@ -84,7 +84,7 @@ func (c *Cache) infoForTesting() (map[string]any, error) {
 	}
 
 	// Add the full-text info to the map
-	if size, err := Utils.Size(c.ft.storage); err != nil {
+	if size, err := utils.Size(c.ft.storage); err != nil {
 		return info, err
 	} else {
 		info["full-text"] = map[string]any{

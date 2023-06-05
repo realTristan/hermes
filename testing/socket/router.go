@@ -2,13 +2,13 @@ package main
 
 import (
 	"github.com/gofiber/fiber/v2"
-	Hermes "github.com/realTristan/Hermes"
-	Socket "github.com/realTristan/Hermes/cloud/socket"
+	hermes "github.com/realTristan/hermes"
+	Socket "github.com/realTristan/hermes/cloud/socket"
 )
 
 func main() {
 	// Cache and fiber app
-	cache := Hermes.InitCache()
+	cache := hermes.InitCache()
 	app := fiber.New()
 
 	// Set the router

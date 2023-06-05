@@ -4,7 +4,7 @@ import (
 	"errors"
 	"strings"
 
-	Utils "github.com/realTristan/Hermes/utils"
+	utils "github.com/realTristan/hermes/utils"
 )
 
 // SearchOneWord searches for a single query within the data using a full-text search approach.
@@ -69,7 +69,7 @@ func (ft *FullText) searchOneWord(sp SearchParams) []map[string]any {
 		switch {
 		case len(result) >= sp.Limit:
 			return result
-		case !Utils.Contains(ft.words[i], sp.Query):
+		case !utils.Contains(ft.words[i], sp.Query):
 			continue
 		}
 

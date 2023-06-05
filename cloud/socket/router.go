@@ -6,12 +6,12 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/websocket/v2"
-	Hermes "github.com/realTristan/Hermes"
-	Utils "github.com/realTristan/Hermes/cloud/socket/utils"
+	hermes "github.com/realTristan/hermes"
+	utils "github.com/realTristan/hermes/cloud/socket/utils"
 )
 
 // Set the router for the socket
-func SetRouter(app *fiber.App, cache *Hermes.Cache) {
+func SetRouter(app *fiber.App, cache *hermes.Cache) {
 	// Init a new socket
 	var socket *Socket = &Socket{
 		active: false,
@@ -59,8 +59,8 @@ func SetRouter(app *fiber.App, cache *Hermes.Cache) {
 			}
 
 			// Get the data
-			var p *Utils.Params
-			if p, err = Utils.ParseParams(msg); err != nil {
+			var p *utils.Params
+			if p, err = utils.ParseParams(msg); err != nil {
 				log.Println("parse:", err)
 				break
 			}

@@ -7,13 +7,13 @@ import (
 	"strings"
 	"time"
 
-	Hermes "github.com/realTristan/Hermes"
+	hermes "github.com/realTristan/hermes"
 )
 
-// Results: Hermes is about 40x faster than a basic search
+// Results: hermes is about 40x faster than a basic search
 func main() {
 	BasicSearch()
-	HermesSearch()
+	hermesSearch()
 }
 
 // Basic Search
@@ -52,10 +52,10 @@ func BasicSearch() {
 	}
 }
 
-// Hermes Search
-func HermesSearch() {
+// hermes Search
+func hermesSearch() {
 	// Initialize the cache
-	var cache *Hermes.Cache = Hermes.InitCache()
+	var cache *hermes.Cache = hermes.InitCache()
 
 	// Initialize the FT cache with a json file
 	cache.FTInitWithJson("../../data/data_hash.json", -1, -1, 3)
@@ -69,7 +69,7 @@ func HermesSearch() {
 			start time.Time = time.Now()
 
 			// Search for a word in the cache
-			res, _ = cache.Search(Hermes.SearchParams{
+			res, _ = cache.Search(hermes.SearchParams{
 				Query:  "computer science",
 				Limit:  100,
 				Strict: false,
@@ -89,8 +89,8 @@ func HermesSearch() {
 		averageNanos  float64 = float64(average) / 100
 		averageMillis float64 = averageNanos / 1000000
 	)
-	fmt.Println("Hermes: Average time is: ", averageNanos, "ns or", averageMillis, "ms")
-	fmt.Println("Hermes: Results: ", total)
+	fmt.Println("hermes: Average time is: ", averageNanos, "ns or", averageMillis, "ms")
+	fmt.Println("hermes: Results: ", total)
 }
 
 // Read a json file

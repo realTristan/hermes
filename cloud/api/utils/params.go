@@ -24,21 +24,21 @@ func GetValueParam[T any](ctx *fiber.Ctx, value *T) error {
 	return nil
 }
 
-// GetMaxLengthParam is a function that retrieves the "maxlength" query parameter from a Fiber context and stores it in an integer pointer.
+// GetMaxSizeParam is a function that retrieves the "maxsize" query parameter from a Fiber context and stores it in an integer pointer.
 // Parameters:
 //   - ctx (*fiber.Ctx): A pointer to a Fiber context.
-//   - maxLength (*int): A pointer to an integer to store the "maxlength" query parameter.
+//   - maxSize (*int): A pointer to an integer to store the "maxsize" query parameter.
 //
 // Returns:
-//   - error: An error message if the "maxlength" query parameter is invalid or cannot be converted to an integer, or nil if the retrieval is successful.
-func GetMaxLengthParam(ctx *fiber.Ctx, maxLength *int) error {
-	if s := ctx.Query("maxlength"); len(s) == 0 {
+//   - error: An error message if the "maxsize" query parameter is invalid or cannot be converted to an integer, or nil if the retrieval is successful.
+func GetMaxSizeParam(ctx *fiber.Ctx, maxSize *int) error {
+	if s := ctx.Query("maxsize"); len(s) == 0 {
 		fmt.Println(s)
-		return errors.New("invalid maxlength")
+		return errors.New("invalid maxsize")
 	} else if i, err := strconv.Atoi(s); err != nil {
 		return err
 	} else {
-		*maxLength = i
+		*maxSize = i
 	}
 	return nil
 }

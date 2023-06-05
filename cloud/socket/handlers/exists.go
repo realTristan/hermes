@@ -1,27 +1,27 @@
 package handlers
 
 import (
-	Hermes "github.com/realTristan/Hermes"
-	Utils "github.com/realTristan/Hermes/cloud/socket/utils"
+	hermes "github.com/realTristan/hermes"
+	utils "github.com/realTristan/hermes/cloud/socket/utils"
 )
 
 // Exists is a handler function that returns a fiber context handler function for checking if a key exists in the cache.
 // Parameters:
-//   - p (*Utils.Params): A pointer to a Utils.Params struct.
-//   - c (*Hermes.Cache): A pointer to a Hermes.Cache struct.
+//   - p (*utils.Params): A pointer to a utils.Params struct.
+//   - c (*hermes.Cache): A pointer to a hermes.Cache struct.
 //
 // Returns:
 //   - []byte: A JSON-encoded byte slice containing a boolean value indicating whether the key exists in the cache or an error message if the key is not provided.
-func Exists(p *Utils.Params, c *Hermes.Cache) []byte {
+func Exists(p *utils.Params, c *hermes.Cache) []byte {
 	// Get the key from the query
 	var (
 		key string
 		err error
 	)
-	if key, err = Utils.GetKeyParam(p); err != nil {
-		return Utils.Error("key not provided")
+	if key, err = utils.GetKeyParam(p); err != nil {
+		return utils.Error("key not provided")
 	}
 
 	// Return whether the key exists
-	return Utils.Success(c.Exists(key))
+	return utils.Success(c.Exists(key))
 }

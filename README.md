@@ -1,10 +1,10 @@
-# Hermes ![Stars](https://img.shields.io/github/stars/realTristan/Hermes?color=brightgreen) ![Watchers](https://img.shields.io/github/watchers/realTristan/Hermes?label=Watchers)
-<img width="1173" alt="Screenshot 2023-06-03 at 1 55 31 PM" src="https://github.com/realTristan/Hermes/assets/75189508/f884f643-00af-405d-900d-a636d119cf74">
+# Hermes ![Stars](https://img.shields.io/github/stars/realTristan/hermes?color=brightgreen) ![Watchers](https://img.shields.io/github/watchers/realTristan/hermes?label=Watchers)
+<img width="1173" alt="Screenshot 2023-06-03 at 1 55 31 PM" src="https://github.com/realTristan/hermes/assets/75189508/f884f643-00af-405d-900d-a636d119cf74">
 
 ## Hermes Go
 Direct access to the hermes cache/nocache functions.
 ```
-go get github.com/realTristan/Hermes
+go get github.com/realTristan/hermes
 ```
 
 ## Hermes Cloud
@@ -30,15 +30,15 @@ import (
   "fmt"
   "time"
 
-  Hermes "github.com/realTristan/Hermes/nocache"
+  hermes "github.com/realTristan/hermes/nocache"
 )
 
 func main() {
   // Initialize the full-text cache
-  var ft, _ = Hermes.InitWithJson("data.json")
+  var ft, _ = hermes.InitWithJson("data.json")
 
   // Search for a word in the cache
-  var res, _ = ft.Search(Hermes.SearchParams{
+  var res, _ = ft.Search(hermes.SearchParams{
     Query:  "tristan",
     Limit:  100,
     Strict: false,
@@ -59,7 +59,7 @@ Query: Computer, Limit: 100, Strict: True => 12.102µs
 ```
 
 ### data.json
-Used with Hermes.InitWithJson()
+Used with hermes.InitWithJson()
 ```json
 [
   {
@@ -82,14 +82,14 @@ package main
 import (
   "fmt"
   "time"
-  Hermes "github.com/realTristan/Hermes"
+  hermes "github.com/realTristan/hermes"
 )
 
 func main() {
   // Initialize the cache
-  cache := Hermes.InitCache()
+  cache := hermes.InitCache()
 
-  // MaxLength: 10, MaxBytes: -1 (no limit), MinWordLength: 3
+  // MaxSize: 10, MaxBytes: -1 (no limit), MinWordLength: 3
   cache.FTInit(10, -1, 3)
 
   // Set the value in the cache
@@ -99,7 +99,7 @@ func main() {
   })
 
   // Search for a word in the cache and print the result
-  result, err := cache.Search(Hermes.SearchParams{
+  result, err := cache.Search(hermes.SearchParams{
     Query:  "tristan",
     Limit:  100,
     Strict: false,
@@ -143,17 +143,17 @@ Coming Soon
 ```go
 import (
   "github.com/gofiber/fiber/v2"
-  Hermes "github.com/realTristan/Hermes"
-  Socket "github.com/realTristan/Hermes/cloud/socket"
+  hermes "github.com/realTristan/hermes"
+  socket "github.com/realTristan/hermes/cloud/socket"
 )
 
 func main() {
   // Cache and fiber app
-  cache := Hermes.InitCache()
+  cache := hermes.InitCache()
   app := fiber.New()
 
   // Set the router
-  Socket.SetRouter(app, cache)
+  socket.SetRouter(app, cache)
 
   // Listen on port 3000
   app.Listen(":3000")
@@ -163,7 +163,7 @@ func main() {
 # Websocket API
 ## Cache
 
-### [cache.set](https://github.com/realTristan/Hermes/blob/master/cloud/socket/handlers/set.go)
+### [cache.set](https://github.com/realTristan/hermes/blob/master/cloud/socket/handlers/set.go)
 
 #### About
 ```
@@ -189,7 +189,7 @@ Set a value in the cache with the corresponding key.
 }
 ```
 
-### [cache.delete](https://github.com/realTristan/Hermes/blob/master/cloud/socket/handlers/delete.go)
+### [cache.delete](https://github.com/realTristan/hermes/blob/master/cloud/socket/handlers/delete.go)
 
 #### About
 ```
@@ -212,7 +212,7 @@ Delete the provided key, and the data correlated to it from the cache.
 }
 ```
 
-### [cache.get](https://github.com/realTristan/Hermes/blob/master/cloud/socket/handlers/get.go)
+### [cache.get](https://github.com/realTristan/hermes/blob/master/cloud/socket/handlers/get.go)
 
 #### About
 ```
@@ -235,7 +235,7 @@ Get data from the cache using a key.
 }
 ```
 
-### [cache.keys](https://github.com/realTristan/Hermes/blob/master/cloud/socket/handlers/keys.go)
+### [cache.keys](https://github.com/realTristan/hermes/blob/master/cloud/socket/handlers/keys.go)
 
 #### About
 ```
@@ -257,7 +257,7 @@ Get all of the keys in the cache.
 }
 ```
 
-### [cache.values](https://github.com/realTristan/Hermes/blob/master/cloud/socket/handlers/values.go)
+### [cache.values](https://github.com/realTristan/hermes/blob/master/cloud/socket/handlers/values.go)
 
 #### About
 ```
@@ -279,7 +279,7 @@ Get all of the values in the cache.
 }
 ```
 
-### [cache.length](https://github.com/realTristan/Hermes/blob/master/cloud/socket/handlers/length.go)
+### [cache.length](https://github.com/realTristan/hermes/blob/master/cloud/socket/handlers/length.go)
 
 #### About
 ```
@@ -301,7 +301,7 @@ Get the amount of keys stored in the cache.
 }
 ```
 
-### [cache.clean](https://github.com/realTristan/Hermes/blob/master/cloud/socket/handlers/clean.go)
+### [cache.clean](https://github.com/realTristan/hermes/blob/master/cloud/socket/handlers/clean.go)
 
 #### About
 ```
@@ -323,7 +323,7 @@ Clean all the data in the cache, and full-text storage.
 }
 ```
 
-### [cache.info](https://github.com/realTristan/Hermes/blob/master/cloud/socket/handlers/info.go)
+### [cache.info](https://github.com/realTristan/hermes/blob/master/cloud/socket/handlers/info.go)
 
 #### About
 ```
@@ -345,7 +345,7 @@ Get the cache and full-text storage statistics.
 }
 ```
 
-### [cache.exists](https://github.com/realTristan/Hermes/blob/master/cloud/socket/handlers/exists.go)
+### [cache.exists](https://github.com/realTristan/hermes/blob/master/cloud/socket/handlers/exists.go)
 
 #### About
 ```
@@ -370,7 +370,7 @@ Get whether a key exists in the cache.
 
 ## Full-Text
 
-### [ft.init](https://github.com/realTristan/Hermes/blob/master/cloud/socket/handlers/init.go)
+### [ft.init](https://github.com/realTristan/hermes/blob/master/cloud/socket/handlers/init.go)
 
 #### About
 ```
@@ -382,7 +382,7 @@ Intialize the full text cache.
 {
   "function": "ft.init",
   "maxbytes": -1,
-  "maxlength": -1,
+  "maxsize": -1,
   "minwordlength": 3
 }
 ```
@@ -395,7 +395,7 @@ Intialize the full text cache.
 }
 ```
 
-### [ft.clean](https://github.com/realTristan/Hermes/blob/master/cloud/socket/handlers/clean.go)
+### [ft.clean](https://github.com/realTristan/hermes/blob/master/cloud/socket/handlers/clean.go)
 
 #### About
 ```
@@ -417,7 +417,7 @@ Clean all of the data in the full-text storage.
 }
 ```
 
-### [ft.search](https://github.com/realTristan/Hermes/blob/master/cloud/socket/handlers/search.go)
+### [ft.search](https://github.com/realTristan/hermes/blob/master/cloud/socket/handlers/search.go)
 
 #### About
 ```
@@ -442,7 +442,7 @@ Search for a query in the full-text storage.
 }
 ```
 
-### [ft.search.oneword](https://github.com/realTristan/Hermes/blob/master/cloud/socket/handlers/search.go)
+### [ft.search.oneword](https://github.com/realTristan/hermes/blob/master/cloud/socket/handlers/search.go)
 
 #### About
 ```
@@ -467,7 +467,7 @@ Search for a single word in the full-text storage.
 }
 ```
 
-### [ft.search.values](https://github.com/realTristan/Hermes/blob/master/cloud/socket/handlers/search.go)
+### [ft.search.values](https://github.com/realTristan/hermes/blob/master/cloud/socket/handlers/search.go)
 
 #### About
 ```
@@ -494,7 +494,7 @@ Search in the cache data values. (Slower)
 }
 ```
 
-### [ft.search.withkey](https://github.com/realTristan/Hermes/blob/master/cloud/socket/handlers/search.go)
+### [ft.search.withkey](https://github.com/realTristan/hermes/blob/master/cloud/socket/handlers/search.go)
 
 #### About
 ```
@@ -519,7 +519,7 @@ Search in the cache data values for a specific key.
 }
 ```
 
-### [ft.maxbytes.set](https://github.com/realTristan/Hermes/blob/master/cloud/socket/handlers/fulltext.go)
+### [ft.maxbytes.set](https://github.com/realTristan/hermes/blob/master/cloud/socket/handlers/fulltext.go)
 
 #### About
 ```
@@ -542,7 +542,7 @@ Set the maximum full-text storage size in bytes.
 }
 ```
 
-### [ft.maxlength.set](https://github.com/realTristan/Hermes/blob/master/cloud/socket/handlers/fulltext.go)
+### [ft.maxsize.set](https://github.com/realTristan/hermes/blob/master/cloud/socket/handlers/fulltext.go)
 
 #### About
 ```
@@ -552,8 +552,8 @@ Set the maximum full-text storage words allowed to be stored.
 #### Example Request
 ```go
 {
-  "function": "ft.maxlength.set",
-  "maxlength": -1
+  "function": "ft.maxsize.set",
+  "maxsize": -1
 }
 ```
 
@@ -565,7 +565,7 @@ Set the maximum full-text storage words allowed to be stored.
 }
 ```
 
-### [ft.storage](https://github.com/realTristan/Hermes/blob/master/cloud/socket/handlers/fulltext.go)
+### [ft.storage](https://github.com/realTristan/hermes/blob/master/cloud/socket/handlers/fulltext.go)
 
 #### About
 ```
@@ -587,7 +587,7 @@ Get the current full-text storage.
 }
 ```
 
-### [ft.storage.size](https://github.com/realTristan/Hermes/blob/master/cloud/socket/handlers/fulltext.go)
+### [ft.storage.size](https://github.com/realTristan/hermes/blob/master/cloud/socket/handlers/fulltext.go)
 
 #### About
 ```
@@ -609,7 +609,7 @@ Get the current full-text storage size in bytes.
 }
 ```
 
-### [ft.storage.length](https://github.com/realTristan/Hermes/blob/master/cloud/socket/handlers/fulltext.go)
+### [ft.storage.length](https://github.com/realTristan/hermes/blob/master/cloud/socket/handlers/fulltext.go)
 
 #### About
 ```
@@ -631,7 +631,7 @@ Get the current full-text storage length.
 }
 ```
 
-### [ft.isinitialized](https://github.com/realTristan/Hermes/blob/master/cloud/socket/handlers/fulltext.go)
+### [ft.isinitialized](https://github.com/realTristan/hermes/blob/master/cloud/socket/handlers/fulltext.go)
 
 #### About
 ```
@@ -653,7 +653,7 @@ Get whether the full-text storage has been initialized.
 }
 ```
 
-### [ft.indices.sequence](https://github.com/realTristan/Hermes/blob/master/cloud/socket/handlers/indices.go)
+### [ft.indices.sequence](https://github.com/realTristan/hermes/blob/master/cloud/socket/handlers/indices.go)
 
 #### About
 ```

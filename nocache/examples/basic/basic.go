@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"time"
 
-	Hermes "github.com/realTristan/Hermes/nocache"
+	hermes "github.com/realTristan/hermes/nocache"
 )
 
 // Main function
@@ -12,14 +12,14 @@ func main() {
 	// Define variables
 	var (
 		// Initialize the full text
-		ft, _ = Hermes.InitWithJson("../../../testing/data/data_array.json", 3)
+		ft, _ = hermes.InitWithJson("../../../testing/data/data_array.json", 3)
 
 		// Track the start time
 		start time.Time = time.Now()
 
 		// Search for a word in the cache
 		// @params: query, limit, strict
-		res, _ = ft.Search(Hermes.SearchParams{
+		res, _ = ft.Search(hermes.SearchParams{
 			Query:  "computer",
 			Limit:  100,
 			Strict: false,

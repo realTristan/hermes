@@ -4,7 +4,7 @@ import (
 	"errors"
 	"strings"
 
-	Utils "github.com/realTristan/Hermes/utils"
+	utils "github.com/realTristan/hermes/utils"
 )
 
 // SearchOneWord searches for a single word in the FullText struct's data and returns a list of maps containing the search results.
@@ -69,7 +69,7 @@ func (c *Cache) searchOneWord(sp SearchParams) []map[string]any {
 		switch {
 		case len(result) >= sp.Limit:
 			return result
-		case !Utils.Contains(k, sp.Query):
+		case !utils.Contains(k, sp.Query):
 			continue
 		}
 

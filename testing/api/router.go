@@ -2,13 +2,13 @@ package main
 
 import (
 	"github.com/gofiber/fiber/v2"
-	Hermes "github.com/realTristan/Hermes"
-	api "github.com/realTristan/Hermes/api"
+	hermes "github.com/realTristan/hermes"
+	api "github.com/realTristan/hermes/cloud/api"
 )
 
 func main() {
 	app := fiber.New()
-	cache := Hermes.InitCache()
+	cache := hermes.InitCache()
 	api.SetRoutes(app, cache)
 	app.Listen(":3000")
 }

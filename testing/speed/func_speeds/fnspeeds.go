@@ -4,12 +4,12 @@ import (
 	"fmt"
 	"time"
 
-	Hermes "github.com/realTristan/Hermes"
+	hermes "github.com/realTristan/hermes"
 )
 
 func main() {
 	// Cache
-	var cache *Hermes.Cache = Hermes.InitCache()
+	var cache *hermes.Cache = hermes.InitCache()
 
 	/* Initialize the FT cache
 	if err := cache.InitFTWithJson("../../data/data_hash.json", maxWords, maxSizeBytes, schema); err != nil {
@@ -55,7 +55,7 @@ func main() {
 
 	// Search for a word in the cache
 	duration("Search", func() {
-		var result, _ = cache.SearchOneWord(Hermes.SearchParams{
+		var result, _ = cache.SearchOneWord(hermes.SearchParams{
 			Query:  "tristan",
 			Limit:  100,
 			Strict: false,
@@ -78,7 +78,7 @@ func main() {
 
 	// Search for a word in the cache
 	duration("Search", func() {
-		var result, _ = cache.SearchOneWord(Hermes.SearchParams{
+		var result, _ = cache.SearchOneWord(hermes.SearchParams{
 			Query:  "tristan",
 			Limit:  100,
 			Strict: false,

@@ -1,13 +1,13 @@
 package ws
 
 import (
-	Hermes "github.com/realTristan/Hermes"
-	"github.com/realTristan/Hermes/cloud/socket/handlers"
-	Utils "github.com/realTristan/Hermes/cloud/socket/utils"
+	hermes "github.com/realTristan/hermes"
+	"github.com/realTristan/hermes/cloud/socket/handlers"
+	utils "github.com/realTristan/hermes/cloud/socket/utils"
 )
 
 // Map of functions that can be called from the client
-var Functions = map[string]func(*Utils.Params, *Hermes.Cache) []byte{
+var Functions = map[string]func(*utils.Params, *hermes.Cache) []byte{
 	"cache.length":        handlers.Length,
 	"cache.clean":         handlers.Clean,
 	"cache.set":           handlers.Set,
@@ -26,7 +26,7 @@ var Functions = map[string]func(*Utils.Params, *Hermes.Cache) []byte{
 	"ft.search.values":    handlers.SearchValues,
 	"ft.search.withkey":   handlers.SearchWithKey,
 	"ft.maxbytes.set":     handlers.FTSetMaxBytes,
-	"ft.maxlength.set":    handlers.FTSetMaxLength,
+	"ft.maxsize.set":      handlers.FTSetMaxSize,
 	"ft.storage":          handlers.FTStorage,
 	"ft.storage.size":     handlers.FTStorageSize,
 	"ft.storage.length":   handlers.FTStorageLength,

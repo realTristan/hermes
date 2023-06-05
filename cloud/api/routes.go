@@ -2,21 +2,21 @@ package api
 
 import (
 	"github.com/gofiber/fiber/v2"
-	Hermes "github.com/realTristan/Hermes"
-	"github.com/realTristan/Hermes/cloud/api/handlers"
+	hermes "github.com/realTristan/hermes"
+	"github.com/realTristan/hermes/cloud/api/handlers"
 )
 
-// SetRoutes is a function that sets the routes for the Hermes Cache API.
+// SetRoutes is a function that sets the routes for the hermes Cache API.
 // Parameters:
 //   - app (*fiber.App): A pointer to a fiber.App struct.
-//   - cache (*Hermes.Cache): A pointer to a Hermes.Cache struct.
+//   - cache (*hermes.Cache): A pointer to a hermes.Cache struct.
 //
 // Returns:
 //   - void: This function does not return anything.
-func SetRoutes(app *fiber.App, cache *Hermes.Cache) {
+func SetRoutes(app *fiber.App, cache *hermes.Cache) {
 	// Dev Testing Handler
 	app.Get("/dev/hermes", func(c *fiber.Ctx) error {
-		return c.SendString("Hermes Cache API Successfully Running!")
+		return c.SendString("hermes Cache API Successfully Running!")
 	})
 
 	// Cache Handlers
@@ -41,7 +41,7 @@ func SetRoutes(app *fiber.App, cache *Hermes.Cache) {
 	app.Get("/ft/search/values", handlers.SearchValues(cache))
 	app.Get("/ft/search/withkey", handlers.SearchWithKey(cache))
 	app.Post("/ft/maxbytes", handlers.FTSetMaxBytes(cache))
-	app.Post("/ft/maxlength", handlers.FTSetMaxLength(cache))
+	app.Post("/ft/maxsize", handlers.FTSetMaxSize(cache))
 	app.Post("/ft/minwordlength", handlers.FTSetMinWordLength(cache))
 	app.Get("/ft/storage", handlers.FTStorage(cache))
 	app.Get("/ft/storage/size", handlers.FTStorageSize(cache))

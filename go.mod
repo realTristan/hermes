@@ -1,4 +1,4 @@
-module github.com/realTristan/Hermes
+module github.com/realTristan/hermes
 
 go 1.20
 

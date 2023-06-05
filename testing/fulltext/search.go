@@ -3,11 +3,11 @@ package main
 import (
 	"fmt"
 
-	Hermes "github.com/realTristan/Hermes"
+	hermes "github.com/realTristan/hermes"
 )
 
 func search() {
-	var cache *Hermes.Cache = Hermes.InitCache()
+	var cache *hermes.Cache = hermes.InitCache()
 
 	// Initialize the FT cache
 	cache.FTInit(-1, -1, 3)

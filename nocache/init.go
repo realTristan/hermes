@@ -3,7 +3,7 @@ package nocache
 import (
 	"sync"
 
-	Utils "github.com/realTristan/Hermes/utils"
+	utils "github.com/realTristan/hermes/utils"
 )
 
 // Initialize the full-text cache with the provided data.
@@ -32,7 +32,7 @@ func InitWithMapSlice(data []map[string]any, minWordLength int) (*FullText, erro
 // This function is thread safe.
 func InitWithJson(file string, minWordLength int) (*FullText, error) {
 	// Read the json data
-	if data, err := Utils.ReadJson[[]map[string]any](file); err != nil {
+	if data, err := utils.ReadJson[[]map[string]any](file); err != nil {
 		return nil, err
 	} else {
 		return InitWithMapSlice(data, minWordLength)

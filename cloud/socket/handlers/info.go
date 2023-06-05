@@ -1,38 +1,38 @@
 package handlers
 
 import (
-	Hermes "github.com/realTristan/Hermes"
-	Utils "github.com/realTristan/Hermes/cloud/socket/utils"
+	hermes "github.com/realTristan/hermes"
+	utils "github.com/realTristan/hermes/cloud/socket/utils"
 )
 
 // Info is a function that returns information about the cache.
 //
 // Parameters:
-//   - _ : A pointer to a Utils.Params struct representing the parameters of the request. This parameter is ignored.
-//   - c: A pointer to a Hermes.Cache struct representing the cache to get information from.
+//   - _ : A pointer to a utils.Params struct representing the parameters of the request. This parameter is ignored.
+//   - c: A pointer to a hermes.Cache struct representing the cache to get information from.
 //
 // Returns:
 //   - A byte slice representing the information about the cache.
-func Info(_ *Utils.Params, c *Hermes.Cache) []byte {
+func Info(_ *utils.Params, c *hermes.Cache) []byte {
 	if info, err := c.Info(); err != nil {
-		return Utils.Error(err)
+		return utils.Error(err)
 	} else {
-		return Utils.Success(info)
+		return utils.Success(info)
 	}
 }
 
 // InfoForTesting is a function that returns information about the cache for testing purposes.
 //
 // Parameters:
-//   - _ : A pointer to a Utils.Params struct representing the parameters of the request. This parameter is ignored.
-//   - c: A pointer to a Hermes.Cache struct representing the cache to get information from.
+//   - _ : A pointer to a utils.Params struct representing the parameters of the request. This parameter is ignored.
+//   - c: A pointer to a hermes.Cache struct representing the cache to get information from.
 //
 // Returns:
 //   - A byte slice representing the information about the cache for testing purposes.
-func InfoForTesting(_ *Utils.Params, c *Hermes.Cache) []byte {
+func InfoForTesting(_ *utils.Params, c *hermes.Cache) []byte {
 	if info, err := c.InfoForTesting(); err != nil {
-		return Utils.Error(err)
+		return utils.Error(err)
 	} else {
-		return Utils.Success(info)
+		return utils.Success(info)
 	}
 }

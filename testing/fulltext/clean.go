@@ -3,11 +3,11 @@ package main
 import (
 	"fmt"
 
-	Hermes "github.com/realTristan/Hermes"
+	hermes "github.com/realTristan/hermes"
 )
 
 func clean() {
-	var cache *Hermes.Cache = Hermes.InitCache()
+	var cache *hermes.Cache = hermes.InitCache()
 
 	// Test CleanFT()
 	var data = map[string]any{
@@ -24,7 +24,7 @@ func clean() {
 	cache.FTInit(-1, -1, 3)
 
 	// Search for a word in the cache
-	var result, _ = cache.SearchOneWord(Hermes.SearchParams{
+	var result, _ = cache.SearchOneWord(hermes.SearchParams{
 		Query:  "tristan",
 		Limit:  100,
 		Strict: false,
@@ -35,7 +35,7 @@ func clean() {
 	cache.FTClean()
 
 	// Search for a word in the cache
-	result, _ = cache.SearchOneWord(Hermes.SearchParams{
+	result, _ = cache.SearchOneWord(hermes.SearchParams{
 		Query:  "tristan",
 		Limit:  100,
 		Strict: false,

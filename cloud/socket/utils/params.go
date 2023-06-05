@@ -93,18 +93,18 @@ func GetValueParam[T any](p *Params, value *T) error {
 	return nil
 }
 
-// GetMaxLengthParam is a function that retrieves the value of the "maxlength" query parameter from a Params struct and stores it in a provided integer pointer.
+// GetMaxSizeParam is a function that retrieves the value of the "maxsize" query parameter from a Params struct and stores it in a provided integer pointer.
 // Parameters:
 //   - p (*Params): A pointer to a Params struct.
-//   - maxLength (*int): A pointer to an integer to store the value of the "maxlength" query parameter.
+//   - maxSize (*int): A pointer to an integer to store the value of the "maxsize" query parameter.
 //
 // Returns:
-//   - error: An error if the "maxlength" query parameter is not provided or is not a float64, or nil if successful.
-func GetMaxLengthParam(p *Params, maxLength *int) error {
-	if i, ok := p.Get("maxlength").(float64); !ok {
-		return errors.New("invalid maxlength")
+//   - error: An error if the "maxsize" query parameter is not provided or is not a float64, or nil if successful.
+func GetMaxSizeParam(p *Params, maxSize *int) error {
+	if i, ok := p.Get("maxsize").(float64); !ok {
+		return errors.New("invalid maxsize")
 	} else {
-		*maxLength = int(i)
+		*maxSize = int(i)
 	}
 	return nil
 }

@@ -5,9 +5,9 @@ import (
 	"strings"
 	"time"
 
-	gzip "github.com/realTristan/Hermes/compression/gzip"
-	"github.com/realTristan/Hermes/compression/zlib"
-	utils "github.com/realTristan/Hermes/utils"
+	gzip "github.com/realTristan/hermes/compression/gzip"
+	"github.com/realTristan/hermes/compression/zlib"
+	utils "github.com/realTristan/hermes/utils"
 )
 
 func main() {

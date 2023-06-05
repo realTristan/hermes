@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 
-	Hermes "github.com/realTristan/Hermes"
+	Hermes "github.com/realTristan/hermes"
 )
 
 func main() {

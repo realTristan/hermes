@@ -4,11 +4,11 @@ import (
 	"log"
 	"os"
 
-	Utils "hermes/utils"
+	utils "hermes/utils"
 
 	"github.com/gofiber/fiber/v2"
-	Hermes "github.com/realTristan/Hermes"
-	Socket "github.com/realTristan/Hermes/cloud/socket"
+	hermes "github.com/realTristan/hermes"
+	Socket "github.com/realTristan/hermes/cloud/socket"
 )
 
 // Main function
@@ -19,18 +19,18 @@ func main() {
 	}
 
 	// Get the arg data
-	var args, err = Utils.GetArgData(os.Args)
+	var args, err = utils.GetArgData(os.Args)
 	if err != nil || args.Port() == nil {
 		panic("incorrect usage. example: ./hermes serve -p {port}")
 	}
 
 	// Get the port and json file
-	var cache *Hermes.Cache = Hermes.InitCache()
+	var cache *hermes.Cache = hermes.InitCache()
 
 	// Initialize a new fiber app
 	var app *fiber.App = fiber.New(fiber.Config{
 		Prefork:      false,
-		ServerHeader: "Hermes",
+		ServerHeader: "hermes",
 	})
 	Socket.SetRouter(app, cache)
 

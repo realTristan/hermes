@@ -3,7 +3,7 @@ package hermes
 import (
 	"errors"
 
-	Utils "github.com/realTristan/Hermes/utils"
+	utils "github.com/realTristan/hermes/utils"
 )
 
 // FullText is a struct that represents a full-text index for a cache of data.
@@ -13,14 +13,14 @@ import (
 //   - storage (map[string]any): A map that stores the indices of the entries in the cache that contain each word in the full-text index. The keys of the map are strings that represent the words in the index, and the values are slices of integers that represent the indices of the entries in the cache that contain the word.
 //   - indices (map[int]string): A map that stores the words in the full-text index. The keys of the map are integers that represent the indices of the words in the index, and the values are strings that represent the words.
 //   - index (int): An integer that represents the current index of the full-text index. This is used to assign unique indices to new words as they are added to the index.
-//   - maxLength (int): An integer that represents the maximum number of words that can be stored in the full-text index.
+//   - maxSize (int): An integer that represents the maximum number of words that can be stored in the full-text index.
 //   - maxBytes (int): An integer that represents the maximum size of the text that can be stored in the full-text index, in bytes.
 //   - minWordLength (int): An integer that represents the minimum length of a word that can be stored in the full-text index.
 type FullText struct {
 	storage       map[string]any // either []int or int
 	indices       map[int]string
 	index         int
-	maxLength     int
+	maxSize       int
 	maxBytes      int
 	minWordLength int
 }
@@ -66,7 +66,7 @@ func (c *Cache) FTSetMaxBytes(maxBytes int) error {
 	}
 
 	// Check if the current size of the storage is greater than the new max size
-	if i, err := Utils.Size(c.ft.storage); err != nil {
+	if i, err := utils.Size(c.ft.storage); err != nil {
 		return err
 	} else if i > maxBytes {
 		return errors.New("the current size of the full-text storage is greater than the new max size")
@@ -79,18 +79,18 @@ func (c *Cache) FTSetMaxBytes(maxBytes int) error {
 	return nil
 }
 
-// FTSetMaxLength is a method of the Cache struct that sets the maximum number of words in the full-text index.
+// FTSetMaxSize is a method of the Cache struct that sets the maximum number of words in the full-text index.
 // If the full-text index is not initialized, this method returns an error.
 // If the current size of the full-text index is greater than the new maximum size, this method returns an error.
 // Otherwise, the maximum number of words in the full-text index is set to the specified value, and this method returns nil.
 // This method is thread-safe.
 //
 // Parameters:
-//   - maxLength (int): An integer that represents the new maximum number of words in the full-text index.
+//   - maxSize (int): An integer that represents the new maximum number of words in the full-text index.
 //
 // Returns:
 //   - error: An error object. If no error occurs, this will be nil.
-func (c *Cache) FTSetMaxLength(maxLength int) error {
+func (c *Cache) FTSetMaxSize(maxSize int) error {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
 
@@ -100,17 +100,17 @@ func (c *Cache) FTSetMaxLength(maxLength int) error {
 	}
 
 	// Check if the current size of the storage is the same as the new max size
-	if maxLength == c.ft.maxLength {
+	if maxSize == c.ft.maxSize {
 		return nil
 	}
 
 	// Check if the current size of the storage is greater than the new max size
-	if len(c.ft.storage) > maxLength {
+	if len(c.ft.storage) > maxSize {
 		return errors.New("the current size of the full-text storage is greater than the new max size")
 	}
 
-	// Set the maxLength field
-	c.ft.maxLength = maxLength
+	// Set the maxSize field
+	c.ft.maxSize = maxSize
 
 	// Return no error
 	return nil
@@ -139,7 +139,7 @@ func (c *Cache) FTSetMinWordLength(minWordLength int) error {
 	// If the new min word length is greater than the max
 	// word length, reset the ft
 	if minWordLength > c.ft.minWordLength {
-		return c.ftInit(c.ft.maxBytes, c.ft.maxLength, minWordLength)
+		return c.ftInit(c.ft.maxBytes, c.ft.maxSize, minWordLength)
 	}
 
 	// Set the minWordLength field
@@ -200,7 +200,7 @@ func (c *Cache) FTStorageSize() (int, error) {
 	}
 
 	// Return the size of the storage map
-	return Utils.Size(c.ft.storage)
+	return utils.Size(c.ft.storage)
 }
 
 // FTStorageLength is a method of the Cache struct that returns the number of words in the full-text index storage.

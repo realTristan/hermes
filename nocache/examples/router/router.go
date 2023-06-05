@@ -14,15 +14,15 @@ import (
 	"strconv"
 	"time"
 
-	Hermes "github.com/realTristan/Hermes/nocache"
+	hermes "github.com/realTristan/hermes/nocache"
 )
 
 // Global full text variable
-var ft *Hermes.FullText
+var ft *hermes.FullText
 
 // Main function
 func main() {
-	ft, _ = Hermes.InitWithJson("../../../testing/data/data_array.json", 3)
+	ft, _ = hermes.InitWithJson("../../../testing/data/data_array.json", 3)
 
 	// Print host
 	fmt.Println(" >> Listening on: http://localhost:8000/")
@@ -60,7 +60,7 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 	// Search for a word in the cache
 	// Make sure the show which keys you do want to search through,
 	// and which ones you don't
-	var res, _ = ft.Search(Hermes.SearchParams{
+	var res, _ = ft.Search(hermes.SearchParams{
 		Query:  query,
 		Limit:  limit,
 		Strict: strict,

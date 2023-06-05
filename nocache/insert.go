@@ -3,7 +3,7 @@ package nocache
 import (
 	"strings"
 
-	Utils "github.com/realTristan/Hermes/utils"
+	utils "github.com/realTristan/hermes/utils"
 )
 
 // Insert data into the full-text cache.
@@ -28,7 +28,7 @@ func (ft *FullText) insert(data []map[string]any, minWordLength int) error {
 
 			// Clean the value
 			strv = strings.TrimSpace(strv)
-			strv = Utils.RemoveDoubleSpaces(strv)
+			strv = utils.RemoveDoubleSpaces(strv)
 			strv = strings.ToLower(strv)
 
 			// Loop through the words
@@ -38,8 +38,8 @@ func (ft *FullText) insert(data []map[string]any, minWordLength int) error {
 				}
 
 				// Trim the word
-				word = Utils.TrimNonAlphaNum(word)
-				var words []string = Utils.SplitByAlphaNum(word)
+				word = utils.TrimNonAlphaNum(word)
+				var words []string = utils.SplitByAlphaNum(word)
 
 				// Loop through the words
 				for j := 0; j < len(words); j++ {
@@ -52,7 +52,7 @@ func (ft *FullText) insert(data []map[string]any, minWordLength int) error {
 					} else if indices, ok := temp.([]int); !ok {
 						ft.storage[words[j]] = []int{temp.(int), i}
 					} else {
-						if Utils.SliceContains(indices, i) {
+						if utils.SliceContains(indices, i) {
 							continue
 						}
 						ft.storage[words[j]] = append(indices, i)

@@ -1,18 +1,18 @@
 package handlers
 
 import (
-	Hermes "github.com/realTristan/Hermes"
-	Utils "github.com/realTristan/Hermes/cloud/socket/utils"
+	hermes "github.com/realTristan/hermes"
+	utils "github.com/realTristan/hermes/cloud/socket/utils"
 )
 
 // Set is a handler function that returns a fiber context handler function for setting a value in the cache.
 // Parameters:
-//   - p (*Utils.Params): A pointer to a Utils.Params struct.
-//   - c (*Hermes.Cache): A pointer to a Hermes.Cache struct.
+//   - p (*utils.Params): A pointer to a utils.Params struct.
+//   - c (*hermes.Cache): A pointer to a hermes.Cache struct.
 //
 // Returns:
 //   - []byte: A JSON-encoded byte slice containing a success message or an error message if the set operation fails.
-func Set(p *Utils.Params, c *Hermes.Cache) []byte {
+func Set(p *utils.Params, c *hermes.Cache) []byte {
 	var (
 		key   string
 		err   error
@@ -20,18 +20,18 @@ func Set(p *Utils.Params, c *Hermes.Cache) []byte {
 	)
 
 	// Get the key from the query
-	if key, err = Utils.GetKeyParam(p); err != nil {
-		return Utils.Error("invalid key")
+	if key, err = utils.GetKeyParam(p); err != nil {
+		return utils.Error("invalid key")
 	}
 
 	// Get the value from the query
-	if err := Utils.GetValueParam(p, &value); err != nil {
-		return Utils.Error(err)
+	if err := utils.GetValueParam(p, &value); err != nil {
+		return utils.Error(err)
 	}
 
 	// Set the value in the cache
 	if err := c.Set(key, value); err != nil {
-		return Utils.Error(err)
+		return utils.Error(err)
 	}
-	return Utils.Success("null")
+	return utils.Success("null")
 }

@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	Utils "github.com/realTristan/Hermes/utils"
+	utils "github.com/realTristan/hermes/utils"
 )
 
 // NewTempStorage is a function that creates a new TempStorage object for a given FullText object.
@@ -75,13 +75,13 @@ func (ts *TempStorage) cleanSingleArrays() {
 //   - (error): An error if the storage limit has been reached, nil otherwise.
 func (ts *TempStorage) error(ft *FullText) error {
 	// Check if the storage limit has been reached
-	if ft.maxLength > 0 {
-		if len(ts.data) > ft.maxLength {
-			return fmt.Errorf("full-text storage limit reached (%d/%d keys). load cancelled", len(ts.data), ft.maxLength)
+	if ft.maxSize > 0 {
+		if len(ts.data) > ft.maxSize {
+			return fmt.Errorf("full-text storage limit reached (%d/%d keys). load cancelled", len(ts.data), ft.maxSize)
 		}
 	}
 	if ft.maxBytes > 0 {
-		if cacheSize, err := Utils.Size(ts.data); err != nil {
+		if cacheSize, err := utils.Size(ts.data); err != nil {
 			return err
 		} else if cacheSize > ft.maxBytes {
 			return fmt.Errorf("full-text byte-size limit reached (%d/%d bytes). load cancelled", cacheSize, ft.maxBytes)
@@ -112,7 +112,7 @@ func (ts *TempStorage) update(ft *FullText, words []string, cacheKey string) {
 		} else if v, ok := temp.([]int); !ok {
 			ts.data[word] = []int{temp.(int), ts.keys[cacheKey]}
 		} else {
-			if Utils.SliceContains(v, ts.keys[cacheKey]) {
+			if utils.SliceContains(v, ts.keys[cacheKey]) {
 				continue
 			}
 			ts.data[word] = append(v, ts.keys[cacheKey])
@@ -148,7 +148,7 @@ func (ts *TempStorage) insert(ft *FullText, cacheKey string, ftv string) error {
 
 	// Clean the string value
 	ftv = strings.TrimSpace(ftv)
-	ftv = Utils.RemoveDoubleSpaces(ftv)
+	ftv = utils.RemoveDoubleSpaces(ftv)
 	ftv = strings.ToLower(ftv)
 
 	// Loop through the words
@@ -162,8 +162,8 @@ func (ts *TempStorage) insert(ft *FullText, cacheKey string, ftv string) error {
 		}
 
 		// Trim the word
-		word = Utils.TrimNonAlphaNum(word)
-		var words []string = Utils.SplitByAlphaNum(word)
+		word = utils.TrimNonAlphaNum(word)
+		var words []string = utils.SplitByAlphaNum(word)
 
 		// Update the temp storage
 		ts.update(ft, words, cacheKey)

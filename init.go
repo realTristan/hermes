@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"sync"
 
-	Utils "github.com/realTristan/Hermes/utils"
+	utils "github.com/realTristan/hermes/utils"
 )
 
 // InitCache is a function that initializes a new Cache struct and returns a pointer to it.
@@ -64,12 +64,12 @@ func (ft *FullText) initInsert(data *map[string]map[string]any) error {
 // If the full-text index is already initialized, an error is returned.
 //
 // Parameters:
-// - maxLength: the maximum number of words to store in the full-text index.
+// - maxSize: the maximum number of words to store in the full-text index.
 // - maxBytes: the maximum size, in bytes, of the full-text index.
 //
 // Returns:
 // - error: If the full-text is already initialized.
-func (c *Cache) FTInit(maxLength int, maxBytes int, minWordLength int) error {
+func (c *Cache) FTInit(maxSize int, maxBytes int, minWordLength int) error {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
 
@@ -79,25 +79,25 @@ func (c *Cache) FTInit(maxLength int, maxBytes int, minWordLength int) error {
 	}
 
 	// Initialize the FT
-	return c.ftInit(maxLength, maxBytes, minWordLength)
+	return c.ftInit(maxSize, maxBytes, minWordLength)
 }
 
 // Initialize the full-text for the cache.
 // This method is not thread-safe, and should only be called from an exported function.
 //
 // Parameters:
-// - maxLength: the maximum number of words to store in the full-text index.
+// - maxSize: the maximum number of words to store in the full-text index.
 // - maxBytes: the maximum size, in bytes, of the full-text index.
 //
 // Returns:
 // - error: From full-text cache insertion.
-func (c *Cache) ftInit(maxLength int, maxBytes int, minWordLength int) error {
+func (c *Cache) ftInit(maxSize int, maxBytes int, minWordLength int) error {
 	// Initialize the FT struct
 	var ft *FullText = &FullText{
 		storage:       make(map[string]any),
 		indices:       make(map[int]string),
 		index:         0,
-		maxLength:     maxLength,
+		maxSize:       maxSize,
 		maxBytes:      maxBytes,
 		minWordLength: minWordLength,
 	}
@@ -120,12 +120,12 @@ func (c *Cache) ftInit(maxLength int, maxBytes int, minWordLength int) error {
 //
 // Parameters:
 // - data: the data to initialize the full-text index with.
-// - maxLength: the maximum number of words to store in the full-text index.
+// - maxSize: the maximum number of words to store in the full-text index.
 // - maxBytes: the maximum size, in bytes, of the full-text index.
 //
 // Returns:
 // - error: If the full-text is already initialized.
-func (c *Cache) FTInitWithMap(data map[string]map[string]any, maxLength int, maxBytes int, minWordLength int) error {
+func (c *Cache) FTInitWithMap(data map[string]map[string]any, maxSize int, maxBytes int, minWordLength int) error {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
 
@@ -135,7 +135,7 @@ func (c *Cache) FTInitWithMap(data map[string]map[string]any, maxLength int, max
 	}
 
 	// Initialize the FT cache
-	return c.ftInitWithMap(data, maxLength, maxBytes, minWordLength)
+	return c.ftInitWithMap(data, maxSize, maxBytes, minWordLength)
 }
 
 // Initialize the full-text for the cache with a map.
@@ -143,18 +143,18 @@ func (c *Cache) FTInitWithMap(data map[string]map[string]any, maxLength int, max
 //
 // Parameters:
 // - data: the data to initialize the full-text index with.
-// - maxLength: the maximum number of words to store in the full-text index.
+// - maxSize: the maximum number of words to store in the full-text index.
 // - maxBytes: the maximum size, in bytes, of the full-text index.
 //
 // Returns:
 // - error
-func (c *Cache) ftInitWithMap(data map[string]map[string]any, maxLength int, maxBytes int, minWordLength int) error {
+func (c *Cache) ftInitWithMap(data map[string]map[string]any, maxSize int, maxBytes int, minWordLength int) error {
 	// Initialize the FT struct
 	var ft *FullText = &FullText{
 		storage:       make(map[string]any),
 		indices:       make(map[int]string),
 		index:         0,
-		maxLength:     maxLength,
+		maxSize:       maxSize,
 		maxBytes:      maxBytes,
 		minWordLength: minWordLength,
 	}
@@ -186,12 +186,12 @@ func (c *Cache) ftInitWithMap(data map[string]map[string]any, maxLength int, max
 //
 // Parameters:
 // - file: the path to the JSON file to initialize the full-text index with.
-// - maxLength: the maximum number of words to store in the full-text index.
+// - maxSize: the maximum number of words to store in the full-text index.
 // - maxBytes: the maximum size, in bytes, of the full-text index.
 //
 // Returns:
 // - error: If the full-text is already initialized.
-func (c *Cache) FTInitWithJson(file string, maxLength int, maxBytes int, minWordLength int) error {
+func (c *Cache) FTInitWithJson(file string, maxSize int, maxBytes int, minWordLength int) error {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
 
@@ -201,7 +201,7 @@ func (c *Cache) FTInitWithJson(file string, maxLength int, maxBytes int, minWord
 	}
 
 	// Initialize the FT
-	return c.ftInitWithJson(file, maxLength, maxBytes, minWordLength)
+	return c.ftInitWithJson(file, maxSize, maxBytes, minWordLength)
 }
 
 // Initialize the full-text for the cache with a JSON file.
@@ -209,15 +209,15 @@ func (c *Cache) FTInitWithJson(file string, maxLength int, maxBytes int, minWord
 //
 // Parameters:
 // - file: the path to the JSON file to initialize the full-text index with.
-// - maxLength: the maximum number of words to store in the full-text index.
+// - maxSize: the maximum number of words to store in the full-text index.
 // - maxBytes: the maximum size, in bytes, of the full-text index.
 //
 // Returns:
 // - error: Json file read error, or init with map error.
-func (c *Cache) ftInitWithJson(file string, maxLength int, maxBytes int, minWordLength int) error {
-	if data, err := Utils.ReadJson[map[string]map[string]any](file); err != nil {
+func (c *Cache) ftInitWithJson(file string, maxSize int, maxBytes int, minWordLength int) error {
+	if data, err := utils.ReadJson[map[string]map[string]any](file); err != nil {
 		return err
 	} else {
-		return c.ftInitWithMap(data, maxLength, maxBytes, minWordLength)
+		return c.ftInitWithMap(data, maxSize, maxBytes, minWordLength)
 	}
 }

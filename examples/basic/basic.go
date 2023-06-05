@@ -14,11 +14,11 @@ import (
 	"strconv"
 	"time"
 
-	Hermes "github.com/realTristan/Hermes"
+	hermes "github.com/realTristan/hermes"
 )
 
 // Initialize the cache
-var cache *Hermes.Cache = Hermes.InitCache()
+var cache *hermes.Cache = hermes.InitCache()
 
 // Main function
 func main() {
@@ -61,7 +61,7 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 	// Search for a word in the cache
 	// Make sure the show which keys you do want to search through,
 	// and which ones you don't
-	var res, _ = cache.Search(Hermes.SearchParams{
+	var res, _ = cache.Search(hermes.SearchParams{
 		Query:  query,
 		Limit:  limit,
 		Strict: strict,
