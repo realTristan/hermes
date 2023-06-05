@@ -20,45 +20,6 @@ func InitCache() *Cache {
 	}
 }
 
-// initInsert is a method of the FullText struct that inserts a value in the full-text cache for the specified key.
-// This function is not thread-safe and should only be called from an exported function.
-//
-// Parameters:
-//   - data: A map of maps containing the data to be inserted.
-//
-// Returns:
-//   - An error if the full-text storage limit or byte-size limit is reached.
-func (ft *FullText) initInsert(data *map[string]map[string]any) error {
-	// Create a new temp storage
-	var ts *TempStorage = NewTempStorage(ft)
-
-	// Loop through the json data
-	for cacheKey, cacheValue := range *data {
-		for k, v := range cacheValue {
-			if ftv := WFTGetValue(v); len(ftv) == 0 {
-				continue
-			} else {
-				// Set the key in the provided value to the fulltext value
-				(*data)[cacheKey][k] = ftv
-
-				// Insert the value in the temp storage
-				if err := ts.insert(ft, cacheKey, ftv); err != nil {
-					return err
-				}
-			}
-		}
-	}
-
-	// Iterate over the temp storage and set the values with len 1 to int
-	ts.cleanSingleArrays()
-
-	// Set the full-text cache to the temp map
-	ts.updateFullText(ft)
-
-	// Return nil for no errors
-	return nil
-}
-
 // Initialize the full-text for the cache
 // This method is thread-safe.
 // If the full-text index is already initialized, an error is returned.
@@ -103,7 +64,7 @@ func (c *Cache) ftInit(maxSize int, maxBytes int, minWordLength int) error {
 	}
 
 	// Load the cache data
-	if err := ft.initInsert(&c.data); err != nil {
+	if err := ft.insert(&c.data); err != nil {
 		return err
 	}
 
@@ -168,7 +129,7 @@ func (c *Cache) ftInitWithMap(data map[string]map[string]any, maxSize int, maxBy
 	}
 
 	// Insert the data into the ft storage
-	if err := ft.initInsert(&data); err != nil {
+	if err := ft.insert(&data); err != nil {
 		return err
 	}
 
@@ -220,4 +181,43 @@ func (c *Cache) ftInitWithJson(file string, maxSize int, maxBytes int, minWordLe
 	} else {
 		return c.ftInitWithMap(data, maxSize, maxBytes, minWordLength)
 	}
+}
+
+// insert is a method of the FullText struct that inserts a value in the full-text cache for the specified key.
+// This function is not thread-safe and should only be called from an exported function.
+//
+// Parameters:
+//   - data: A map of maps containing the data to be inserted.
+//
+// Returns:
+//   - An error if the full-text storage limit or byte-size limit is reached.
+func (ft *FullText) insert(data *map[string]map[string]any) error {
+	// Create a new temp storage
+	var ts *TempStorage = NewTempStorage(ft)
+
+	// Loop through the json data
+	for cacheKey, cacheValue := range *data {
+		for k, v := range cacheValue {
+			if ftv := WFTGetValue(v); len(ftv) == 0 {
+				continue
+			} else {
+				// Set the key in the provided value to the fulltext value
+				(*data)[cacheKey][k] = ftv
+
+				// Insert the value in the temp storage
+				if err := ts.insert(ft, cacheKey, ftv); err != nil {
+					return err
+				}
+			}
+		}
+	}
+
+	// Iterate over the temp storage and set the values with len 1 to int
+	ts.cleanSingleArrays()
+
+	// Set the full-text cache to the temp map
+	ts.updateFullText(ft)
+
+	// Return nil for no errors
+	return nil
 }
