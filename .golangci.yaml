@@ -1,0 +1,14 @@
+linters:
+  enable:
+    - gosec
+    - govet
+  presets:
+    - bugs
+    - performance
+run:
+  go: '1.20'
+issues:
+  exclude-rules:
+    - path: testing
+      linters:
+        - errcheck
