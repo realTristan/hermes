@@ -1,4 +1,4 @@
-package cache
+package hermes
 
 // When you delete a number of keys from the cache, the index remains
 // the same. Over time, this number will grow to be very large, and will

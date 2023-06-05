@@ -1,4 +1,4 @@
-package cache
+package hermes
 
 // Exists is a method of the Cache struct that checks if a key exists in the cache.
 // This method is thread-safe.

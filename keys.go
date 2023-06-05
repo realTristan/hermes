@@ -1,4 +1,4 @@
-package cache
+package hermes
 
 // Keys is a method of the Cache struct that returns all the keys in the cache.
 // This function is thread-safe.

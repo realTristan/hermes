@@ -1,4 +1,4 @@
-package cache
+package hermes
 
 // Values is a method of the Cache struct that gets all the values in the cache.
 // This function is thread-safe.

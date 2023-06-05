@@ -1,4 +1,4 @@
-package cache
+package hermes
 
 // WFT is a struct that represents a value to be set in the cache and in the full-text cache.
 type WFT struct {

@@ -1,4 +1,4 @@
-package cache
+package hermes
 
 // SearchParams is a struct that contains the search parameters for the Cache search methods.
 type SearchParams struct {

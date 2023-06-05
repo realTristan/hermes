@@ -1,4 +1,4 @@
-package cache
+package hermes
 
 // Get is a method of the Cache struct that retrieves the value associated with the given key from the cache.
 // This method is thread-safe.

@@ -1,4 +1,4 @@
-package cache
+package hermes
 
 // Delete is a method of the Cache struct that removes a key from the cache.
 // If the full-text index is initialized, it is also removed from there.

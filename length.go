@@ -1,4 +1,4 @@
-package cache
+package hermes
 
 // Length is a method of the Cache struct that returns the number of items stored in the cache.
 // This function is thread-safe.
