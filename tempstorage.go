@@ -132,6 +132,18 @@ func (ts *TempStorage) update(ft *FullText, words []string, cacheKey string) {
 						ts.data[k] = append(v.([]int), ts.keys[cacheKey]...)
 						ts.data[word] = k
 					}
+				} else if strings.Contains(word, k) {
+					if _, ok := k.(string); ok {
+						continue
+					}
+					else if _, ok := k.(int); ok {
+						ts.data[word] = []int{k.(int), ts.keys[cacheKey]}
+						ts.data[k] = word
+					}
+					else if _, ok := k.([]int); ok {
+						ts.data[word] = append(k.([]int), ts.keys[cacheKey]...)
+						ts.data[k] = word
+					}
 				}
 			}
 			*/
