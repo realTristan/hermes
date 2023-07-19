@@ -109,8 +109,9 @@ func (ts *TempStorage) update(ft *FullText, words []string, cacheKey string) {
 		}
 		if temp, ok := ts.data[word]; !ok {
 			ts.data[word] = []int{ts.index}
-		} else if _, ok := temp.(string); ok {
-			continue
+			/*else if _, ok := temp.(string); ok {
+				continue
+			}*/
 		} else if v, ok := temp.([]int); !ok {
 			ts.data[word] = []int{temp.(int), ts.keys[cacheKey]}
 		} else {
@@ -208,7 +209,7 @@ func (ts *TempStorage) insert(ft *FullText, cacheKey string, ftv string) error {
 	}
 
 	// Finally, merge the keys
-	ts.mergeKeys()
+	// ts.mergeKeys()
 
 	// Return no error
 	return nil

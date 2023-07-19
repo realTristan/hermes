@@ -64,56 +64,76 @@ func (c *Cache) search(sp SearchParams) []map[string]any {
 	var result []map[string]any = []map[string]any{}
 
 	// Variables for storing the smallest words array
-	var smallestData []int = []int{}
+	// var smallestData []int = []int{}
+	var (
+		smallestIndex int = 0
+		smallest      int = 0
+	)
 
 	// Check if the query is in the cache
 	if indices, ok := c.ft.storage[words[0]]; !ok {
 		return []map[string]any{}
 	} else {
-		for {
+		/*for {
 			if v, ok := indices.(string); ok {
 				indices = c.ft.storage[v]
 			} else {
 				break
 			}
-		}
+		}*/
 		if temp, ok := indices.(int); ok {
 			return []map[string]any{
 				c.data[c.ft.indices[temp]],
 			}
 		}
-		smallestData = indices.([]int)
+		// smallestData = indices.([]int)
+		smallest = len(indices.([]int))
 	}
 
 	// Find the smallest words array
 	// Don't include the first or last words from the query
 	for i := 1; i < len(words)-1; i++ {
 		if indices, ok := c.ft.storage[words[i]]; ok {
-			for {
+			/*for {
 				if v, ok := indices.(string); ok {
 					indices = c.ft.storage[v]
 				} else {
 					break
 				}
-			}
+			}*/
 			if index, ok := indices.(int); ok {
 				return []map[string]any{
 					c.data[c.ft.indices[index]],
 				}
 			}
-			if l := len(indices.([]int)); l < len(smallestData) {
+			/*if l := len(indices.([]int)); l < len(smallestData) {
 				smallestData = indices.([]int)
+			}*/
+			if l := len(indices.([]int)); l < smallest {
+				smallest = l
+				smallestIndex = i
 			}
 		}
 	}
 
 	// Loop through the indices
-	for i := 0; i < len(smallestData); i++ {
+	/*for i := 0; i < len(smallestData); i++ {
 		for _, value := range c.data[c.ft.indices[smallestData[i]]] {
 			// Check if the value contains the query
 			if v, ok := value.(string); ok {
 				if strings.Contains(strings.ToLower(v), sp.Query) {
 					result = append(result, c.data[c.ft.indices[smallestData[i]]])
+				}
+			}
+		}
+	}*/
+	var keys []int = c.ft.storage[words[smallestIndex]].([]int)
+	for i := 0; i < len(keys); i++ {
+		for _, value := range c.data[c.ft.indices[keys[i]]] {
+			// Check if the value contains the query
+			if v, ok := value.(string); ok {
+				if strings.Contains(strings.ToLower(v), sp.Query) {
+					result = append(result, c.data[c.ft.indices[keys[i]]])
 				}
 			}
 		}

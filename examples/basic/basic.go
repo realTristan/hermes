@@ -9,6 +9,7 @@ package main
 
 import (
 	"fmt"
+	"time"
 
 	hermes "github.com/realTristan/hermes"
 )
@@ -21,11 +22,13 @@ func main() {
 	cache.FTInitWithJson("../../testing/data/data_hash.json", -1, -1, 3)
 
 	// Search for a word in the cache
+	var startTime time.Time = time.Now()
 	var res, _ = cache.Search(hermes.SearchParams{
-		Query:  "tristan",
+		Query:  "computer",
 		Limit:  100,
 		Strict: false,
 	})
-
-	fmt.Println(res)
+	var duration time.Duration = time.Since(startTime)
+	fmt.Println("Search took", duration)
+	fmt.Println("Search results:", len(res))
 }
