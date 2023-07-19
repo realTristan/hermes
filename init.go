@@ -212,11 +212,17 @@ func (ft *FullText) insert(data *map[string]map[string]any) error {
 		}
 	}
 
+	// Merge the keys
+	// ts.mergeKeys()
+
 	// Iterate over the temp storage and set the values with len 1 to int
 	ts.cleanSingleArrays()
 
 	// Set the full-text cache to the temp map
 	ts.updateFullText(ft)
+
+	// Print the size of the full-text cache storage
+	fmt.Println(utils.Size(ft.storage))
 
 	// Return nil for no errors
 	return nil

@@ -107,16 +107,6 @@ func (ts *TempStorage) update(ft *FullText, words []string, cacheKey string) {
 		if len(word) < ft.minWordLength {
 			continue
 		}
-		// Alternative to mergeKeys()
-		/*for k := range ts.data {
-			if strings.Contains(k, word) {
-				if _, ok := ts.data[k].(string); ok {
-					continue
-				}
-				word = k
-				break
-			}
-		}*/
 		if temp, ok := ts.data[word]; !ok {
 			ts.data[word] = []int{ts.index}
 		} else if v, ok := temp.([]int); !ok {
@@ -151,14 +141,6 @@ func (ts *TempStorage) updateKeys(cacheKey string) {
 // Returns:
 //   - None.
 func (ts *TempStorage) mergeKeys() {
-	// Function to convert an interface to a slice of integers
-	var intToSlice = func(v any) []int {
-		if _, ok := v.([]int); !ok {
-			return []int{v.(int)}
-		}
-		return v.([]int)
-	}
-
 	// Loop through the keys
 	for k1, v1 := range ts.data {
 		for k2, v2 := range ts.data {
@@ -172,9 +154,16 @@ func (ts *TempStorage) mergeKeys() {
 				if _, ok := v2.(string); ok {
 					continue
 				}
-				var v1, v2 = intToSlice(v1), intToSlice(v2)
-				ts.data[k1] = append(v1, v2...)
+				var v1, v2 = v1.([]int), v2.([]int)
+				for v := range v2 {
+					if !utils.SliceContains(v1, v) {
+						v1 = append(v1, v)
+					}
+				}
+				ts.data[k1] = v1
 				ts.data[k2] = k1
+				// delete(ts.data, k2)
+				break
 			}
 		}
 	}
@@ -214,9 +203,6 @@ func (ts *TempStorage) insert(ft *FullText, cacheKey string, ftv string) error {
 		// Update the temp storage
 		ts.update(ft, words, cacheKey)
 	}
-
-	// Finally, merge the keys
-	// ts.mergeKeys()
 
 	// Return no error
 	return nil
