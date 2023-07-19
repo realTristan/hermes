@@ -64,47 +64,56 @@ func (c *Cache) search(sp SearchParams) []map[string]any {
 	var result []map[string]any = []map[string]any{}
 
 	// Variables for storing the smallest words array
-	var (
-		smallest      int = 0 //nolint:ineffassign
-		smallestIndex int = 0
-	)
+	var smallestData []int = []int{}
 
 	// Check if the query is in the cache
 	if indices, ok := c.ft.storage[words[0]]; !ok {
 		return []map[string]any{}
 	} else {
+		for {
+			if v, ok := indices.(string); ok {
+				indices = c.ft.storage[v]
+			} else {
+				break
+			}
+		}
 		if temp, ok := indices.(int); ok {
 			return []map[string]any{
 				c.data[c.ft.indices[temp]],
 			}
 		}
-		smallest = len(indices.([]int))
+		smallestData = indices.([]int)
 	}
 
 	// Find the smallest words array
 	// Don't include the first or last words from the query
 	for i := 1; i < len(words)-1; i++ {
 		if indices, ok := c.ft.storage[words[i]]; ok {
+			for {
+				if v, ok := indices.(string); ok {
+					indices = c.ft.storage[v]
+				} else {
+					break
+				}
+			}
 			if index, ok := indices.(int); ok {
 				return []map[string]any{
 					c.data[c.ft.indices[index]],
 				}
 			}
-			if l := len(indices.([]int)); l < smallest {
-				smallest = l
-				smallestIndex = i
+			if l := len(indices.([]int)); l < len(smallestData) {
+				smallestData = indices.([]int)
 			}
 		}
 	}
 
 	// Loop through the indices
-	var keys []int = c.ft.storage[words[smallestIndex]].([]int)
-	for i := 0; i < len(keys); i++ {
-		for _, value := range c.data[c.ft.indices[keys[i]]] {
+	for i := 0; i < len(smallestData); i++ {
+		for _, value := range c.data[c.ft.indices[smallestData[i]]] {
 			// Check if the value contains the query
 			if v, ok := value.(string); ok {
 				if strings.Contains(strings.ToLower(v), sp.Query) {
-					result = append(result, c.data[c.ft.indices[keys[i]]])
+					result = append(result, c.data[c.ft.indices[smallestData[i]]])
 				}
 			}
 		}

@@ -109,6 +109,8 @@ func (ts *TempStorage) update(ft *FullText, words []string, cacheKey string) {
 		}
 		if temp, ok := ts.data[word]; !ok {
 			ts.data[word] = []int{ts.index}
+		} else if _, ok := temp.(string); ok {
+			continue
 		} else if v, ok := temp.([]int); !ok {
 			ts.data[word] = []int{temp.(int), ts.keys[cacheKey]}
 		} else {
@@ -156,9 +158,15 @@ func (ts *TempStorage) mergeKeys() {
 				continue
 			}
 			if strings.Contains(k1, k2) {
+				if _, ok := v1.(string); ok {
+					continue
+				}
+				if _, ok := v2.(string); ok {
+					continue
+				}
 				var v1, v2 = intToSlice(v1), intToSlice(v2)
 				ts.data[k1] = append(v1, v2...)
-				delete(ts.data, k2)
+				ts.data[k2] = k1
 			}
 		}
 	}
@@ -197,8 +205,10 @@ func (ts *TempStorage) insert(ft *FullText, cacheKey string, ftv string) error {
 
 		// Update the temp storage
 		ts.update(ft, words, cacheKey)
-		ts.mergeKeys()
 	}
+
+	// Finally, merge the keys
+	ts.mergeKeys()
 
 	// Return no error
 	return nil

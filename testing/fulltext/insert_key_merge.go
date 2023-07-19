@@ -16,13 +16,13 @@ func insert_key_merge() {
 		"age":  17,
 	})
 	cache.Set("user_id2", map[string]any{
-		"name": cache.WithFT("tris"),
+		"name": cache.WithFT("tris is cool"),
 		"age":  17,
 	})
 
 	// Search for tris
-	var result, _ = cache.SearchOneWord(hermes.SearchParams{
-		Query:  "tris",
+	var result, _ = cache.Search(hermes.SearchParams{
+		Query:  "tris is",
 		Limit:  100,
 		Strict: false,
 	})
