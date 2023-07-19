@@ -107,67 +107,24 @@ func (ts *TempStorage) update(ft *FullText, words []string, cacheKey string) {
 		if len(word) < ft.minWordLength {
 			continue
 		}
+		// Alternative to mergeKeys()
+		/*for k := range ts.data {
+			if strings.Contains(k, word) {
+				if _, ok := ts.data[k].(string); ok {
+					continue
+				}
+				word = k
+				break
+			}
+		}*/
 		if temp, ok := ts.data[word]; !ok {
 			ts.data[word] = []int{ts.index}
-			/*else if _, ok := temp.(string); ok {
-				continue
-			}*/
 		} else if v, ok := temp.([]int); !ok {
 			ts.data[word] = []int{temp.(int), ts.keys[cacheKey]}
 		} else {
 			if utils.SliceContains(v, ts.keys[cacheKey]) {
 				continue
 			}
-			/* Alternative to mergeKeys()
-			for k, v := range ts.data {
-				if _, ok := v.(string); ok {
-					continue
-				}
-				if strings.Contains(k, word) {
-					else if _, ok := v.(int); ok {
-						ts.data[k] = []int{v.(int), ts.keys[cacheKey]}
-						for i := range ts.keys[cacheKey] {
-							if i == v.(int) {
-								continue
-							}
-							ts.data[word] = append(ts.data[word].([]int), i)
-						}
-						ts.data[word] = k
-					}
-					else if _, ok := v.([]int); ok {
-						for i := range ts.keys[cacheKey] {
-							if utils.SliceContains(v.([]int), ts.keys[cacheKey][i]) {
-								continue
-							}
-							v = append(v.([]int), ts.keys[cacheKey][i])
-						}
-						ts.data[k] = v
-						ts.data[word] = k
-					}
-				} else if strings.Contains(word, k) {
-					else if _, ok := v.(int); ok {
-						ts.data[word] = []int{v.(int)}
-						for i := range ts.keys[cacheKey] {
-							if i == v.(int) {
-								continue
-							}
-							ts.data[word] = append(ts.data[word].([]int), i)
-						}
-						ts.data[k] = word
-					}
-					else if _, ok := v.([]int); ok {
-						for i := range ts.keys[cacheKey] {
-							if utils.SliceContains(v.([]int), ts.keys[cacheKey][i]) {
-								continue
-							}
-							v = append(v.([]int), ts.keys[cacheKey][i])
-						}
-						ts.data[word] = v
-						ts.data[k] = word
-					}
-				}
-			}
-			*/
 			ts.data[word] = append(v, ts.keys[cacheKey])
 		}
 	}
