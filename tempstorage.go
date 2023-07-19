@@ -134,6 +134,36 @@ func (ts *TempStorage) updateKeys(cacheKey string) {
 	}
 }
 
+// mergeKeys is a method of the TempStorage struct that merges all keys that contain subkeys into a single key.
+// Parameters:
+//   - None.
+//
+// Returns:
+//   - None.
+func (ts *TempStorage) mergeKeys() {
+	// Function to convert an interface to a slice of integers
+	var intToSlice = func(v any) []int {
+		if _, ok := v.([]int); !ok {
+			return []int{v.(int)}
+		}
+		return v.([]int)
+	}
+
+	// Loop through the keys
+	for k1, v1 := range ts.data {
+		for k2, v2 := range ts.data {
+			if k1 == k2 {
+				continue
+			}
+			if strings.Contains(k1, k2) {
+				var v1, v2 = intToSlice(v1), intToSlice(v2)
+				ts.data[k1] = append(v1, v2...)
+				delete(ts.data, k2)
+			}
+		}
+	}
+}
+
 // insertWords is a method of the TempStorage struct that inserts data into the temp storage.
 // Parameters:
 //   - ft (*FullText): A pointer to the FullText object to check the storage limit against.
@@ -167,6 +197,7 @@ func (ts *TempStorage) insert(ft *FullText, cacheKey string, ftv string) error {
 
 		// Update the temp storage
 		ts.update(ft, words, cacheKey)
+		ts.mergeKeys()
 	}
 
 	// Return no error
