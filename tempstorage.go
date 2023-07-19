@@ -118,6 +118,23 @@ func (ts *TempStorage) update(ft *FullText, words []string, cacheKey string) {
 			if utils.SliceContains(v, ts.keys[cacheKey]) {
 				continue
 			}
+			/* Alternative to mergeKeys()
+			for k, v := range ts.data {
+				if strings.Contains(k, word) {
+					if _, ok := v.(string); ok {
+						continue
+					}
+					else if _, ok := v.(int); ok {
+						ts.data[k] = []int{v.(int), ts.keys[cacheKey]}
+						ts.data[word] = k
+					}
+					else if _, ok := v.([]int); ok {
+						ts.data[k] = append(v.([]int), ts.keys[cacheKey]...)
+						ts.data[word] = k
+					}
+				}
+			}
+			*/
 			ts.data[word] = append(v, ts.keys[cacheKey])
 		}
 	}
